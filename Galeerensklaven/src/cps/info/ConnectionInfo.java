@@ -23,7 +23,7 @@ public class ConnectionInfo {
 	}
 	public String getCommunicationInboundPortURI() {
 		return comipuri;
-	}
+	} 
 	public String getRoutingInboundPortURI() {
 		return rotipuri;
 	}
