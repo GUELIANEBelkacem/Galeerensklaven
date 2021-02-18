@@ -1,4 +1,4 @@
-package cps.address;
+package cps.info.address;
 
 public interface NodeAddressI
 extends AddressI{

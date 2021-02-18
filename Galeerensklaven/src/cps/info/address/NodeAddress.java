@@ -1,10 +1,10 @@
-package cps.address;
+package cps.info.address;
 
-public class NetworkAddress implements NetworkAddressI {
+public class NodeAddress implements NodeAddressI {
 	private int adr;
 
 
-	public NetworkAddress(int adr) {
+	public NodeAddress(int adr) {
 		this.adr = adr;
 	}
 	
