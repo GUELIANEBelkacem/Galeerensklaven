@@ -3,8 +3,6 @@ package cps.registration;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.sun.jdi.connect.spi.Connection;
-
 import cps.info.ConnectionInfo;
 import cps.info.address.NodeAddressI;
 import cps.info.position.PositionI;
