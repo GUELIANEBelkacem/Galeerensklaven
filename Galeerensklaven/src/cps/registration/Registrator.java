@@ -1,10 +1,14 @@
 package cps.registration;
 
-import fr.sorbonne_u.components.AbstractComponent;
+import java.util.HashSet;
 
+import fr.sorbonne_u.components.AbstractComponent;
+import fr.sorbonne_u.components.annotations.OfferedInterfaces;
+
+@OfferedInterfaces(offered = {RegistrationCI.class})
 public class Registrator extends AbstractComponent {
 	public static final String RegIP_URI;
-	protected
+	private Set<ConnectionInfo> cInfo = new HashSet<>();
 
 	protected Registrator() {
 		super(1, 0);
@@ -15,5 +19,8 @@ public class Registrator extends AbstractComponent {
 		super(reflectionInboundPortURI, nbThreads, nbSchedulableThreads);
 		// TODO Auto-generated constructor stub
 	}
+	
+	
+	public Set<ConnectionInfo> registerTerminal()
 
 }
