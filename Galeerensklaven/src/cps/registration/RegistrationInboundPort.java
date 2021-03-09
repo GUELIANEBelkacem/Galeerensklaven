@@ -14,12 +14,12 @@ public class RegistrationInboundPort extends AbstractInboundPort implements Regi
 
 	private static final long serialVersionUID = 1L;
 
-	public RegistrationInboundPort(Class<? extends OfferedCI> implementedInterface, ComponentI owner) throws Exception {
+	protected RegistrationInboundPort(ComponentI owner) throws Exception {
 		super(RegistrationCI.class, owner);
 
 	}
 
-	public RegistrationInboundPort(String uri, ComponentI owner) throws Exception {
+	protected RegistrationInboundPort(String uri, ComponentI owner) throws Exception {
 		super(uri, RegistrationCI.class, owner);
 		// TODO Auto-generated constructor stub
 	}

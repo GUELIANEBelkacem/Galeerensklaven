@@ -20,7 +20,6 @@ public class Registrator extends AbstractComponent {
 		super(1, 0);
 		this.rip = new RegistrationInboundPort(RegIP_URI, this);
 		this.rip.publishPort();
-		
 	}
 
 	
@@ -78,7 +77,10 @@ public class Registrator extends AbstractComponent {
 	
 	public void unreg(NodeAddressI address) {
 		for (ConnectionInfo ci : cInfo) {
-			if(ci.getAddress().isequalsAddress(address)) cInfo.remove(ci);
+			if(ci.getAddress().isequalsAddress(address)) {
+				cInfo.remove(ci);
+				break;
+			}
 		}
 	}
 

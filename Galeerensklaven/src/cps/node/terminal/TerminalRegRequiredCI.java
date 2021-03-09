@@ -11,7 +11,7 @@ import cps.info.ConnectionInfo;
 public interface TerminalRegRequiredCI extends RequiredCI {
 	
 	public Set<ConnectionInfo> register(NodeAddressI address, String commIpUri, PositionI initialPosition,
-			double initialRange);
+			double initialRange) throws Exception;
 	
 
 }
