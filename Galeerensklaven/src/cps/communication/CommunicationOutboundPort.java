@@ -6,14 +6,14 @@ import cps.message.MessageI;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 
-public class CommunicationInboundPort extends AbstractInboundPort implements CommunicationCI {
+public class CommunicationOutboundPort  extends AbstractInboundPort implements CommunicationCI{
 	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 2601324781658680231L;
+	private static final long serialVersionUID = -3787632917561440543L;
 
-	public CommunicationInboundPort (ComponentI owner) throws Exception {
+	public CommunicationOutboundPort (ComponentI owner) throws Exception {
 		super(CommunicationCI.class, owner);
 
 	}
@@ -87,5 +87,6 @@ public class CommunicationInboundPort extends AbstractInboundPort implements Com
 		}
 		
 	}
+
 
 }
