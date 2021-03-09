@@ -4,7 +4,7 @@ import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 
 
-@RequiredInterfaces(required = )
+@RequiredInterfaces(required =  )
 public class TerminalNode extends AbstractComponent {
 
 	public TerminalNode() throws Exception{

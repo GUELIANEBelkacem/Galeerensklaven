@@ -29,7 +29,7 @@ public class Message implements MessageI {
 
 	@Override
 	public void decrementHops() {
-		hopsLeft--;
+		this.hopsLeft--;
 		
 	}
 
