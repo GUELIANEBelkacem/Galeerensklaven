@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import cps.registration.*;
 
@@ -17,6 +18,7 @@ import cps.communication.CommunicationOutboundPort;
 import cps.info.ConnectionInfo;
 import cps.info.address.AddressI;
 import cps.info.position.PositionI;
+import cps.message.MessageI;
 import cps.info.address.NodeAddressI;
 
 @RequiredInterfaces(required = { CommunicationCI.class, RegistrationCI.class })
@@ -45,7 +47,6 @@ public class TerminalNode extends AbstractComponent {
 		this.trop.publishPort();
 		this.tcip = new CommunicationInboundPort(CommunicationInboundPort.generatePortURI(), this);
 		this.tcip.publishPort();
-		i++;
 
 		// TODO Auto-generated constructor stub
 	}
@@ -80,5 +81,25 @@ public class TerminalNode extends AbstractComponent {
 	}
 	 
 
+	public void transmitMessage(MessageI m) {
+		if(m.getAddress().isequalsAddress(this.address)) {
+			this.traceMessage(this.address.getAddress() + "recieves message" + m.getContent().getMessage());
+		}
+		else {
+			if(m.stillAlive()) {
+				m.decrementHops();
+				for(Entry<AddressI,CommunicationOutboundPort> e : addressComOPmap.entrySet()){
+					try {
+						e.getValue().transmitMessage(m);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+		}
+		
+	}
+	
 
 }
