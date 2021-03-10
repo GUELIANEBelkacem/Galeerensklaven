@@ -71,7 +71,7 @@ public class TerminalNode extends AbstractComponent {
 	
 	public void connect(NodeAddressI naddress, String communicationInboundPortURI) {
 		try {
-			addressComOPmap.put(naddress, new CommunicationOutboundPort(CommunicationOutboundPort.genURI(), this));
+			addressComOPmap.putIfAbsent(naddress, new CommunicationOutboundPort(CommunicationOutboundPort.generatePortURI(), this));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
