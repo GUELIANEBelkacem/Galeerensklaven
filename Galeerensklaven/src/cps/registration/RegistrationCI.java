@@ -6,8 +6,9 @@ import cps.info.ConnectionInfo;
 import cps.info.address.NodeAddressI;
 import cps.info.position.PositionI;
 import fr.sorbonne_u.components.interfaces.OfferedCI;
+import fr.sorbonne_u.components.interfaces.RequiredCI;
 
-public interface RegistrationCI extends OfferedCI {
+public interface RegistrationCI extends OfferedCI, RequiredCI {
 	
 	public Set<ConnectionInfo> registerTerminalNode(NodeAddressI address, String commIpUri, PositionI initialPosition,
 			double initialRange) throws Exception;

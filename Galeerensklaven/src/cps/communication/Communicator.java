@@ -40,10 +40,7 @@ public class Communicator extends AbstractComponent {
 		
 	}
 	
-
-
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI) {
-
 	
 	}
 
