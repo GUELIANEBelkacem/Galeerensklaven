@@ -18,7 +18,7 @@ public class CVM extends AbstractCVM {
 		
 		AbstractComponent.createComponent(Registrator.class.getCanonicalName(), new Object[] {});
 		
-		for(int i=0; i<4;i++) {
+		for(int i=0; i<2;i++) {
 			rot[i] = AbstractComponent.createComponent(RoutingNode.class.getCanonicalName(), new Object[] {});
 			this.doPortConnection(rot[i],RoutingNode.RegOP_URI , Registrator.RegIP_URI, RegistrationConnector.class.getCanonicalName());
 		}

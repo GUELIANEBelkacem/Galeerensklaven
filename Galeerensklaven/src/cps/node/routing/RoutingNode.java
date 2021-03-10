@@ -55,7 +55,7 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 		return s;
 	}
 	Random rand = new Random();
-	private double range = 60;
+	private double range = 2000;
 	private final NodeAddressI address= new NodeAddress(RoutingNode.genAddresse()) ;
 	private Position pos = new Position(rand.nextInt(50), rand.nextInt(50));   // change this genPos
 	private ConnectionInfo conInfo = new ConnectionInfo(this.address, ComIP_URI, RotIP_URI, true, pos, false);
@@ -120,19 +120,22 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 		
 	}
 
-
 	@Override
 	public synchronized void execute() throws Exception {
 		super.execute();
 		
 		this.register();
+		
 		for(ConnectionInfo c: this.neighbors) {
 			if(c.isRouting()) {
 				this.neighborsCOP.get(c.getAddress()).connectRouting(this.address, this.ComIP_URI, this.RotIP_URI);
+				Thread.sleep(3000L);
 			}else {
 				this.neighborsCOP.get(c.getAddress()).connect(this.address, this.ComIP_URI);
+				Thread.sleep(1000L);
 			}
 		}
+		
 		for(AddressI e: this.neighborsCOP.keySet()) {
 			this.transmitMessage(new Message(address.getAddress() , 10, e));
 		}
@@ -175,6 +178,7 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 			pc.publishPort();
 			this.doPortConnection(uriTempC, communicationInboundPortURI, CommunicationConnector.class.getCanonicalName());//add connector here 
 			this.neighborsCOP.put(address, pc);
+			
 		}
 		
 		if(! this.neighborsROP.containsKey(address)) {
