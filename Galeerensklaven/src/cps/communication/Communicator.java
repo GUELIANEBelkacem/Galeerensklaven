@@ -49,8 +49,8 @@ public class Communicator extends AbstractComponent {
 		
 	}
 
-	public void hasRouteFor(AddressI address) {
-		
+	public int hasRouteFor(AddressI address) {
+		return 0;
 	}
 
 	public void ping() {

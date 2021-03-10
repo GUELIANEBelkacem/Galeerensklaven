@@ -3,6 +3,8 @@ package cps.communication;
 import cps.info.address.AddressI;
 import cps.info.address.NodeAddressI;
 import cps.message.MessageI;
+import cps.node.routing.RoutingNode;
+import cps.node.NodeI;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 
@@ -35,7 +37,7 @@ public class CommunicationInboundPort extends AbstractInboundPort implements Com
 		
 		try {
 			this.getOwner().runTask(
-					u-> ((Communicator) u).connect(address, communicationInboundPortURI));
+					u-> ((NodeI) u).connect(address, communicationInboundPortURI));
 		} catch (AssertionError | Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -49,7 +51,7 @@ public class CommunicationInboundPort extends AbstractInboundPort implements Com
 		
 		try {
 			this.getOwner().runTask(
-					u-> ((Communicator) u).connectRouting(address, communicationInboundPortURI, routingInboundPortURI));
+					u-> ((RoutingNode) u).connectRouting(address, communicationInboundPortURI, routingInboundPortURI));
 		} catch (AssertionError | Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -61,24 +63,19 @@ public class CommunicationInboundPort extends AbstractInboundPort implements Com
 		
 		try {
 			this.getOwner().runTask(
-					u-> ((Communicator) u).transmitMessage(m));
+					u-> ((NodeI) u).transmitMessage(m));
 		} catch (AssertionError | Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 	}
-
+/*
 	@Override
-	public void hasRouteFor(AddressI address) throws Exception{
-
-		try {
-			this.getOwner().runTask(
-					u-> ((Communicator) u).hasRouteFor(address));
-		} catch (AssertionError | Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public int hasRouteFor(AddressI address) throws Exception{
+		
+		return this.getOwner().handleRequest(
+				t -> ((Communicator) t).hasRouteFor(address));
 		
 	}
 
@@ -94,5 +91,6 @@ public class CommunicationInboundPort extends AbstractInboundPort implements Com
 		}
 		
 	}
+	*/
 
 }

@@ -27,7 +27,7 @@ public class RoutingOutboundPort extends AbstractOutboundPort implements Routing
 		super(uri, RoutingCI.class, owner);
 
 	}
-
+	/*
 	@Override
 	public void updateRouting(NodeAddressI neighbour, Set<RouteInfo> routes) throws Exception {
 		this.getOwner().runTask(
@@ -41,4 +41,5 @@ public class RoutingOutboundPort extends AbstractOutboundPort implements Routing
 				u-> ((AccessPointI) r).updateRoutingPoint(neighbour, numberOfHops));
 		
 	}
+	*/
 }

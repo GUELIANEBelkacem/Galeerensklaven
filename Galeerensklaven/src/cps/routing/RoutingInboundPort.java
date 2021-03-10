@@ -25,6 +25,8 @@ public class RoutingInboundPort extends AbstractInboundPort implements RoutingCI
 		super(uri, RoutingCI.class, owner);
 
 	}
+	
+	/*
 
 	@Override
 	public void updateRouting(NodeAddressI neighbour, Set<RouteInfo> routes) throws Exception{
@@ -39,4 +41,5 @@ public class RoutingInboundPort extends AbstractInboundPort implements RoutingCI
 				u-> ((NodeI) r).updateRoutingPoint(neighbour, numberOfHops));
 		
 	}
+	*/
 }

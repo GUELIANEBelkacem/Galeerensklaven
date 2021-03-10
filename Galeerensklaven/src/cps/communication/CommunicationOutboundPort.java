@@ -44,11 +44,12 @@ public class CommunicationOutboundPort  extends AbstractOutboundPort implements 
 		
 		
 	}
+	/*
 
 	@Override
-	public void hasRouteFor(AddressI address) throws Exception{
+	public int hasRouteFor(AddressI address) throws Exception{
 
-		((CommunicationCI)this.getConnector()).hasRouteFor(address);
+		return ((CommunicationCI)this.getConnector()).hasRouteFor(address);
 		
 		
 	}
@@ -59,6 +60,6 @@ public class CommunicationOutboundPort  extends AbstractOutboundPort implements 
 		((CommunicationCI)this.getConnector()).ping();
 		
 	}
-
+	 */
 
 }

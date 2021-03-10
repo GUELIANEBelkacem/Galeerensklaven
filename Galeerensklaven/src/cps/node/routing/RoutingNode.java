@@ -16,6 +16,7 @@ import cps.info.address.NodeAddress;
 import cps.info.address.NodeAddressI;
 import cps.info.position.Position;
 import cps.info.position.PositionI;
+import cps.message.Message;
 import cps.message.MessageI;
 import cps.node.NodeI;
 import cps.registration.RegistrationCI;
@@ -108,9 +109,19 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 
 	@Override
 	public synchronized void execute() throws Exception {
-
-		
 		super.execute();
+		
+		this.register();
+		for(ConnectionInfo c: this.neighbors) {
+			if(c.isRouting()) {
+				this.neighborsCOP.get(c.getAddress()).connectRouting(this.address, this.ComIP_URI, this.RotIP_URI);
+			}else {
+				this.neighborsCOP.get(c.getAddress()).connect(this.address, this.ComIP_URI);
+			}
+		}
+		for(AddressI e: this.neighborsCOP.keySet()) {
+			this.transmitMessage(new Message(address + "has transmited" , 10, e));
+		}
 	}
 	/*
 	public void hasRouteFor(AddressI address);
@@ -118,7 +129,7 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 	*/
 	public void transmitMessage(MessageI m) throws Exception {
 		if(m.getAddress().isequalsAddress(this.address)) {
-			this.traceMessage(this.address.getAddress() + "recieves message" + m.getContent().getMessage());
+			this.traceMessage(this.address.getAddress() + "recieved the message that " + m.getContent().getMessage());
 		}
 		else {
 			if(m.stillAlive()) {
