@@ -24,13 +24,9 @@ import cps.info.address.NodeAddressI;
 
 public class TerminalNode extends AbstractComponent {
 	private NodeAddressI address;
-	private static int i = 0;
-	private static int opcount = 0;
 	private PositionI initialPosition;
 	private double initialRange;
 
-	public final String TROP_URI = "trop-uri-" + i;
-	public final String COMMIP_URI = "commip-uri" + i;
 	//protected CommunicationCI comm;
 	protected CommunicationInboundPort tcip; 
 	protected RegistrationOutboundPort trop;
@@ -45,9 +41,9 @@ public class TerminalNode extends AbstractComponent {
 		this.initialPosition = initialPosition;
 		this.initialRange = initialRange;
 
-		this.trop = new RegistrationOutboundPort(TROP_URI, this);
+		this.trop = new RegistrationOutboundPort(RegistrationOutboundPort.generatePortURI(), this);
 		this.trop.publishPort();
-		this.tcip = new TerminalCommIP(COMMIP_URI, this);
+		this.tcip = new CommunicationInboundPort(CommunicationInboundPort.generatePortURI(), this);
 		this.tcip.publishPort();
 		i++;
 
@@ -62,10 +58,10 @@ public class TerminalNode extends AbstractComponent {
 
 	public synchronized void execute() throws Exception {
 		super.execute();
-		voisins = this.trop.register(address, COMMIP_URI, initialPosition, initialRange);
+		voisins = this.trop.registerTerminalNode(address, tcip.getPortURI(), initialPosition, initialRange);
 		for (ConnectionInfo ci : voisins) {
-			addressComOPmap.put(ci.getAddress(), new TermCommOutboundPort(genURI(), this));
-			addressComOPmap.get(ci).connect(address, COMMIP_URI);
+			addressComOPmap.put(ci.getAddress(), new CommunicationOutboundPort(CommunicationOutboundPort.generatePortURI(), this));
+			addressComOPmap.get(ci.getAddress()).connect(address, tcip.getPortURI());
 			//comm.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
 			//ci.getCommunicationInboundPortURI().connect(address, comm); // gros doute ....
 		}
@@ -74,16 +70,15 @@ public class TerminalNode extends AbstractComponent {
 	
 	
 	public void connect(NodeAddressI naddress, String communicationInboundPortURI) {
-		addressComOPmap.put(naddress, new TermCommOutboundPort(genURI(), this));
+		try {
+			addressComOPmap.put(naddress, new CommunicationOutboundPort(CommunicationOutboundPort.genURI(), this));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	 
-	
-	public static String genURI() {
-        String s = "term_op_uri "+opcount;
-        opcount++;
-        return s;
-    }
-	
+
 
 }

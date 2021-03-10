@@ -4,21 +4,11 @@ import cps.info.address.AddressI;
 import cps.info.address.NodeAddressI;
 import cps.message.MessageI;
 import fr.sorbonne_u.components.ComponentI;
-import fr.sorbonne_u.components.ports.AbstractInboundPort;
+import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 
-public class CommunicationOutboundPort  extends AbstractInboundPort implements CommunicationCI{
-	public static int count =0;
+public class CommunicationOutboundPort  extends AbstractOutboundPort implements CommunicationCI{
 
-	public static String genURI() {
-		String s = "com_op_uri "+count;
-		count++;
-		return s;
-	}
-	
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3787632917561440543L;
 
 	public CommunicationOutboundPort (String uri, ComponentI owner) throws Exception {
@@ -35,13 +25,7 @@ public class CommunicationOutboundPort  extends AbstractInboundPort implements C
 	@Override
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception{
 		
-		try {
-			this.getOwner().runTask(
-					u-> ((Communicator) u).connect(address, communicationInboundPortURI));
-		} catch (AssertionError | Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		((CommunicationCI)this.getConnector()).connect(address, communicationInboundPortURI);
 		
 	}
 	
@@ -49,51 +33,30 @@ public class CommunicationOutboundPort  extends AbstractInboundPort implements C
 	@Override
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI) throws Exception{
 		
-		try {
-			this.getOwner().runTask(
-					u-> ((Communicator) u).connectRouting(address, communicationInboundPortURI, routingInboundPortURI));
-		} catch (AssertionError | Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		((CommunicationCI)this.getConnector()).connectRouting(address, communicationInboundPortURI, routingInboundPortURI);
+		
 	}
 
 	@Override
 	public void transmitMessage(MessageI m) throws Exception{
 		
-		try {
-			this.getOwner().runTask(
-					u-> ((Communicator) u).transmitMessage(m));
-		} catch (AssertionError | Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		((CommunicationCI)this.getConnector()).transmitMessage(m);
+		
 		
 	}
 
 	@Override
 	public void hasRouteFor(AddressI address) throws Exception{
 
-		try {
-			this.getOwner().runTask(
-					u-> ((Communicator) u).hasRouteFor(address));
-		} catch (AssertionError | Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		((CommunicationCI)this.getConnector()).hasRouteFor(address);
+		
 		
 	}
 
 	@Override
 	public void ping() throws Exception{
 
-		try {
-			this.getOwner().runTask(
-					u-> ((Communicator) u).ping());
-		} catch (AssertionError | Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		((CommunicationCI)this.getConnector()).ping();
 		
 	}
 
