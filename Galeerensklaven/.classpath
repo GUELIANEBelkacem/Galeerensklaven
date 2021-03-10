@@ -10,5 +10,10 @@
 	<classpathentry exported="true" kind="lib" path="C:/Users/moham/git/Galeerensklaven/Galeerensklaven/commons-math3-3.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="C:/Users/moham/git/Galeerensklaven/Galeerensklaven/javassist.jar"/>
 	<classpathentry exported="true" kind="lib" path="C:/Users/moham/git/Galeerensklaven/Galeerensklaven/jing.jar"/>
+	<classpathentry kind="lib" path="/home/jae/Documents/fac/BCM4Java-13012021.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
