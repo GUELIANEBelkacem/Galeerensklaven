@@ -7,15 +7,24 @@ import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 
 public class CommunicationOutboundPort  extends AbstractInboundPort implements CommunicationCI{
+	public static int count =0;
+
+	public static String genURI() {
+		String s = "com_op_uri "+count;
+		count++;
+		return s;
+	}
 	
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -3787632917561440543L;
 
-	public CommunicationOutboundPort (ComponentI owner) throws Exception {
-		super(CommunicationCI.class, owner);
+	public CommunicationOutboundPort (String uri, ComponentI owner) throws Exception {
 
+		super(uri, CommunicationCI.class, owner);
+	 
 	}
 	/*
 	public CommunicationInboundPort (String uri, ComponentI owner) throws Exception {
@@ -24,7 +33,7 @@ public class CommunicationOutboundPort  extends AbstractInboundPort implements C
 	*/
 
 	@Override
-	public void connect(NodeAddressI address, String communicationInboundPortURI) {
+	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception{
 		
 		try {
 			this.getOwner().runTask(
@@ -38,7 +47,7 @@ public class CommunicationOutboundPort  extends AbstractInboundPort implements C
 	
 
 	@Override
-	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI) {
+	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI) throws Exception{
 		
 		try {
 			this.getOwner().runTask(
@@ -50,7 +59,7 @@ public class CommunicationOutboundPort  extends AbstractInboundPort implements C
 	}
 
 	@Override
-	public void transmitMessage(MessageI m) {
+	public void transmitMessage(MessageI m) throws Exception{
 		
 		try {
 			this.getOwner().runTask(
@@ -63,7 +72,7 @@ public class CommunicationOutboundPort  extends AbstractInboundPort implements C
 	}
 
 	@Override
-	public void hasRouteFor(AddressI address) {
+	public void hasRouteFor(AddressI address) throws Exception{
 
 		try {
 			this.getOwner().runTask(
@@ -76,7 +85,7 @@ public class CommunicationOutboundPort  extends AbstractInboundPort implements C
 	}
 
 	@Override
-	public void ping() {
+	public void ping() throws Exception{
 
 		try {
 			this.getOwner().runTask(

@@ -1,20 +1,20 @@
 package cps.info.address;
 
 public class NodeAddress implements NodeAddressI {
-	private int adr;
+	private String adr;
 
 
-	public NodeAddress(int adr) {
+	public NodeAddress(String adr) {
 		this.adr = adr;
 	}
 	
 	@Override
-	public int getAddress() {
+	public String getAddress() {
 		return this.adr;
 	}
 	@Override	
 	public boolean isequalsAddress(AddressI a) {
-		return (this.adr == a.getAddress());
+		return (this.adr.equals(a.getAddress()));
 	}
 
 
