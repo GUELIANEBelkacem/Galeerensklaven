@@ -37,7 +37,14 @@ public class CommunicationInboundPort extends AbstractInboundPort implements Com
 		
 		try {
 			this.getOwner().runTask(
-					u-> ((NodeI) u).connect(address, communicationInboundPortURI));
+					u-> {
+						try {
+							((NodeI) u).connect(address, communicationInboundPortURI);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					});
 		} catch (AssertionError | Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -51,7 +58,14 @@ public class CommunicationInboundPort extends AbstractInboundPort implements Com
 		
 		try {
 			this.getOwner().runTask(
-					u-> ((RoutingNode) u).connectRouting(address, communicationInboundPortURI, routingInboundPortURI));
+					u-> {
+						try {
+							((RoutingNode) u).connectRouting(address, communicationInboundPortURI, routingInboundPortURI);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					});
 		} catch (AssertionError | Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -63,7 +77,14 @@ public class CommunicationInboundPort extends AbstractInboundPort implements Com
 		
 		try {
 			this.getOwner().runTask(
-					u-> ((NodeI) u).transmitMessage(m));
+					u-> {
+						try {
+							((NodeI) u).transmitMessage(m);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					});
 		} catch (AssertionError | Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

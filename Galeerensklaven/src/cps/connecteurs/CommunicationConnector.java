@@ -27,6 +27,7 @@ public class CommunicationConnector extends AbstractConnector implements Communi
 		((CommunicationCI)this.offering).transmitMessage(m);
 
 	}
+	/*
 
 	@Override
 	public void hasRouteFor(AddressI address) throws Exception {
@@ -39,5 +40,5 @@ public class CommunicationConnector extends AbstractConnector implements Communi
 		((CommunicationCI)this.offering).ping();
 
 	}
-
+	*/
 }

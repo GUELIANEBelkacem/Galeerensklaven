@@ -37,7 +37,7 @@ public class TerminalNode extends AbstractComponent {
 	protected RegistrationOutboundPort trop;
 	protected HashMap<AddressI, CommunicationOutboundPort> addressComOPmap;
 	
-	
+	public static final String RegOP_URI = RegistrationOutboundPort.generatePortURI();
 	
 	Random rand = new Random();
 	private double initialRange = 10;
@@ -54,7 +54,8 @@ public class TerminalNode extends AbstractComponent {
 		//this.initialPosition = initialPosition;
 		//this.initialRange = initialRange;
 
-		this.trop = new RegistrationOutboundPort(RegistrationOutboundPort.generatePortURI(), this);
+		//this.trop = new RegistrationOutboundPort(RegistrationOutboundPort.generatePortURI(), this);
+		this.trop = new RegistrationOutboundPort(this.RegOP_URI, this);
 		this.trop.publishPort();
 		this.tcip = new CommunicationInboundPort(CommunicationInboundPort.generatePortURI(), this);
 		this.tcip.publishPort();
@@ -74,6 +75,7 @@ public class TerminalNode extends AbstractComponent {
 		for (ConnectionInfo ci : voisins) {
 			addressComOPmap.put(ci.getAddress(), new CommunicationOutboundPort(CommunicationOutboundPort.generatePortURI(), this));
 			addressComOPmap.get(ci.getAddress()).connect(address, tcip.getPortURI());
+			this.logMessage("terminaaaaaaaaaaaaaaaaal");
 			//comm.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
 			//ci.getCommunicationInboundPortURI().connect(address, comm); // gros doute ....
 		}

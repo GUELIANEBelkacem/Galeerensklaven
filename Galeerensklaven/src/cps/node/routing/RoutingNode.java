@@ -10,6 +10,8 @@ import java.util.Set;
 import cps.communication.CommunicationCI;
 import cps.communication.CommunicationInboundPort;
 import cps.communication.CommunicationOutboundPort;
+import cps.connecteurs.CommunicationConnector;
+import cps.connecteurs.RegistrationConnector;
 import cps.info.ConnectionInfo;
 import cps.info.address.AddressI;
 import cps.info.address.NodeAddress;
@@ -38,10 +40,10 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 	private Map<AddressI,RoutingCI> neighborsROP = new HashMap<AddressI,RoutingCI>();
 	private Set<ConnectionInfo> neighbors; //new HashSet<ConnectionInfo>();		
 		
-	
-	public static final String RotIP_URI = RoutingInboundPort.genURI();
-	public static final String ComIP_URI = 	CommunicationInboundPort.genURI();
-	public static final String RegOP_URI = "reg_op_uri";
+	/*testing uri generation methodes*/
+	public final String RotIP_URI =     RoutingInboundPort.genURI();
+	public final String ComIP_URI = 	CommunicationOutboundPort.generatePortURI();
+	public final static String RegOP_URI =     RegistrationOutboundPort.generatePortURI();
 	private RoutingInboundPort rotip;
 	private CommunicationInboundPort comip;
 	private RegistrationOutboundPort regop;
@@ -53,13 +55,19 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 		return s;
 	}
 	Random rand = new Random();
-	private double range = 10;
+	private double range = 60;
 	private final NodeAddressI address= new NodeAddress(RoutingNode.genAddresse()) ;
 	private Position pos = new Position(rand.nextInt(50), rand.nextInt(50));   // change this genPos
 	private ConnectionInfo conInfo = new ConnectionInfo(this.address, ComIP_URI, RotIP_URI, true, pos, false);
 
 	@Override
 	public synchronized void finalise() throws Exception {
+		for(CommunicationCI c: this.neighborsCOP.values()) {
+			this.doPortDisconnection(((CommunicationOutboundPort)c).getPortURI());
+		}
+		for(RoutingCI r: this.neighborsROP.values()) {
+			this.doPortDisconnection(((RoutingOutboundPort)r).getPortURI());
+		}
 		this.doPortDisconnection(RotIP_URI);
 		this.doPortDisconnection(ComIP_URI);
 		this.doPortDisconnection(RegOP_URI);
@@ -71,6 +79,12 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 	public synchronized void shutdown() throws ComponentShutdownException {
 		
 		try {
+			for(CommunicationCI c: this.neighborsCOP.values()) {
+				((CommunicationOutboundPort)c).unpublishPort();
+			}
+			for(RoutingCI r: this.neighborsROP.values()) {
+				((RoutingOutboundPort)r).unpublishPort();
+			}
 			this.rotip.unpublishPort();
 			this.comip.unpublishPort();
 			this.regop.unpublishPort();
@@ -120,7 +134,7 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 			}
 		}
 		for(AddressI e: this.neighborsCOP.keySet()) {
-			this.transmitMessage(new Message(address + "has transmited" , 10, e));
+			this.transmitMessage(new Message("routing node " + address.getAddress() + " has transmited" , 10, e));
 		}
 	}
 	/*
@@ -129,7 +143,7 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 	*/
 	public void transmitMessage(MessageI m) throws Exception {
 		if(m.getAddress().isequalsAddress(this.address)) {
-			this.traceMessage(this.address.getAddress() + "recieved the message that " + m.getContent().getMessage());
+			this.logMessage(this.address.getAddress() + " recieved the message that " + m.getContent().getMessage());
 		}
 		else {
 			if(m.stillAlive()) {
@@ -143,28 +157,31 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 	}
 	
 	
-	public void connect(NodeAddressI address, String communicationInboundPortURI) {
+	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception {
 		if(! this.neighborsCOP.containsKey(address)) {
 			String uriTempC = CommunicationOutboundPort.generatePortURI();
 			CommunicationOutboundPort pc = new CommunicationOutboundPort(uriTempC,this);
-			this.doPortConnection(uriTempC, communicationInboundPortURI, connector);//add connector here 
+			pc.publishPort();
+			this.doPortConnection(uriTempC, communicationInboundPortURI, CommunicationConnector.class.getCanonicalName());//add connector here 
 			this.neighborsCOP.put(address, pc);
 		}
 	}
 
 
-	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI) {
+	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI) throws Exception {
 		if(! this.neighborsCOP.containsKey(address)) {
 			String uriTempC = CommunicationOutboundPort.generatePortURI();
 			CommunicationOutboundPort pc = new CommunicationOutboundPort(uriTempC,this);
-			this.doPortConnection(uriTempC, communicationInboundPortURI, connector);//add connector here 
+			pc.publishPort();
+			this.doPortConnection(uriTempC, communicationInboundPortURI, CommunicationConnector.class.getCanonicalName());//add connector here 
 			this.neighborsCOP.put(address, pc);
 		}
 		
 		if(! this.neighborsROP.containsKey(address)) {
 			String uriTempR = RoutingOutboundPort.generatePortURI();
 			RoutingOutboundPort pr = new RoutingOutboundPort(uriTempR,this);
-			this.doPortConnection(uriTempR, routingInboundPortURI, connector);//add connector here 
+			pr.publishPort();
+			this.doPortConnection(uriTempR, routingInboundPortURI, RegistrationConnector.class.getCanonicalName());//add connector here 
 			this.neighborsROP.put(address, pr);
 		}
 	}
@@ -189,12 +206,14 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 		for(ConnectionInfo c : this.neighbors) {
 			String uriTempC = CommunicationOutboundPort.generatePortURI();
 			CommunicationOutboundPort pc = new CommunicationOutboundPort(uriTempC,this);
-			this.doPortConnection(uriTempC, c.getCommunicationInboundPortURI(), connector);//add connector here 
+			pc.publishPort();
+			this.doPortConnection(uriTempC, c.getCommunicationInboundPortURI(), CommunicationConnector.class.getCanonicalName());//add connector here 
 			this.neighborsCOP.put(c.getAddress(), pc);
 			
 			String uriTempR = RoutingOutboundPort.generatePortURI();
 			RoutingOutboundPort pr = new RoutingOutboundPort(uriTempR,this);
-			this.doPortConnection(uriTempR, c.getCommunicationInboundPortURI(), connector);//add connector here 
+			pr.publishPort();
+			this.doPortConnection(uriTempR, c.getCommunicationInboundPortURI(), RegistrationConnector.class.getCanonicalName());//add connector here 
 			this.neighborsROP.put(c.getAddress(), pr);
 		}
 		
