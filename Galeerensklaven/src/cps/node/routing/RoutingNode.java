@@ -134,7 +134,7 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 			}
 		}
 		for(AddressI e: this.neighborsCOP.keySet()) {
-			this.transmitMessage(new Message("routing node " + address.getAddress() + " has transmited" , 10, e));
+			this.transmitMessage(new Message(address.getAddress() , 10, e));
 		}
 	}
 	/*
@@ -143,7 +143,7 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 	*/
 	public void transmitMessage(MessageI m) throws Exception {
 		if(m.getAddress().isequalsAddress(this.address)) {
-			//this.logMessage(this.address.getAddress() + " recieved the message that " + m.getContent().getMessage());
+			this.logMessage(this.address.getAddress() + " <--- " + m.getContent().getMessage());
 		}
 		else {
 			if(m.stillAlive()) {

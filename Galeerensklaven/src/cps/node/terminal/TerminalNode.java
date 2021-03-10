@@ -64,7 +64,7 @@ public class TerminalNode extends AbstractComponent implements NodeI {
 		
 		
 		this.toggleLogging();
-		
+		this.toggleTracing();
 		// TODO Auto-generated constructor stub
 	}
 
