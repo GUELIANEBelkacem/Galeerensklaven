@@ -21,13 +21,14 @@ import cps.info.address.NodeAddress;
 import cps.info.position.Position;
 import cps.info.position.PositionI;
 import cps.message.MessageI;
+import cps.node.NodeI;
 import cps.node.routing.RoutingNode;
 import cps.info.address.NodeAddressI;
 
 @RequiredInterfaces(required = { CommunicationCI.class, RegistrationCI.class })
 @OfferedInterfaces(offered = { CommunicationCI.class })
 
-public class TerminalNode extends AbstractComponent {
+public class TerminalNode extends AbstractComponent implements NodeI {
 	//private NodeAddressI address;
 	//private PositionI initialPosition;
 	//private double initialRange;
@@ -53,13 +54,17 @@ public class TerminalNode extends AbstractComponent {
 		//this.address = address;
 		//this.initialPosition = initialPosition;
 		//this.initialRange = initialRange;
-
+		this.logMessage("terminaaaaaaaaaaaaaaaaal");
+		System.out.println("test terminal constr");
 		//this.trop = new RegistrationOutboundPort(RegistrationOutboundPort.generatePortURI(), this);
 		this.trop = new RegistrationOutboundPort(this.RegOP_URI, this);
 		this.trop.publishPort();
 		this.tcip = new CommunicationInboundPort(CommunicationInboundPort.generatePortURI(), this);
 		this.tcip.publishPort();
-
+		
+		
+		this.toggleLogging();
+		
 		// TODO Auto-generated constructor stub
 	}
 
@@ -71,6 +76,8 @@ public class TerminalNode extends AbstractComponent {
 
 	public synchronized void execute() throws Exception {
 		super.execute();
+		System.out.println("test terminal execute");
+		this.logMessage("terminaaaaaaaaaaaaaaaaal");
 		voisins = this.trop.registerTerminalNode(address, tcip.getPortURI(), initialPosition, initialRange);
 		for (ConnectionInfo ci : voisins) {
 			addressComOPmap.put(ci.getAddress(), new CommunicationOutboundPort(CommunicationOutboundPort.generatePortURI(), this));
@@ -96,7 +103,7 @@ public class TerminalNode extends AbstractComponent {
 
 	public void transmitMessage(MessageI m) {
 		if(m.getAddress().isequalsAddress(this.address)) {
-			this.traceMessage(this.address.getAddress() + "recieves message" + m.getContent().getMessage());
+			this.logMessage(this.address.getAddress() + "recieves message" + m.getContent().getMessage());
 		}
 		else {
 			if(m.stillAlive()) {

@@ -18,10 +18,11 @@ public class CVM extends AbstractCVM {
 		
 		AbstractComponent.createComponent(Registrator.class.getCanonicalName(), new Object[] {});
 		
-		for(int i=0; i<3;i++) {
+		/*for(int i=0; i<3;i++) {
 			rot[i] = AbstractComponent.createComponent(RoutingNode.class.getCanonicalName(), new Object[] {});
 			this.doPortConnection(rot[i],RoutingNode.RegOP_URI , Registrator.RegIP_URI, RegistrationConnector.class.getCanonicalName());
 		}
+		*/
 		
 		for(int i=0; i<2;i++) {
 			ter[i] = AbstractComponent.createComponent(TerminalNode.class.getCanonicalName(), new Object[] {});
@@ -39,7 +40,7 @@ public class CVM extends AbstractCVM {
 	public static void main(String[] args) {
 		try {
 			CVM c = new CVM();
-			c.startStandardLifeCycle(60000L);
+			c.startStandardLifeCycle(5000L);
 			System.exit(0);
 		} catch (Exception e) {
 			e.printStackTrace();

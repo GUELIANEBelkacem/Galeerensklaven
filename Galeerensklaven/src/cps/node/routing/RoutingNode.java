@@ -143,7 +143,7 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 	*/
 	public void transmitMessage(MessageI m) throws Exception {
 		if(m.getAddress().isequalsAddress(this.address)) {
-			this.logMessage(this.address.getAddress() + " recieved the message that " + m.getContent().getMessage());
+			//this.logMessage(this.address.getAddress() + " recieved the message that " + m.getContent().getMessage());
 		}
 		else {
 			if(m.stillAlive()) {
