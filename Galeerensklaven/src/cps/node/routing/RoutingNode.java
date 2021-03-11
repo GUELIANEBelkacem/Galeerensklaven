@@ -272,6 +272,10 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 
 	}
 	
+	//--------------------------Routing------------------------------------------------------------------------
+	public void updateRouting(NodeAddressI neighbour, Set<RouteInfo> routes) throws Exception{
+		
+	}
 	
 
 }

@@ -4,6 +4,7 @@ import java.util.Set;
 
 import cps.info.address.NodeAddressI;
 import cps.node.NodeI;
+import cps.node.routing.RoutingNode;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 
@@ -26,20 +27,20 @@ public class RoutingInboundPort extends AbstractInboundPort implements RoutingCI
 
 	}
 	
-	/*
+	
 
 	@Override
 	public void updateRouting(NodeAddressI neighbour, Set<RouteInfo> routes) throws Exception{
 		this.getOwner().runTask(
-				u-> ((NodeI) r).updateRouting(neighbour, routes));// to be changed 
+				r-> ((RoutingNode) r).updateRouting(neighbour, routes));
 		
 	}
 
 	@Override
 	public void updateAccessPoint(NodeAddressI neighbour, int numberOfHops)throws Exception {
 		this.getOwner().runTask(
-				u-> ((NodeI) r).updateRoutingPoint(neighbour, numberOfHops));
+				r-> ((AccessPoint) r).updateRoutingPoint(neighbour, numberOfHops));
 		
 	}
-	*/
+	
 }
