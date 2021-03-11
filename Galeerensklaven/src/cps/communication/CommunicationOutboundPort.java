@@ -44,7 +44,7 @@ public class CommunicationOutboundPort  extends AbstractOutboundPort implements 
 		
 		
 	}
-	/*
+	
 
 	@Override
 	public int hasRouteFor(AddressI address) throws Exception{
@@ -60,6 +60,6 @@ public class CommunicationOutboundPort  extends AbstractOutboundPort implements 
 		((CommunicationCI)this.getConnector()).ping();
 		
 	}
-	 */
+	 
 
 }

@@ -52,7 +52,7 @@ public class CommunicationInboundPort extends AbstractInboundPort implements Com
 		
 	}
 	
-
+/*
 	@Override
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI) throws Exception{
 		
@@ -70,6 +70,21 @@ public class CommunicationInboundPort extends AbstractInboundPort implements Com
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return;
+	}
+	*/
+	
+	@Override
+	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI) throws Exception{
+		
+		
+			this.getOwner().handleRequest(
+					u-> {((RoutingNode) u).connectRouting(address, communicationInboundPortURI, routingInboundPortURI);
+						
+						return null;});
+					
+				
+
 	}
 
 	@Override
@@ -91,27 +106,30 @@ public class CommunicationInboundPort extends AbstractInboundPort implements Com
 		}
 		
 	}
-/*
+
 	@Override
 	public int hasRouteFor(AddressI address) throws Exception{
 		
 		return this.getOwner().handleRequest(
-				t -> ((Communicator) t).hasRouteFor(address));
+				t -> ((NodeI) t).hasRouteFor(address));
 		
 	}
 
 	@Override
 	public void ping() throws Exception{
 
-		try {
+	
 			this.getOwner().runTask(
-					u-> ((Communicator) u).ping());
-		} catch (AssertionError | Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+					u-> {
+						try {
+							((NodeI) u).ping();
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					});
+
+	
 	}
-	*/
 
 }

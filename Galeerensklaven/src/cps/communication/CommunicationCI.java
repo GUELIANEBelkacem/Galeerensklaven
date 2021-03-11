@@ -10,8 +10,6 @@ public interface CommunicationCI extends OfferedCI, RequiredCI {
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception;
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI)throws Exception;
 	public void transmitMessage(MessageI m) throws Exception;
-	/*
 	public int hasRouteFor(AddressI address) throws Exception;
 	public void ping() throws Exception;
-	*/
 }

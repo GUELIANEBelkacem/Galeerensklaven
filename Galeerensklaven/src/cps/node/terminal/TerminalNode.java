@@ -15,11 +15,13 @@ import cps.registration.*;
 import cps.communication.CommunicationCI;
 import cps.communication.CommunicationInboundPort;
 import cps.communication.CommunicationOutboundPort;
+import cps.connecteurs.CommunicationConnector;
 import cps.info.ConnectionInfo;
 import cps.info.address.AddressI;
 import cps.info.address.NodeAddress;
 import cps.info.position.Position;
 import cps.info.position.PositionI;
+import cps.message.Message;
 import cps.message.MessageI;
 import cps.node.NodeI;
 import cps.node.routing.RoutingNode;
@@ -81,10 +83,22 @@ public class TerminalNode extends AbstractComponent implements NodeI {
 		voisins = this.trop.registerTerminalNode(address, tcip.getPortURI(), initialPosition, initialRange);
 		for (ConnectionInfo ci : voisins) {
 			addressComOPmap.put(ci.getAddress(), new CommunicationOutboundPort(CommunicationOutboundPort.generatePortURI(), this));
+			
 			addressComOPmap.get(ci.getAddress()).connect(address, tcip.getPortURI());
+			
+			addressComOPmap.get(ci.getAddress()).publishPort();
+			this.doPortConnection(addressComOPmap.get(ci.getAddress()).getPortURI(), ci.getCommunicationInboundPortURI(), CommunicationConnector.class.getCanonicalName());//add connector here 
+			
+			
+			
 			this.logMessage("terminaaaaaaaaaaaaaaaaal");
 			//comm.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
 			//ci.getCommunicationInboundPortURI().connect(address, comm); // gros doute ....
+		}
+		
+		
+		for(AddressI e: this.addressComOPmap.keySet()) {
+			this.transmitMessage(new Message(address.getAddress() , 10, e));
 		}
 
 	}
@@ -103,7 +117,7 @@ public class TerminalNode extends AbstractComponent implements NodeI {
 
 	public void transmitMessage(MessageI m) {
 		if(m.getAddress().isequalsAddress(this.address)) {
-			this.logMessage(this.address.getAddress() + "recieves message" + m.getContent().getMessage());
+			this.logMessage(this.address.getAddress() + " <===== " + m.getContent().getMessage());
 		}
 		else {
 			if(m.stillAlive()) {
