@@ -31,40 +31,41 @@ import cps.info.address.NodeAddressI;
 @OfferedInterfaces(offered = { CommunicationCI.class })
 
 public class TerminalNode extends AbstractComponent implements NodeI {
-	//private NodeAddressI address;
-	//private PositionI initialPosition;
-	//private double initialRange;
+	// private NodeAddressI address;
+	// private PositionI initialPosition;
+	// private double initialRange;
 
-	//protected CommunicationCI comm;
-	protected CommunicationInboundPort tcip; 
+	// protected CommunicationCI comm;
+	protected CommunicationInboundPort tcip;
 	protected RegistrationOutboundPort trop;
-	protected HashMap<AddressI, CommunicationOutboundPort> addressComOPmap;
-	
+	protected HashMap<AddressI, CommunicationOutboundPort> addressComOPmap = new HashMap<>();
+
 	public static final String RegOP_URI = RegistrationOutboundPort.generatePortURI();
-	
+
 	Random rand = new Random();
-	private double initialRange = 10;
-	private final NodeAddressI address= new NodeAddress(RoutingNode.genAddresse()) ;
-	private Position initialPosition = new Position(rand.nextInt(50), rand.nextInt(50));   // change this genPos
-	//private ConnectionInfo conInfo = new ConnectionInfo(this.address, ComIP_URI, RotIP_URI, true, pos, false);
-	
+	private double initialRange = 10000000;
+	private final NodeAddressI address = new NodeAddress(RoutingNode.genAddresse());
+	private Position initialPosition = new Position(rand.nextInt(50), rand.nextInt(50)); // change this genPos
+	// private ConnectionInfo conInfo = new ConnectionInfo(this.address, ComIP_URI,
+	// RotIP_URI, true, pos, false);
 
 	private Set<ConnectionInfo> voisins = new HashSet<>();
-	//public TerminalNode(NodeAddressI address, PositionI initialPosition, double initialRange) throws Exception {
+
+	// public TerminalNode(NodeAddressI address, PositionI initialPosition, double
+	// initialRange) throws Exception {
 	public TerminalNode() throws Exception {
 		super(1, 0);
-		//this.address = address;
-		//this.initialPosition = initialPosition;
-		//this.initialRange = initialRange;
-		this.logMessage("terminaaaaaaaaaaaaaaaaal");
-		System.out.println("test terminal constr");
-		//this.trop = new RegistrationOutboundPort(RegistrationOutboundPort.generatePortURI(), this);
+		// this.address = address;
+		// this.initialPosition = initialPosition;
+		// this.initialRange = initialRange;
+		
+		// this.trop = new
+		// RegistrationOutboundPort(RegistrationOutboundPort.generatePortURI(), this);
 		this.trop = new RegistrationOutboundPort(this.RegOP_URI, this);
 		this.trop.publishPort();
 		this.tcip = new CommunicationInboundPort(CommunicationInboundPort.generatePortURI(), this);
 		this.tcip.publishPort();
-		
-		
+
 		this.toggleLogging();
 		this.toggleTracing();
 		// TODO Auto-generated constructor stub
@@ -78,10 +79,9 @@ public class TerminalNode extends AbstractComponent implements NodeI {
 
 	public synchronized void execute() throws Exception {
 		super.execute();
-		System.out.println("test terminal execute");
-		this.logMessage("terminaaaaaaaaaaaaaaaaal");
 		voisins = this.trop.registerTerminalNode(address, tcip.getPortURI(), initialPosition, initialRange);
 		for (ConnectionInfo ci : voisins) {
+
 			addressComOPmap.put(ci.getAddress(), new CommunicationOutboundPort(CommunicationOutboundPort.generatePortURI(), this));
 			
 			addressComOPmap.get(ci.getAddress()).connect(address, tcip.getPortURI());
@@ -89,11 +89,15 @@ public class TerminalNode extends AbstractComponent implements NodeI {
 			addressComOPmap.get(ci.getAddress()).publishPort();
 			this.doPortConnection(addressComOPmap.get(ci.getAddress()).getPortURI(), ci.getCommunicationInboundPortURI(), CommunicationConnector.class.getCanonicalName());//add connector here 
 			
-			
+			for(AddressI e: this.addressComOPmap.keySet()) {
+				System.out.println("test map");
+				this.transmitMessage(new Message( address.getAddress(), 10, e));
+			}
 			
 			this.logMessage("terminaaaaaaaaaaaaaaaaal");
 			//comm.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());
 			//ci.getCommunicationInboundPortURI().connect(address, comm); // gros doute ....
+
 		}
 		
 		
@@ -102,27 +106,38 @@ public class TerminalNode extends AbstractComponent implements NodeI {
 		}
 
 	}
-	
-	
+
 	public void connect(NodeAddressI naddress, String communicationInboundPortURI) {
 		try {
-			addressComOPmap.putIfAbsent(naddress, new CommunicationOutboundPort(CommunicationOutboundPort.generatePortURI(), this));
+			if (!addressComOPmap.containsKey(naddress)) {
+				CommunicationOutboundPort tempPort = new CommunicationOutboundPort(CommunicationOutboundPort.generatePortURI(), this);
+				tempPort.publishPort();
+				addressComOPmap.put(naddress,
+						tempPort);
+				this.doPortConnection(tempPort.getPortURI(), communicationInboundPortURI, CommunicationConnector.class.getCanonicalName());
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	 
 
 	public void transmitMessage(MessageI m) {
+<<<<<<< HEAD
 		if(m.getAddress().isequalsAddress(this.address)) {
 			this.logMessage(this.address.getAddress() + " <===== " + m.getContent().getMessage());
 		}
 		else {
 			if(m.stillAlive()) {
+=======
+		if (m.getAddress().isequalsAddress(this.address)) {
+			this.logMessage(this.address.getAddress() + "recieves message" + m.getContent().getMessage());
+		} else {
+			if (m.stillAlive()) {
+>>>>>>> 44940bd (debut Accesspoint)
 				m.decrementHops();
-				for(Entry<AddressI,CommunicationOutboundPort> e : addressComOPmap.entrySet()){
+				for (Entry<AddressI, CommunicationOutboundPort> e : addressComOPmap.entrySet()) {
 					try {
 						e.getValue().transmitMessage(m);
 					} catch (Exception e1) {
@@ -132,8 +147,7 @@ public class TerminalNode extends AbstractComponent implements NodeI {
 				}
 			}
 		}
-		
+
 	}
-	
 
 }

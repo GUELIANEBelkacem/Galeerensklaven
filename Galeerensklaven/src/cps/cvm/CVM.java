@@ -17,17 +17,31 @@ public class CVM extends AbstractCVM {
 		String[] ter = new String[10];
 		
 		AbstractComponent.createComponent(Registrator.class.getCanonicalName(), new Object[] {});
+<<<<<<< HEAD
 		
 		for(int i=0; i<10;i++) {
+=======
+		/*
+		for(int i=0; i<2;i++) {
+>>>>>>> 44940bd (debut Accesspoint)
 			rot[i] = AbstractComponent.createComponent(RoutingNode.class.getCanonicalName(), new Object[] {});
 			this.doPortConnection(rot[i],RoutingNode.RegOP_URI , Registrator.RegIP_URI, RegistrationConnector.class.getCanonicalName());
-		}
+		} */
 		
+		
+<<<<<<< HEAD
 		/*
 		for(int i=0; i<5;i++) {
 			ter[i] = AbstractComponent.createComponent(TerminalNode.class.getCanonicalName(), new Object[] {});
 			this.doPortConnection(ter[i],TerminalNode.RegOP_URI , Registrator.RegIP_URI, RegistrationConnector.class.getCanonicalName());
 		}
+=======
+		for(int i=0; i<2;i++) {
+			ter[i] = AbstractComponent.createComponent(TerminalNode.class.getCanonicalName(), new Object[] {});
+			this.doPortConnection(ter[i],TerminalNode.RegOP_URI , Registrator.RegIP_URI, RegistrationConnector.class.getCanonicalName());
+		}
+		
+>>>>>>> 44940bd (debut Accesspoint)
 		
 		*/
 		
