@@ -124,18 +124,13 @@ public class TerminalNode extends AbstractComponent implements NodeI {
 	}
 
 	public void transmitMessage(MessageI m) {
-<<<<<<< HEAD
+
 		if(m.getAddress().isequalsAddress(this.address)) {
 			this.logMessage(this.address.getAddress() + " <===== " + m.getContent().getMessage());
 		}
 		else {
 			if(m.stillAlive()) {
-=======
-		if (m.getAddress().isequalsAddress(this.address)) {
-			this.logMessage(this.address.getAddress() + "recieves message" + m.getContent().getMessage());
-		} else {
-			if (m.stillAlive()) {
->>>>>>> 44940bd (debut Accesspoint)
+
 				m.decrementHops();
 				for (Entry<AddressI, CommunicationOutboundPort> e : addressComOPmap.entrySet()) {
 					try {
@@ -148,6 +143,18 @@ public class TerminalNode extends AbstractComponent implements NodeI {
 			}
 		}
 
+	}
+
+	@Override
+	public int hasRouteFor(AddressI address) throws Exception {
+		// TODO Auto-generated method stub
+		return -1;
+	}
+
+	@Override
+	public void ping() throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
