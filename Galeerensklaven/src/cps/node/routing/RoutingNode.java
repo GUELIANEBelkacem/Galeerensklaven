@@ -1,18 +1,17 @@
 package cps.node.routing;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
-
-
 import cps.communication.CommunicationCI;
 import cps.communication.CommunicationInboundPort;
 import cps.communication.CommunicationOutboundPort;
 import cps.connecteurs.CommunicationConnector;
-import cps.connecteurs.RegistrationConnector;
+import cps.connecteurs.RoutingConnector;
 import cps.info.ConnectionInfo;
 import cps.info.address.AddressI;
 import cps.info.address.NodeAddress;
@@ -59,7 +58,7 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 		return s;
 	}
 	Random rand = new Random();
-	private double range = 2000;
+	private double range = 30;
 	private final NodeAddressI address= new NodeAddress(RoutingNode.genAddresse()) ;
 	private Position pos = new Position(rand.nextInt(50), rand.nextInt(50));   // change this genPos
 	private ConnectionInfo conInfo = new ConnectionInfo(this.address, ComIP_URI, RotIP_URI, true, pos, false);
@@ -71,6 +70,13 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 		for(AddressI e: this.neighborsCOP.keySet()) {
 			System.out.println(this.address.getAddress() + " <=====> " + e.getAddress());
 		}
+		
+		
+		for(Entry<AddressI, RouteInfo> a: this.routingTable.entrySet()) {
+			System.out.println(this.address.getAddress()+ ": " +a.getKey().getAddress() + " <===" + a.getValue().getNumberOfHops() +"===> " + a.getValue().getDestination().getAddress());
+		}
+		
+		
 		for(CommunicationCI c: this.neighborsCOP.values()) {
 			this.doPortDisconnection(((CommunicationOutboundPort)c).getPortURI());
 		}
@@ -132,32 +138,41 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 	@Override
 	public synchronized void execute() throws Exception {
 		super.execute();
+
 		
 		this.catchUp();
 		
 		
-
-		for(AddressI e: this.neighborsCOP.keySet()) {
-			this.transmitMessage(new Message(address.getAddress() , 1, e));
+		this.route();
+		
+	
+		for(AddressI e: this.routingTable.keySet()) {
+			this.transmitMessage(new Message(address.getAddress() , 2, e));
 		}
 		
 		
-		
+		/*
 		for(AddressI e: this.neighborsCOP.keySet()) {
 			this.logMessage(this.address.getAddress() + " <=====> " + e.getAddress());
 		}
-		
+		*/
 		//this.logMessage("end");
 	}
 
 	
+	
+	
+	
+	
+	
+	//--------------------------Connection------------------------------------------------------------------------
 	public void catchUp() throws Exception {
 		this.register();
 		
 		for(ConnectionInfo c: this.neighbors) {
 			if(c.isRouting()) {
 				this.neighborsCOP.get(c.getAddress()).connectRouting(this.address, this.ComIP_URI, this.RotIP_URI);
-				this.logMessage("me "+ this.address.getAddress()+" is connecting to "+c.getAddress().getAddress());
+				//this.logMessage("me "+ this.address.getAddress()+" is connecting to "+c.getAddress().getAddress());
 			}else {
 				this.neighborsCOP.get(c.getAddress()).connect(this.address, this.ComIP_URI);
 				
@@ -165,7 +180,7 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 		}
 		
 	}
-	
+	/*
 	public void transmitMessage(MessageI m) throws Exception {
 		if(m.getAddress().isequalsAddress(this.address)) {
 			this.logMessage(this.address.getAddress() + " <--- " + m.getContent().getMessage());
@@ -177,7 +192,34 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 					e.getValue().transmitMessage(m);
 				}
 			}else {
-				this.logMessage("message expired");
+				//this.logMessage("message expired");
+			}
+		}
+		
+	}
+	*/
+	
+	public void transmitMessage(MessageI m) throws Exception {
+		if(m.getAddress().isequalsAddress(this.address)) {
+			this.logMessage(this.address.getAddress() + " <--- " + m.getContent().getMessage());
+		}
+		else {
+			if(m.stillAlive()) {
+				if(this.routingTable.containsKey(m.getAddress())) {
+					//this.logMessage("message routed");
+					m.decrementHops();
+					this.neighborsCOP.get(this.routingTable.get(m.getAddress()).getDestination()).transmitMessage(m);
+				}
+				
+				else {
+					
+						m.decrementHops();
+						for(Entry<AddressI,CommunicationCI> e : this.neighborsCOP.entrySet()){
+							e.getValue().transmitMessage(m);
+						}
+					}
+			}else {
+						//this.logMessage("message expired");
 			}
 		}
 		
@@ -191,6 +233,10 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 			pc.publishPort();
 			this.doPortConnection(uriTempC, communicationInboundPortURI, CommunicationConnector.class.getCanonicalName());//add connector here 
 			this.neighborsCOP.put(address, pc);
+			
+			if(!address.isequalsAddress(this.address)) {
+			this.routingTable.put(address, new RouteInfo(address,1));
+			}
 		}
 	}
 
@@ -198,13 +244,35 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI) throws Exception {
 	
 		if(! this.neighborsCOP.containsKey(address)) {
-			this.logMessage(address.getAddress()+" sent its address to me "+this.address.getAddress());
+			
+			//this.logMessage(address.getAddress()+" sent its address to me "+this.address.getAddress());
 			String uriTempC = CommunicationOutboundPort.generatePortURI();
 			CommunicationOutboundPort pc = new CommunicationOutboundPort(uriTempC,this);
 			this.neighborsCOP.put(address, pc);
 			pc.publishPort();
 			this.doPortConnection(uriTempC, communicationInboundPortURI, CommunicationConnector.class.getCanonicalName());//add connector here 
-			this.transmitMessage(new Message(this.address.getAddress() , 1 , address));
+			
+			
+			
+			
+			if(!address.isequalsAddress(this.address)) {
+			this.routingTable.put(address, new RouteInfo(address,1));
+			}
+			
+			//this is garbage cheat code ---------------------------------------------------------------
+			/*
+			this.route();
+			this.route();
+			this.route();
+			this.route();
+			this.route();
+			for(int i = 0; i<1000000; i++) {}
+			this.route();
+			this.transmitMessage(new Message(this.address.getAddress() , 2 , address));
+			*/
+			
+			//-------------------------------------------------------------------------------------------
+			
 			
 		}
 		
@@ -212,12 +280,49 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 			String uriTempR = RoutingOutboundPort.generatePortURI();
 			RoutingOutboundPort pr = new RoutingOutboundPort(uriTempR,this);
 			pr.publishPort();
-			this.doPortConnection(uriTempR, routingInboundPortURI, RegistrationConnector.class.getCanonicalName());//add connector here 
+			this.doPortConnection(uriTempR, routingInboundPortURI, RoutingConnector.class.getCanonicalName());
 			this.neighborsROP.put(address, pr);
+			
+			
+			
+			
+			
+			
+			
+			if(!address.isequalsAddress(this.address)) {
+			this.routingTable.put(address, new RouteInfo(address,1));
+			}
 		}
 	}
 	
-	// registrator
+	public int hasRouteFor(AddressI address) {
+		if(this.routingTable.containsKey(address)) {
+			return this.routingTable.get(address).getNumberOfHops();
+		}else {
+			return -1;
+		}
+	}
+	
+	public void ping() throws Exception {
+		for(Entry<AddressI, CommunicationCI> a: this.neighborsCOP.entrySet()) {
+			try {
+				((CommunicationOutboundPort)a).ping();
+			}
+			catch(Exception e){
+				throw new java.rmi.ConnectException(a.getKey().getAddress()+" cant be found");
+			}
+	}
+
+
+	}
+	
+	
+	
+	
+	
+	
+	
+	//--------------------------Registration------------------------------------------------------------------------
 	public Set<ConnectionInfo> registerRoutingNode(NodeAddressI address, String commIpUri, PositionI initialPosition,
 			double initialRange, String routingIpUri) throws Exception{
 		
@@ -241,41 +346,85 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 			this.doPortConnection(uriTempC, c.getCommunicationInboundPortURI(), CommunicationConnector.class.getCanonicalName());//add connector here 
 			this.neighborsCOP.put(c.getAddress(), pc);
 			
+			if(c.isRouting()) {
 			String uriTempR = RoutingOutboundPort.generatePortURI();
 			RoutingOutboundPort pr = new RoutingOutboundPort(uriTempR,this);
 			pr.publishPort();
-			this.doPortConnection(uriTempR, c.getCommunicationInboundPortURI(), RegistrationConnector.class.getCanonicalName());//add connector here 
+			this.doPortConnection(uriTempR, c.getRoutingInboundPortURI(), RoutingConnector.class.getCanonicalName());//add connector here 
 			this.neighborsROP.put(c.getAddress(), pr);
+			}
+			
+			
+			
+			
+			if(!c.getAddress().isequalsAddress(this.address)) {
+				this.routingTable.put(c.getAddress(), new RouteInfo(c.getAddress(),1));
+			}
 		}
 		
 	}
 	
 	
-	public int hasRouteFor(AddressI address) {
-		if(this.routingTable.containsKey(address)) {
-			return this.routingTable.get(address).getNumberOfHops();
-		}else {
-			return -1;
-		}
-	}
+
 	
-	public void ping() throws Exception {
-		for(Entry<AddressI, CommunicationCI> a: this.neighborsCOP.entrySet()) {
-			try {
-				((CommunicationOutboundPort)a).ping();
-			}
-			catch(Exception e){
-				throw new java.rmi.ConnectException(a.getKey().getAddress()+" cant be found");
-			}
-	}
-
-
-	}
+	
+	
+	
+	
+	
 	
 	//--------------------------Routing------------------------------------------------------------------------
 	public void updateRouting(NodeAddressI neighbour, Set<RouteInfo> routes) throws Exception{
+		System.out.println("blabla");
+		for(RouteInfo r: routes) {
+			if(this.routingTable.containsKey(r.getDestination())) {
+				if(this.routingTable.get(r.getDestination()).getNumberOfHops()>r.getNumberOfHops()) {
+					this.routingTable.put(r.getDestination(), new RouteInfo(neighbour, r.getNumberOfHops()+1));
+				} 
+			}
+			
+			else {
+				if(! r.getDestination().isequalsAddress(this.address)){
+					this.routingTable.put(r.getDestination(), new RouteInfo(neighbour, r.getNumberOfHops()+1));
+					
+				}
+				
+			}
+		}
+		//this.route();
+		for(AddressI e: this.routingTable.keySet()) {
+			this.transmitMessage(new Message(address.getAddress() , 2, e));
+		}
+	}
+	
+	
+	public void route() throws Exception {
+		
+		Set<RouteInfo> routes = this.getRouteInfo();
+		//this.logMessage("updating routing");
+		for(Entry<AddressI, RoutingCI> a: this.neighborsROP.entrySet()) {
+			((RoutingOutboundPort)a.getValue()).updateRouting(this.address, routes);
+		}
+	}
+	
+	public Set<RouteInfo> getRouteInfo() {
+		
+		Set<RouteInfo> routes = new HashSet<RouteInfo>();
+		for(Entry<AddressI, RouteInfo> a: this.routingTable.entrySet()) {
+			routes.add(new RouteInfo(a.getKey(), a.getValue().getNumberOfHops()));
+		}
+		return routes;
+	}
+
+
+	public void updateAccessPoint(NodeAddressI neighbour, int numberOfHops) {
+		// TODO Auto-generated method stub
 		
 	}
 	
+	
 
+
+
+	
 }
