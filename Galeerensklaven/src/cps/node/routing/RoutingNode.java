@@ -205,14 +205,16 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 		}
 		else {
 			if(m.stillAlive()) {
+				
 				if(this.routingTable.containsKey(m.getAddress())) {
+					
 					//this.logMessage("message routed");
 					m.decrementHops();
 					this.neighborsCOP.get(this.routingTable.get(m.getAddress()).getDestination()).transmitMessage(m);
 				}
 				
 				else {
-					
+						
 						m.decrementHops();
 						for(Entry<AddressI,CommunicationCI> e : this.neighborsCOP.entrySet()){
 							e.getValue().transmitMessage(m);
