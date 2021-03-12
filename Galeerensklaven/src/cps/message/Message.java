@@ -32,5 +32,8 @@ public class Message implements MessageI {
 		this.hopsLeft--;
 		
 	}
+	public int getHops() {
+		return this.hopsLeft;
+	}
 
 }

@@ -8,5 +8,6 @@ public interface MessageI {
 	public MessageContent getContent();
 	public boolean stillAlive();
 	public void decrementHops();
+	public int getHops();
 
 }

@@ -58,7 +58,7 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 		return s;
 	}
 	Random rand = new Random();
-	private double range = 30;
+	private double range = 5;
 	private final NodeAddressI address= new NodeAddress(RoutingNode.genAddresse()) ;
 	private Position pos = new Position(rand.nextInt(50), rand.nextInt(50));   // change this genPos
 	private ConnectionInfo conInfo = new ConnectionInfo(this.address, ComIP_URI, RotIP_URI, true, pos, false);
@@ -210,14 +210,17 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 					
 					//this.logMessage("message routed");
 					m.decrementHops();
-					this.neighborsCOP.get(this.routingTable.get(m.getAddress()).getDestination()).transmitMessage(m);
+					this.neighborsCOP.get(this.routingTable.get(m.getAddress()).getDestination()).transmitMessage(new Message(this.address.getAddress() + " <--- " + m.getContent().getMessage(), m.getHops(), m.getAddress()));
+					//---------------------------------------------------------------
+					//do <--- trick
+					//---------------------------------------------------------------
 				}
 				
 				else {
 						
 						m.decrementHops();
 						for(Entry<AddressI,CommunicationCI> e : this.neighborsCOP.entrySet()){
-							e.getValue().transmitMessage(m);
+							e.getValue().transmitMessage(new Message(this.address.getAddress() + " <--- " + m.getContent().getMessage(), m.getHops(), m.getAddress()));
 						}
 					}
 			}else {
