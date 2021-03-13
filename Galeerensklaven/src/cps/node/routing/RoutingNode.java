@@ -38,14 +38,15 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 	
 	private Map<AddressI,CommunicationCI> neighborsCOP = new HashMap<AddressI,CommunicationCI>();
 	private Map<AddressI,RoutingCI> neighborsROP = new HashMap<AddressI,RoutingCI>();
-	private Set<ConnectionInfo> neighbors; //new HashSet<ConnectionInfo>();		
-	
+	private Set<ConnectionInfo> neighbors; //new HashSet<ConnectionInfo>();
 	private Map<AddressI,RouteInfo> routingTable = new HashMap<AddressI,RouteInfo>();
+	private AddressI bestAProute = null;
+	private int jumpsToAP = -1;
 		
 	/*testing uri generation methodes*/
 	public final String RotIP_URI =     RoutingInboundPort.genURI();
 	public final String ComIP_URI = 	CommunicationOutboundPort.generatePortURI();
-	public final static String RegOP_URI =     RegistrationOutboundPort.generatePortURI();
+	public final String RegOP_URI =     RegistrationOutboundPort.generatePortURI();
 	private RoutingInboundPort rotip;
 	private CommunicationInboundPort comip;
 	private RegistrationOutboundPort regop;
@@ -133,6 +134,16 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 		this.toggleLogging();
 		this.toggleTracing();
 		
+	}
+	
+	
+	public AddressI getBestAProute() {
+		return bestAProute;
+	}
+	
+	
+	public int getJumpsToAP() {
+		return jumpsToAP;
 	}
 
 	@Override
@@ -328,10 +339,10 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 	
 	
 	//--------------------------Registration------------------------------------------------------------------------
-	public Set<ConnectionInfo> registerRoutingNode(NodeAddressI address, String commIpUri, PositionI initialPosition,
+	public Set<ConnectionInfo> registerAccessPoint(NodeAddressI address, String commIpUri, PositionI initialPosition,
 			double initialRange, String routingIpUri) throws Exception{
 		
-		return this.regop.registerRoutingNode(address, commIpUri, initialPosition,initialRange, routingIpUri);
+		return this.regop.registerAccessPoint(address, commIpUri, initialPosition, initialRange, routingIpUri);
 		
 		
 
@@ -343,7 +354,7 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 	
 	public void register() throws Exception {
 	
-		this.neighbors = this.registerRoutingNode(this.address, this.ComIP_URI, this.pos, this.range, this.RotIP_URI);
+		this.neighbors = this.registerAccessPoint(this.address, this.ComIP_URI, this.pos, this.range, this.RotIP_URI);
 		for(ConnectionInfo c : this.neighbors) {
 			String uriTempC = CommunicationOutboundPort.generatePortURI();
 			CommunicationOutboundPort pc = new CommunicationOutboundPort(uriTempC,this);
@@ -401,7 +412,7 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 			this.transmitMessage(new Message(address.getAddress() , 2, e));
 		}
 	}
-	
+
 	
 	public void route() throws Exception {
 		
@@ -422,8 +433,14 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 	}
 
 
-	public void updateAccessPoint(NodeAddressI neighbour, int numberOfHops) {
-		// TODO Auto-generated method stub
+	public void updateAccessPoint(NodeAddressI neighbour, int numberOfHops) throws Exception{
+		if(jumpsToAP == -1 || numberOfHops < jumpsToAP) {
+			jumpsToAP = numberOfHops;
+			bestAProute = neighbour;
+			for (Entry<AddressI, RoutingCI> e : neighborsROP.entrySet()) {
+				e.getValue().updateAccessPoint(address, jumpsToAP + 1);
+			}
+		}
 		
 	}
 	

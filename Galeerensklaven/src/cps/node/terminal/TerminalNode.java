@@ -40,7 +40,7 @@ public class TerminalNode extends AbstractComponent implements NodeI {
 	protected RegistrationOutboundPort trop;
 	protected HashMap<AddressI, CommunicationOutboundPort> addressComOPmap = new HashMap<>();
 
-	public static final String RegOP_URI = RegistrationOutboundPort.generatePortURI();
+	public static String RegOP_URI = RegistrationOutboundPort.generatePortURI();
 
 	Random rand = new Random();
 	private double initialRange = 10000000;
