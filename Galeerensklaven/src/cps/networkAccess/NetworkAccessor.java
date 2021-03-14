@@ -1,4 +1,4 @@
-package cpa.networkAccess;
+package cps.networkAccess;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -7,10 +7,12 @@ import cps.registration.RegistrationCI;
 import cps.registration.RegistrationInboundPort;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
+import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import cps.info.AccessInfo;
 import cps.info.address.NetworkAddressI;
 
 @OfferedInterfaces(offered = { NetworkAccessorCI.class })
+@RequiredInterfaces(required = {NetworkAccessorCI.class})
 public class NetworkAccessor extends AbstractComponent {
 
 	public static final String NaIP_URI = "naip-uri";
@@ -41,7 +43,7 @@ public class NetworkAccessor extends AbstractComponent {
 		ainfo.add(new AccessInfo(address, accessorIpUri));
 	}
 	
-	public Set<AccessInfo> getAccessPoints(){
+	public Set<AccessInfo> getNetworkNodes(){
 		return ainfo;
 	}
 

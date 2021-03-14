@@ -14,6 +14,7 @@ import cps.connecteurs.CommunicationConnector;
 import cps.connecteurs.RoutingConnector;
 import cps.info.ConnectionInfo;
 import cps.info.address.AddressI;
+import cps.info.address.NetworkAddressI;
 import cps.info.address.NodeAddress;
 import cps.info.address.NodeAddressI;
 import cps.info.position.Position;
@@ -46,7 +47,7 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 	/*testing uri generation methodes*/
 	public final String RotIP_URI =     RoutingInboundPort.genURI();
 	public final String ComIP_URI = 	CommunicationOutboundPort.generatePortURI();
-	public final String RegOP_URI =     RegistrationOutboundPort.generatePortURI();
+	public static final String RegOP_URI =     RegistrationOutboundPort.generatePortURI();
 	private RoutingInboundPort rotip;
 	private CommunicationInboundPort comip;
 	private RegistrationOutboundPort regop;
@@ -211,6 +212,19 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 	*/
 	
 	public void transmitMessage(MessageI m) throws Exception {
+		if (m.getAddress().isNetworkAddress()) {
+			if(bestAProute == null) {
+				for(Entry<AddressI,CommunicationCI> e : this.neighborsCOP.entrySet()){
+					e.getValue().transmitMessage(new Message(this.address.getAddress() + " <--- " + m.getContent().getMessage(), m.getHops(), m.getAddress()));
+				}
+			}else {
+				m.decrementHops();
+				neighborsCOP.get(bestAProute).transmitMessage(new Message(this.address.getAddress() + " <--- " + m.getContent().getMessage(), m.getHops(), m.getAddress() ));
+			}
+		
+		}
+		
+		
 		if(m.getAddress().isequalsAddress(this.address)) {
 			this.logMessage(this.address.getAddress() + " <--- " + m.getContent().getMessage());
 		}

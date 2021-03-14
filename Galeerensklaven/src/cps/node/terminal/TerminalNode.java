@@ -18,6 +18,7 @@ import cps.communication.CommunicationOutboundPort;
 import cps.connecteurs.CommunicationConnector;
 import cps.info.ConnectionInfo;
 import cps.info.address.AddressI;
+import cps.info.address.NetworkAddress;
 import cps.info.address.NodeAddress;
 import cps.info.position.Position;
 import cps.info.position.PositionI;
@@ -93,6 +94,7 @@ public class TerminalNode extends AbstractComponent implements NodeI {
 				System.out.println("test map");
 				this.transmitMessage(new Message( address.getAddress(), 10, e));
 			}
+			this.transmitMessage(new Message( "envoi au réseau classique de " + address.getAddress(), 10, new NetworkAddress("CNode 0")));
 			
 			this.logMessage("terminaaaaaaaaaaaaaaaaal");
 			//comm.connect(ci.getAddress(), ci.getCommunicationInboundPortURI());

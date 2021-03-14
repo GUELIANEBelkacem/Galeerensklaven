@@ -1,6 +1,8 @@
 package cps.cvm;
 
+import cps.classicNetwork.ClassicNetwork;
 import cps.connecteurs.RegistrationConnector;
+import cps.networkAccess.NetworkAccessor;
 import cps.node.routing.RoutingNode;
 import cps.node.terminal.TerminalNode;
 import cps.registration.Registrator;
@@ -17,21 +19,26 @@ public class CVM extends AbstractCVM {
 		String[] ter = new String[1000];
 		
 		AbstractComponent.createComponent(Registrator.class.getCanonicalName(), new Object[] {});
-
+		AbstractComponent.createComponent(NetworkAccessor.class.getCanonicalName(), new Object[] {});
 		
-		for(int i=0; i<50;i++) {
+		for(int i=0; i<2;i++) {
 
 			rot[i] = AbstractComponent.createComponent(RoutingNode.class.getCanonicalName(), new Object[] {});
 			this.doPortConnection(rot[i],RoutingNode.RegOP_URI , Registrator.RegIP_URI, RegistrationConnector.class.getCanonicalName());
 		} 
 		
 		
-		/*
+		
 		for(int i=0; i<2;i++) {
 			ter[i] = AbstractComponent.createComponent(TerminalNode.class.getCanonicalName(), new Object[] {});
 			this.doPortConnection(ter[i],TerminalNode.RegOP_URI , Registrator.RegIP_URI, RegistrationConnector.class.getCanonicalName());
 		}
-		*/
+		
+		for(int i=0; i<2;i++) {
+			ter[i] = AbstractComponent.createComponent(ClassicNetwork.class.getCanonicalName(), new Object[] {});
+			this.doPortConnection(ter[i],TerminalNode.RegOP_URI , Registrator.RegIP_URI, RegistrationConnector.class.getCanonicalName());
+		}
+		
 
 		
 		

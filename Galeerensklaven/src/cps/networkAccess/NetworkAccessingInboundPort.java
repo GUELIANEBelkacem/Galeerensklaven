@@ -1,4 +1,4 @@
-package cpa.networkAccess;
+package cps.networkAccess;
 
 import java.util.Set;
 
@@ -35,9 +35,9 @@ public class NetworkAccessingInboundPort extends AbstractInboundPort implements 
 	}
 
 	@Override
-	public Set<AccessInfo> getAccessPoints() throws Exception{
+	public Set<AccessInfo> getNetworkNodes() throws Exception{
 		return this.getOwner().handleRequest(
-				t -> ((NetworkAccessor) t).getAccessPoints());
+				t -> ((NetworkAccessor) t).getNetworkNodes());
 	}
 
 }
