@@ -46,12 +46,12 @@ import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 
 public class AccessPoint extends AbstractComponent implements NodeI {
 
-	private Map<AddressI, RouteInfo> routingTable = new HashMap<AddressI, RouteInfo>();
+	
 
 	public final String RotIP_URI = RoutingInboundPort.genURI();
 	public final String ComIP_URI = CommunicationInboundPort.generatePortURI();
-	public final String RegOP_URI = RegistrationOutboundPort.generatePortURI();
-	public final String NaOP_URI = NetworkAccessingOutboundPort.generatePortURI();
+	public final static String RegOP_URI = RegistrationOutboundPort.generatePortURI();
+	public final static String NaOP_URI = NetworkAccessingOutboundPort.generatePortURI();
 	public final String NcIP_URI = NetworkCommunicationInboundPort.generatePortURI();
 	
 	
@@ -75,14 +75,18 @@ public class AccessPoint extends AbstractComponent implements NodeI {
 	private Map<AddressI, CommunicationCI> neighborsCOP = new HashMap<AddressI, CommunicationCI>();
 	private Map<AddressI, RoutingCI> neighborsROP = new HashMap<AddressI, RoutingCI>();
 	private Set<ConnectionInfo> neighbors; // new HashSet<ConnectionInfo>();
+	private Map<AddressI, RouteInfo> routingTable = new HashMap<AddressI, RouteInfo>();
 
 	protected HashMap<AddressI, CommunicationOutboundPort> addressComOPmap = new HashMap<>();
+	
 
 	Random rand = new Random();
 	private double initialRange = 10000000;
 	private Position initialPosition = new Position(rand.nextInt(50), rand.nextInt(50));
 
-	public AccessPoint() throws Exception {
+	private ConnectionInfo conInfo = new ConnectionInfo(this.address, ComIP_URI, RotIP_URI, true, initialPosition, true);
+	
+	protected AccessPoint() throws Exception {
 		super(1, 0);
 		this.arop = new RegistrationOutboundPort(RegOP_URI, this);
 		this.arop.publishPort();
@@ -95,6 +99,9 @@ public class AccessPoint extends AbstractComponent implements NodeI {
 		this.arotip = new RoutingInboundPort(RotIP_URI, this);
 		this.arotip.publishPort();
 		
+		this.toggleLogging();
+		this.toggleTracing();
+		
 		// this.ncop = new NetworkCommunicationOutboundPort(uri, this);
 		// this.ncip = new NetworkCommunicationInboundPort(uri, this)
 		// TODO Auto-generated constructor stub
@@ -106,7 +113,11 @@ public class AccessPoint extends AbstractComponent implements NodeI {
 
 	@Override
 	public synchronized void finalise() throws Exception {
-
+		
+		for(Entry<NetworkAddressI, NetworkCommunicationCI> e: networkOP.entrySet()) {
+			System.out.println(e.getKey().getAddress() + "\n");
+		}
+		
 		
 		for(AddressI e: this.neighborsCOP.keySet()) {
 			System.out.println(this.address.getAddress() + " <=====> " + e.getAddress());
@@ -227,6 +238,7 @@ public class AccessPoint extends AbstractComponent implements NodeI {
 	@Override
 	public void transmitMessage(MessageI m) throws Exception {
 		// TODO Auto-generated method stub
+		this.logMessage("message passe par accesspoint " + address.getAddress());
 		if (m.getAddress().isNetworkAddress()) {
 			networkOP.get(m.getAddress()).transmitMessage((NetworkAddressI) m.getAddress(), m);
 			this.logMessage("Message transmis au réseau classique à l'adresse " + m.getAddress().getAddress());
@@ -283,7 +295,7 @@ public class AccessPoint extends AbstractComponent implements NodeI {
 	public Set<ConnectionInfo> registerRoutingNode(NodeAddressI address, String commIpUri, PositionI initialPosition,
 			double initialRange, String routingIpUri) throws Exception {
 
-		return this.arop.registerRoutingNode(address, commIpUri, initialPosition, initialRange, routingIpUri);
+		return this.arop.registerAccessPoint(address, commIpUri, initialPosition, initialRange, routingIpUri);
 
 	}
 
@@ -317,7 +329,7 @@ public class AccessPoint extends AbstractComponent implements NodeI {
 
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI)
 			throws Exception {
-
+		connectNetwork();
 		if (!this.neighborsCOP.containsKey(address)) {
 
 			// this.logMessage(address.getAddress()+" sent its address to me
@@ -361,7 +373,7 @@ public class AccessPoint extends AbstractComponent implements NodeI {
 				
 			}
 		}
-		
+		connectNetwork();
 	}
 	
 	
@@ -386,8 +398,11 @@ public class AccessPoint extends AbstractComponent implements NodeI {
 	
 	public void connectNetwork() throws Exception {
 		networks = naop.getNetworkNodes();
+		this.logMessage("connecting");
 		String tempUri;
+		System.out.println("NETWORKS\n\n\n\n");
 		for(AccessInfo e : networks) {
+			System.out.println(e.getAddress().getAddress());
 			tempUri = e.getAccessInboundPortURI();
 			NetworkCommunicationOutboundPort ni = new NetworkCommunicationOutboundPort(NetworkCommunicationOutboundPort.generatePortURI(), this);
 			networkOP.put(e.getAddress(), ni);

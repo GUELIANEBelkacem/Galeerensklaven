@@ -36,6 +36,9 @@ public class ClassicNetwork extends AbstractComponent {
 		this.ncip.publishPort();
 		this.naop = new NetworkAccessingOutboundPort(NAOP_URI, this);
 		this.naop.publishPort();
+		
+		this.toggleLogging();
+		this.toggleTracing();
 	}
 
 	protected ClassicNetwork(String reflectionInboundPortURI, int nbThreads, int nbSchedulableThreads) {
