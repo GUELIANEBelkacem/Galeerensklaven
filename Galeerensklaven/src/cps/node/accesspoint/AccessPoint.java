@@ -48,7 +48,7 @@ public class AccessPoint extends AbstractComponent implements NodeI {
 
 	
 
-	public final String RotIP_URI = RoutingInboundPort.genURI();
+	public final String RotIP_URI = RoutingInboundPort.generatePortURI();
 	public final String ComIP_URI = CommunicationInboundPort.generatePortURI();
 	public final static String RegOP_URI = RegistrationOutboundPort.generatePortURI();
 	public final static String NaOP_URI = NetworkAccessingOutboundPort.generatePortURI();
@@ -114,7 +114,7 @@ public class AccessPoint extends AbstractComponent implements NodeI {
 	@Override
 	public synchronized void finalise() throws Exception {
 		
-		for(Entry<NetworkAddressI, NetworkCommunicationCI> e: networkOP.entrySet()) {
+		for(Entry<AddressI, CommunicationCI> e: this.neighborsCOP.entrySet()) {
 			System.out.println(e.getKey().getAddress() + "\n");
 		}
 		
@@ -179,13 +179,17 @@ public class AccessPoint extends AbstractComponent implements NodeI {
 	public synchronized void execute() throws Exception {
 		
 		super.execute();
-
-		this.connectNetwork();
 		
 		this.catchUp();
-		
-		
 		this.route();
+		
+		System.out.println("taki taki");
+		this.connectNetwork();
+		
+		
+		
+		
+		
 		
 	
 		for(AddressI e: this.routingTable.keySet()) {
@@ -237,6 +241,7 @@ public class AccessPoint extends AbstractComponent implements NodeI {
 
 	@Override
 	public void transmitMessage(MessageI m) throws Exception {
+		
 		// TODO Auto-generated method stub
 		this.logMessage("message passe par accesspoint " + address.getAddress());
 		if (m.getAddress().isNetworkAddress()) {
@@ -397,10 +402,13 @@ public class AccessPoint extends AbstractComponent implements NodeI {
 	}
 	
 	public void connectNetwork() throws Exception {
+		
 		networks = naop.getNetworkNodes();
+		
 		this.logMessage("connecting");
 		String tempUri;
 		System.out.println("NETWORKS\n\n\n\n");
+		
 		for(AccessInfo e : networks) {
 			System.out.println(e.getAddress().getAddress());
 			tempUri = e.getAccessInboundPortURI();
@@ -410,6 +418,7 @@ public class AccessPoint extends AbstractComponent implements NodeI {
 			this.doPortConnection(ni.getPortURI(), tempUri, NetworkCommunicationConnector.class.getCanonicalName());
 			
 		}
+		
 	}
 
 	

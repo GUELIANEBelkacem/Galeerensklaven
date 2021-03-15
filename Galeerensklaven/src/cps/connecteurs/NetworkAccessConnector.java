@@ -18,6 +18,7 @@ public class NetworkAccessConnector extends AbstractConnector implements Network
 
 	@Override
 	public Set<AccessInfo> getNetworkNodes() throws Exception {
+			
 		return ((NetworkAccessorCI) this.offering).getNetworkNodes();
 	}
 

@@ -44,6 +44,7 @@ public class NetworkAccessor extends AbstractComponent {
 	}
 	
 	public Set<AccessInfo> getNetworkNodes(){
+		
 		return ainfo;
 	}
 
