@@ -1,6 +1,8 @@
 package cps.networkAccess;
 
 import java.util.Set;
+import cps.networkAccess.NetworkAccessorCI;
+import cps.node.accesspoint.AccessPoint;
 
 import cps.info.AccessInfo;
 import cps.info.address.NetworkAddressI;
@@ -35,9 +37,24 @@ public class NetworkAccessingInboundPort extends AbstractInboundPort implements 
 	}
 
 	@Override
-	public Set<AccessInfo> getNetworkNodes() throws Exception{
+	public Set<AccessInfo> getNetworkNodes(String uri) throws Exception{
 		return this.getOwner().handleRequest(
-				t -> ((NetworkAccessor) t).getNetworkNodes());
+				t -> ((NetworkAccessor) t).getNetworkNodes(uri));
+	}
+	
+	public void spreadCo() {
+		try {
+		this.getOwner().runTask(u -> {
+			try {
+				((NetworkAccessorCI) u).spreadCo();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

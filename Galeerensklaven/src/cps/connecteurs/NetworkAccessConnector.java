@@ -17,9 +17,14 @@ public class NetworkAccessConnector extends AbstractConnector implements Network
 	}
 
 	@Override
-	public Set<AccessInfo> getNetworkNodes() throws Exception {
+	public Set<AccessInfo> getNetworkNodes(String uri) throws Exception {
 			
-		return ((NetworkAccessorCI) this.offering).getNetworkNodes();
+		return ((NetworkAccessorCI) this.offering).getNetworkNodes(uri);
+	}
+	
+	@Override
+	public void spreadCo() throws Exception{
+		((NetworkAccessorCI) this.offering).spreadCo();
 	}
 
 }

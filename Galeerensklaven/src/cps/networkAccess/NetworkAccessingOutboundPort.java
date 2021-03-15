@@ -29,9 +29,18 @@ public class NetworkAccessingOutboundPort extends AbstractOutboundPort implement
 	}
 
 	@Override
-	public Set<AccessInfo> getNetworkNodes() throws Exception {
+	public Set<AccessInfo> getNetworkNodes(String uri) throws Exception {
 		// TODO Auto-generated method stub
-		return ((NetworkAccessorCI) this.getConnector()).getNetworkNodes();
+		return ((NetworkAccessorCI) this.getConnector()).getNetworkNodes(uri);
+	}
+	
+	public void spreadCo() {
+		try {
+			((NetworkAccessorCI) this. getConnector()).spreadCo();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

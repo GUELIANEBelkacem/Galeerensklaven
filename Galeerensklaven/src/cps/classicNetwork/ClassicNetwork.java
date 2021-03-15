@@ -9,26 +9,31 @@ import cps.networkAccess.NetworkAccessingOutboundPort;
 import cps.networkCommunication.NetworkCommunicationInboundPort;
 import cps.node.routing.RoutingNode;
 import fr.sorbonne_u.components.AbstractComponent;
+import fr.sorbonne_u.components.annotations.OfferedInterfaces;
+import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
+import cps.networkAccess.*;
 
+
+@OfferedInterfaces(offered = {NetworkAccessorCI.class})
+@RequiredInterfaces(required = {NetworkAccessorCI.class})
 public class ClassicNetwork extends AbstractComponent {
 
-	private NetworkAddressI naddress;
 
 	public static final String NAOP_URI = NetworkAccessingOutboundPort.generatePortURI();
-	public static String NCIP_URI = NetworkCommunicationInboundPort.generatePortURI();
+	public String NCIP_URI = NetworkCommunicationInboundPort.generatePortURI();
 
 	protected NetworkCommunicationInboundPort ncip;
 	protected NetworkAccessingOutboundPort naop;
 
-	public static int count = 0;
+	public static int count = 5;
 	public static String genAddresse() {
 		String s = "CNode " + count;
 		count ++;
 		return s;
 	}
 	
-	private final NetworkAddressI address= new NetworkAddress(genAddresse()) ;
+	private final NetworkAddressI naddress= new NetworkAddress(genAddresse()) ;
 	
 	protected ClassicNetwork() throws Exception {
 		super(1, 0);
@@ -51,13 +56,14 @@ public class ClassicNetwork extends AbstractComponent {
 	}
 
 	public void receiveMessage(MessageI m) {
-		this.logMessage("network received message :    " + m.getContent());
+		this.logMessage("network received message :    " + m.getContent().getMessage());
 	}
 	
 	
 	public synchronized void execute() throws Exception{
 		super.execute();
 		naop.registerAccessPoint(naddress, NCIP_URI);
+		naop.spreadCo();
 		
 	}
 	
