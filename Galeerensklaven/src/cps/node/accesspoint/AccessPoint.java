@@ -11,7 +11,9 @@ import cps.communication.CommunicationCI;
 import cps.communication.CommunicationInboundPort;
 import cps.communication.CommunicationOutboundPort;
 import cps.connecteurs.CommunicationConnector;
+import cps.connecteurs.NetworkAccessConnector;
 import cps.connecteurs.NetworkCommunicationConnector;
+import cps.connecteurs.RegistrationConnector;
 import cps.connecteurs.RoutingConnector;
 import cps.info.AccessInfo;
 import cps.info.ConnectionInfo;
@@ -26,6 +28,7 @@ import cps.message.Message;
 import cps.message.MessageI;
 import cps.networkAccess.NetworkAccessingInboundPort;
 import cps.networkAccess.NetworkAccessingOutboundPort;
+import cps.networkAccess.NetworkAccessor;
 import cps.networkAccess.NetworkAccessorCI;
 import cps.networkCommunication.NetworkCommunicationCI;
 import cps.networkCommunication.NetworkCommunicationInboundPort;
@@ -34,7 +37,9 @@ import cps.node.NodeI;
 import cps.node.routing.RoutingNode;
 import cps.registration.RegistrationCI;
 import cps.registration.RegistrationOutboundPort;
+import cps.registration.Registrator;
 import cps.routing.RouteInfo;
+import cps.routing.RoutingAccessingCI;
 import cps.routing.RoutingCI;
 import cps.routing.RoutingInboundPort;
 import cps.routing.RoutingOutboundPort;
@@ -43,10 +48,10 @@ import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 
-@RequiredInterfaces(required = { RoutingCI.class, CommunicationCI.class, RegistrationCI.class })
-@OfferedInterfaces(offered = { RoutingCI.class, CommunicationCI.class, NetworkAccessorCI.class })
+@RequiredInterfaces(required = { RoutingCI.class, CommunicationCI.class, RegistrationCI.class, NetworkAccessorCI.class, NetworkCommunicationCI.class })
+@OfferedInterfaces(offered = { RoutingCI.class, CommunicationCI.class, NetworkAccessorCI.class, NetworkCommunicationCI.class })
 
-public class AccessPoint extends AbstractComponent implements NodeI {
+public class AccessPoint extends AbstractComponent implements NodeI,RoutingAccessingCI{
 
 	
 
@@ -102,6 +107,8 @@ public class AccessPoint extends AbstractComponent implements NodeI {
 		this.arotip.publishPort();
 		this.naip = new NetworkAccessingInboundPort(NaIP_URI, this);
 		this.naip.publishPort();
+		this.doPortConnection(AccessPoint.RegOP_URI , Registrator.RegIP_URI, RegistrationConnector.class.getCanonicalName());
+		this.doPortConnection(AccessPoint.NaOP_URI , NetworkAccessor.NaIP_URI, NetworkAccessConnector.class.getCanonicalName());
 		
 		this.toggleLogging();
 		this.toggleTracing();
@@ -117,16 +124,16 @@ public class AccessPoint extends AbstractComponent implements NodeI {
 
 	@Override
 	public synchronized void finalise() throws Exception {
-		/*
+		System.out.println(address.getAddress() + "--------------------------------------------------------");
 		for(Entry<NetworkAddressI, NetworkCommunicationCI> e : networkOP.entrySet()) {
 			System.out.println(e.getKey().getAddress() + "        connected network to ANode " + address.getAddress());
 		}
-		
+		/*
 		for(Entry<AddressI, CommunicationCI> e: this.neighborsCOP.entrySet()) {
 			System.out.println(e.getKey().getAddress() + "\n");
 		}
 		
-		
+		*/
 		for(AddressI e: this.neighborsCOP.keySet()) {
 			System.out.println(this.address.getAddress() + " <=====> " + e.getAddress());
 		}
@@ -135,12 +142,12 @@ public class AccessPoint extends AbstractComponent implements NodeI {
 		for(Entry<AddressI, RouteInfo> a: this.routingTable.entrySet()) {
 			System.out.println(this.address.getAddress()+ ": " +a.getKey().getAddress() + " <===" + a.getValue().getNumberOfHops() +"===> " + a.getValue().getDestination().getAddress());
 		}
-		*/
-		
+		System.out.println(address.getAddress() + "--------------------------------------------------------");
+		/*
 		for(AddressI e: networkOP.keySet()) {
 			System.out.println(this.address.getAddress() + "linked for " + e.getAddress());
 		}
-		
+		*/
 		for(NetworkCommunicationCI n : this.networkOP.values()) {
 			this.doPortDisconnection(((NetworkCommunicationOutboundPort)n).getPortURI());
 		}
@@ -261,10 +268,21 @@ public class AccessPoint extends AbstractComponent implements NodeI {
 	public void transmitMessage(MessageI m) throws Exception {
 		
 		// TODO Auto-generated method stub
-		this.logMessage("message passe par accesspoint " + address.getAddress());
+		//this.logMessage("message passe par accesspoint " + address.getAddress());
 		if (m.getAddress().isNetworkAddress()) {
+			
+			/*if(!networkOP.containsKey(m.getAddress())) {
+				if(m.stillAlive()) {
+					m.decrementHops();
+					for(ConnectionInfo e : neighbors) {
+						if(e.getKey().is) {}
+				}
+				
+				}
+				transmitMessage(m);
+			}*/
 			networkOP.get(m.getAddress()).transmitMessage((NetworkAddressI) m.getAddress(), m);
-			this.logMessage("Message transmis au réseau classique à l'adresse " + m.getAddress().getAddress());
+			//this.logMessage("Message transmis au réseau classique à l'adresse " + m.getAddress().getAddress());
 			for (Entry<AddressI, RoutingCI> e : neighborsROP.entrySet()) {
 				e.getValue().updateAccessPoint(address, 1);
 			}
@@ -436,9 +454,10 @@ public class AccessPoint extends AbstractComponent implements NodeI {
 			networkOP.put(e.getAddress(), ni);
 			ni.publishPort();
 			this.doPortConnection(ni.getPortURI(), tempUri, NetworkCommunicationConnector.class.getCanonicalName());
-			System.out.println(" ----------------------   " + tempUri + "      /////    " + ni.getPortURI());
+			//System.out.println(" ----------------------   " + tempUri + "      /////    " + ni.getPortURI());
 			i++;
 		}
+		/*
 		for(AddressI e: this.routingTable.keySet()) {
 			this.transmitMessage(new Message(address.getAddress() , 2, e));
 		}
@@ -447,6 +466,8 @@ public class AccessPoint extends AbstractComponent implements NodeI {
 		}
 		transmitMessage(new Message(address.getAddress(), 3, new NetworkAddress("CNode 1")));
 		transmitMessage(new Message(address.getAddress(), 3, new NetworkAddress("CNode 0")));
+		
+		*/
 		
 	}
 
@@ -470,12 +491,14 @@ public class AccessPoint extends AbstractComponent implements NodeI {
 		}
 		spreadCo();
 		//this.route();
-		for(AddressI e: this.routingTable.keySet()) {
+	/*	for(AddressI e: this.routingTable.keySet()) {
 			this.transmitMessage(new Message(address.getAddress() , 2, e));
 		}
 		for(AddressI e: networkOP.keySet()) {
 			transmitMessage(new Message(address.getAddress(), 3, e));
 		}
+		
+		*/
 	}
 	
 	

@@ -1,11 +1,11 @@
 package cps.classicNetwork;
 
+import cps.connecteurs.NetworkAccessConnector;
 import cps.info.address.NetworkAddress;
 import cps.info.address.NetworkAddressI;
 import cps.info.address.NodeAddress;
 import cps.info.address.NodeAddressI;
 import cps.message.MessageI;
-import cps.networkAccess.NetworkAccessingOutboundPort;
 import cps.networkCommunication.NetworkCommunicationInboundPort;
 import cps.node.routing.RoutingNode;
 import fr.sorbonne_u.components.AbstractComponent;
@@ -26,7 +26,7 @@ public class ClassicNetwork extends AbstractComponent {
 	protected NetworkCommunicationInboundPort ncip;
 	protected NetworkAccessingOutboundPort naop;
 
-	public static int count = 5;
+	public static int count = 0;
 	public static String genAddresse() {
 		String s = "CNode " + count;
 		count ++;
@@ -41,7 +41,7 @@ public class ClassicNetwork extends AbstractComponent {
 		this.ncip.publishPort();
 		this.naop = new NetworkAccessingOutboundPort(NAOP_URI, this);
 		this.naop.publishPort();
-		
+		this.doPortConnection(ClassicNetwork.NAOP_URI , NetworkAccessor.NaIP_URI, NetworkAccessConnector.class.getCanonicalName());
 		this.toggleLogging();
 		this.toggleTracing();
 	}
@@ -65,6 +65,8 @@ public class ClassicNetwork extends AbstractComponent {
 		naop.registerAccessPoint(naddress, NCIP_URI);
 		naop.spreadCo();
 		
+		this.logMessage("I AM IRONMAN");
+		
 	}
 	
 	
@@ -83,6 +85,6 @@ public class ClassicNetwork extends AbstractComponent {
 			e.printStackTrace();
 		}
 	}
-	
+
 	
 }
