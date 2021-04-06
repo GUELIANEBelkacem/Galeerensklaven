@@ -24,33 +24,41 @@ public class CVM extends AbstractCVM {
 		AbstractComponent.createComponent(Registrator.class.getCanonicalName(), new Object[] {});
 		AbstractComponent.createComponent(NetworkAccessor.class.getCanonicalName(), new Object[] {});
 		
-		/*
+		
 		for(int i=0; i<4;i++) {
 			ter[i] = AbstractComponent.createComponent(ClassicNetwork.class.getCanonicalName(), new Object[] {});
 			this.doPortConnection(ter[i],ClassicNetwork.NAOP_URI , NetworkAccessor.NaIP_URI, NetworkAccessConnector.class.getCanonicalName());
 		}
-		
-		for(int i=0; i<2;i++) {
+		for(int i=0; i<3;i++) {
 			ap[i] = AbstractComponent.createComponent(AccessPoint.class.getCanonicalName(), new Object[] {});
 			this.doPortConnection(ap[i],AccessPoint.RegOP_URI , Registrator.RegIP_URI, RegistrationConnector.class.getCanonicalName());
 			this.doPortConnection(ap[i],AccessPoint.NaOP_URI , NetworkAccessor.NaIP_URI, NetworkAccessConnector.class.getCanonicalName());
 		}
-		*/
-		for(int i=0; i<10;i++) {
+
+		
+		for(int i=0; i<3;i++) {
+			ter[i] = AbstractComponent.createComponent(ClassicNetwork.class.getCanonicalName(), new Object[] {});
+			this.doPortConnection(ter[i],ClassicNetwork.NAOP_URI , NetworkAccessor.NaIP_URI, NetworkAccessConnector.class.getCanonicalName());
+		}
+		
+		
+		
+		for(int i=0; i<4;i++) {
+
 
 			rot[i] = AbstractComponent.createComponent(RoutingNode.class.getCanonicalName(), new Object[] {});
 			this.doPortConnection(rot[i],RoutingNode.RegOP_URI , Registrator.RegIP_URI, RegistrationConnector.class.getCanonicalName());
 		} 
 		
 		
-		/*
+		
 		for(int i=0; i<4;i++) {
 			ter[i] = AbstractComponent.createComponent(TerminalNode.class.getCanonicalName(), new Object[] {});
 			this.doPortConnection(ter[i],TerminalNode.RegOP_URI , Registrator.RegIP_URI, RegistrationConnector.class.getCanonicalName());
 		}
 		
 		
-		*/
+		
 		
 
 		

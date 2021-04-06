@@ -7,6 +7,7 @@ import cps.node.NodeI;
 import cps.node.routing.RoutingNode;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
+import cps.node.accesspoint.AccessPoint;
 
 public class RoutingInboundPort extends AbstractInboundPort implements RoutingCI{
 	public static int count =0;
@@ -34,7 +35,7 @@ public class RoutingInboundPort extends AbstractInboundPort implements RoutingCI
 		this.getOwner().runTask(
 				r-> {
 					try {
-						((RoutingNode) r).updateRouting(neighbour, routes);
+						((AccessPoint) r).updateRouting(neighbour, routes);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -48,7 +49,7 @@ public class RoutingInboundPort extends AbstractInboundPort implements RoutingCI
 		this.getOwner().runTask(
 				r-> {
 					try {
-						((RoutingNode) r).updateAccessPoint(neighbour, numberOfHops);
+						((AccessPoint) r).updateAccessPoint(neighbour, numberOfHops);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

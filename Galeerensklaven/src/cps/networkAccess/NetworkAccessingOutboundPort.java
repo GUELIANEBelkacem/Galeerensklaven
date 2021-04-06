@@ -24,14 +24,23 @@ public class NetworkAccessingOutboundPort extends AbstractOutboundPort implement
 
 	@Override
 	public void registerAccessPoint(NetworkAddressI address, String accessorIpUri) throws Exception {
-		((NetworkAccessor) this.getConnector()).registerAccessPoint(address, accessorIpUri);
+		((NetworkAccessorCI) this.getConnector()).registerAccessPoint(address, accessorIpUri);
 
 	}
 
 	@Override
-	public Set<AccessInfo> getNetworkNodes() throws Exception {
+	public Set<AccessInfo> getNetworkNodes(String uri) throws Exception {
 		// TODO Auto-generated method stub
-		return ((NetworkAccessor) this.getConnector()).getNetworkNodes();
+		return ((NetworkAccessorCI) this.getConnector()).getNetworkNodes(uri);
+	}
+	
+	public void spreadCo() {
+		try {
+			((NetworkAccessorCI) this. getConnector()).spreadCo();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
