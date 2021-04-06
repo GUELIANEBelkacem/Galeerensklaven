@@ -60,7 +60,7 @@ public class RoutingNode extends AbstractComponent implements NodeI{
 		return s;
 	}
 	Random rand = new Random();
-	private double range = 10000000;
+	private double range =2;
 	private final NodeAddressI address= new NodeAddress(RoutingNode.genAddresse()) ;
 	private Position pos = new Position(rand.nextInt(50), rand.nextInt(50));   // change this genPos
 	private ConnectionInfo conInfo = new ConnectionInfo(this.address, ComIP_URI, RotIP_URI, true, pos, false);
