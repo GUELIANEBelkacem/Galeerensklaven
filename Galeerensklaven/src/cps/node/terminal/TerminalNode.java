@@ -1,4 +1,414 @@
 package cps.node.terminal;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Random;
+import java.util.Set;
+
+import cps.communication.CommunicationCI;
+import cps.communication.CommunicationInboundPort;
+import cps.communication.CommunicationOutboundPort;
+import cps.connecteurs.CommunicationConnector;
+import cps.info.ConnectionInfo;
+import cps.info.address.AddressI;
+import cps.info.address.NetworkAddress;
+import cps.info.address.NodeAddress;
+import cps.info.address.NodeAddressI;
+import cps.info.position.Position;
+import cps.info.position.PositionI;
+import cps.message.Message;
+import cps.message.MessageI;
+import cps.node.NodeI;
+import cps.node.routing.RoutingNode;
+import cps.registration.RegistrationCI;
+import cps.registration.RegistrationOutboundPort;
+import fr.sorbonne_u.components.AbstractComponent;
+import fr.sorbonne_u.components.annotations.OfferedInterfaces;
+import fr.sorbonne_u.components.annotations.RequiredInterfaces;
+import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
+
+
+
+@RequiredInterfaces(required = {  CommunicationCI.class, RegistrationCI.class })
+@OfferedInterfaces(offered = {  CommunicationCI.class, RegistrationCI.class })
+
+
+public class TerminalNode extends AbstractComponent implements NodeI{
+	
+	private Map<AddressI, CommunicationCI> neighborsCOP = new HashMap<AddressI, CommunicationCI>();
+	private Set<ConnectionInfo> neighbors;
+		
+		
+	public String ComIP_URI = CommunicationInboundPort.generatePortURI();
+	public static final String RegOP_URI = RegistrationOutboundPort.generatePortURI();
+	private CommunicationInboundPort comip;
+	private RegistrationOutboundPort regop;
+	
+	public static int count = 0;
+
+	public static String genAddresse() {
+		String s = "TNode " + count;
+		count++;
+		return s;
+	}
+
+	Random rand = new Random();
+
+	private double range =1;
+	private final NodeAddressI address= new NodeAddress(RoutingNode.genAddresse()) ;
+	//private Position pos = new Position(rand.nextInt(10), rand.nextInt(10));   // change this genPos
+	private Position pos = new Position(count, 4); 
+	
+	// pooling 
+	protected static final String	POOL_URI = "computations pool" ;
+	protected static final int		NTHREADS = 10 ;
+		
+	protected TerminalNode() {
+		super(2, 0);
+		
+		
+		try {
+			
+			this.comip = new CommunicationInboundPort(ComIP_URI, this);
+			this.regop = new RegistrationOutboundPort(RegOP_URI, this);
+			
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		
+		
+		
+		try {
+			this.comip.publishPort();
+			this.regop.publishPort();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		this.toggleLogging();
+		this.toggleTracing();
+		
+		try {
+			this.createNewExecutorService(POOL_URI, NTHREADS, false) ;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	@Override
+	public synchronized void execute() throws Exception {
+		super.execute();
+		
+		
+		this.register();
+		
+		
+
+		
+		
+		this.runTaskOnComponent(
+				POOL_URI,
+				new AbstractComponent.AbstractTask() {
+					
+					@Override
+					public void run() {
+						try {
+							
+							Thread.sleep(100L) ;
+							catchUp();
+						
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						}});
+		
+
+		
+		this.runTaskOnComponent(
+				POOL_URI,
+				new AbstractComponent.AbstractTask() {
+					
+					@Override
+					public void run() {
+						try {
+							
+							//Thread.sleep(1000L) ;
+							int i = 0;
+							while(i<10000) {
+							Thread.sleep(1000L) ;
+							coucou();
+							}
+						
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						}});
+		
+		
+	
+		
+	}
+	
+	
+	
+	
+	
+	
+	@Override
+	public synchronized void finalise() throws Exception {
+
+		
+		for (CommunicationCI c : this.neighborsCOP.values()) {
+			this.doPortDisconnection(((CommunicationOutboundPort) c).getPortURI());
+		}
+		super.finalise();
+	}
+	
+	
+	@Override
+	public synchronized void shutdown() throws ComponentShutdownException {
+
+		try {
+			for (CommunicationCI c : this.neighborsCOP.values()) {
+				((CommunicationOutboundPort) c).unpublishPort();
+			}
+			
+			
+			this.comip.unpublishPort();
+			this.regop.unpublishPort();
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+
+		super.shutdown();
+	}
+
+	// --------------------------Registration------------------------------------------------------------------------
+
+	public Set<ConnectionInfo> registerTerminalNode(NodeAddressI address, String commIpUri, PositionI initialPosition,
+			double initialRange) throws Exception{
+		return this.regop.registerTerminalNode(address, commIpUri, initialPosition, initialRange);
+	}
+	public void unregister(NodeAddressI address) throws Exception {
+		this.regop.unregister(address);
+	}
+
+	
+	
+	public void register() throws Exception {
+
+		this.neighbors = this.registerTerminalNode(this.address, this.ComIP_URI, this.pos, this.range);
+		for (ConnectionInfo c : this.neighbors) {
+			String uriTempC = CommunicationOutboundPort.generatePortURI();
+			CommunicationOutboundPort pc = new CommunicationOutboundPort(uriTempC, this);
+			pc.publishPort();
+			this.doPortConnection(uriTempC, c.getCommunicationInboundPortURI(),
+					CommunicationConnector.class.getCanonicalName());// add connector here
+			this.neighborsCOP.put(c.getAddress(), pc);
+
+		}
+
+	}
+
+	
+	
+	
+	
+
+	
+	
+	
+	
+	// --------------------------Connection------------------------------------------------------------------------
+	@Override
+	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception {
+		if (!this.neighborsCOP.containsKey(address)) {
+			String uriTempC = CommunicationOutboundPort.generatePortURI();
+			CommunicationOutboundPort pc = new CommunicationOutboundPort(uriTempC, this);
+			pc.publishPort();
+			this.doPortConnection(uriTempC, communicationInboundPortURI,
+					CommunicationConnector.class.getCanonicalName());// add connector here
+			this.neighborsCOP.put(address, pc);
+
+			
+		}
+	}
+	
+	
+	public void catchUp() throws Exception {
+		for (ConnectionInfo c : this.neighbors) {
+			this.neighborsCOP.get(c.getAddress()).connect(this.address, this.ComIP_URI);
+		}
+	}
+	
+	
+	
+	
+	@Override
+	public void transmitMessage(MessageI m) throws Exception {
+
+
+		if (m.getAddress().isequalsAddress(this.address)) {
+			this.logMessage(this.address.getAddress() + " <--- " + m.getContent().getMessage());
+		} else {
+			if (m.stillAlive()) {
+
+				if (this.neighborsCOP.containsKey(m.getAddress())) {
+					m.decrementHops();
+					this.neighborsCOP.get(m.getAddress()).transmitMessage(
+							new Message(this.address.getAddress() + " <--- " + m.getContent().getMessage(), m.getHops(),
+									m.getAddress()));
+				}
+				else {
+					m.decrementHops();
+					for (Entry<AddressI, CommunicationCI> e : this.neighborsCOP.entrySet()) {
+						e.getValue().transmitMessage(
+								new Message(this.address.getAddress() + " <--- " + m.getContent().getMessage(),
+										m.getHops(), m.getAddress()));
+					}
+				}
+			} else {
+			}
+		}
+
+	}
+	
+	
+	
+	
+	public void coucou() throws Exception {
+		
+		this.transmitMessage(new Message(address.getAddress() , 4, new NetworkAddress("RNode 3"))); 
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	@Override
+	public int hasRouteFor(AddressI address) throws Exception {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void ping() throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+package cps.node.terminal;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
@@ -71,12 +481,6 @@ public class TerminalNode extends AbstractComponent implements NodeI {
 		this.toggleTracing();
 		// TODO Auto-generated constructor stub
 	}
-
-	/*
-	 * public TerminalNode(String reflectionInboundPortURI, int nbThreads, int
-	 * nbSchedulableThreads) { super(reflectionInboundPortURI, nbThreads,
-	 * nbSchedulableThreads); // TODO Auto-generated constructor stub }
-	 */
 
 	public synchronized void execute() throws Exception {
 		super.execute();
@@ -160,3 +564,4 @@ public class TerminalNode extends AbstractComponent implements NodeI {
 	}
 
 }
+*/

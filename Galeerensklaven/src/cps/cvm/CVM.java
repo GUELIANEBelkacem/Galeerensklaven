@@ -24,7 +24,7 @@ public class CVM extends AbstractCVM {
 		AbstractComponent.createComponent(Registrator.class.getCanonicalName(), new Object[] {});
 		AbstractComponent.createComponent(NetworkAccessor.class.getCanonicalName(), new Object[] {});
 		
-		
+		/*
 		for(int i=0; i<4;i++) {
 			ter[i] = AbstractComponent.createComponent(ClassicNetwork.class.getCanonicalName(), new Object[] {});
 			this.doPortConnection(ter[i],ClassicNetwork.NAOP_URI , NetworkAccessor.NaIP_URI, NetworkAccessConnector.class.getCanonicalName());
@@ -40,7 +40,7 @@ public class CVM extends AbstractCVM {
 			ter[i] = AbstractComponent.createComponent(ClassicNetwork.class.getCanonicalName(), new Object[] {});
 			this.doPortConnection(ter[i],ClassicNetwork.NAOP_URI , NetworkAccessor.NaIP_URI, NetworkAccessConnector.class.getCanonicalName());
 		}
-		
+		*/
 		
 		
 		for(int i=0; i<4;i++) {
@@ -51,12 +51,12 @@ public class CVM extends AbstractCVM {
 		} 
 		
 		
-		
-		for(int i=0; i<4;i++) {
+		/*
+		for(int i=0; i<2;i++) {
 			ter[i] = AbstractComponent.createComponent(TerminalNode.class.getCanonicalName(), new Object[] {});
 			this.doPortConnection(ter[i],TerminalNode.RegOP_URI , Registrator.RegIP_URI, RegistrationConnector.class.getCanonicalName());
 		}
-		
+		*/
 		
 		
 		
@@ -73,7 +73,7 @@ public class CVM extends AbstractCVM {
 	public static void main(String[] args) {
 		try {
 			CVM c = new CVM();
-			c.startStandardLifeCycle(20000L);
+			c.startStandardLifeCycle(100000L);
 			System.exit(0);
 		} catch (Exception e) {
 			e.printStackTrace();

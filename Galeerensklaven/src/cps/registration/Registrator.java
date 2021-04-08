@@ -55,6 +55,7 @@ public class Registrator extends AbstractComponent {
 
 	public Set<ConnectionInfo> registerRouting(NodeAddressI address, String commIpUri, PositionI initialPosition,
 			double initialRange, String routingIpUri) {
+		
 		Set<ConnectionInfo> res = new HashSet<>();
 		for (ConnectionInfo ci : cInfo) {
 			if (ci.getPosition().distance(initialPosition) <= initialRange)

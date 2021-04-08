@@ -16,5 +16,8 @@ public class Position implements PositionI{
 		return (Math.sqrt((this.x - other.getX())*(this.x - other.getX())+(this.y - other.getY())*(this.y - other.getY())));
 	}
 	
-
+	@Override 
+	public String toString() {
+		return "pos: "+ x +"  " +y +"\n";
+	}
 }
