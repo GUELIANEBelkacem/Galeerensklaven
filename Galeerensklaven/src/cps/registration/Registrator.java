@@ -67,7 +67,6 @@ public class Registrator extends AbstractComponent {
 
 	public Set<ConnectionInfo> registerAPoint(NodeAddressI address, String commIpUri, PositionI initialPosition,
 			double initialRange, String routingIpUri) {
-		System.out.println("helooo");
 		Set<ConnectionInfo> res = new HashSet<>();
 		for (ConnectionInfo ci : cInfo) {
 			if (ci.getPosition().distance(initialPosition) <= initialRange || ci.isAPoint())

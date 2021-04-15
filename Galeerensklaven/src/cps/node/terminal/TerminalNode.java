@@ -1,9 +1,9 @@
 package cps.node.terminal;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import cps.communication.CommunicationCI;
 import cps.communication.CommunicationInboundPort;
@@ -19,7 +19,6 @@ import cps.info.position.PositionI;
 import cps.message.Message;
 import cps.message.MessageI;
 import cps.node.NodeI;
-import cps.node.routing.RoutingNode;
 import cps.registration.RegistrationCI;
 import cps.registration.RegistrationOutboundPort;
 import fr.sorbonne_u.components.AbstractComponent;
@@ -34,8 +33,8 @@ import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 
 
 public class TerminalNode extends AbstractComponent implements NodeI{
-	
-	private Map<AddressI, CommunicationCI> neighborsCOP = new HashMap<AddressI, CommunicationCI>();
+	//a currentHashMap is thread safe without synchronizing the whole map. better than locking the entire map, to be verified with the prof
+	private Map<AddressI, CommunicationCI> neighborsCOP = new ConcurrentHashMap<AddressI, CommunicationCI>();
 	private Set<ConnectionInfo> neighbors;
 		
 		
@@ -55,9 +54,9 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 	Random rand = new Random();
 
 	private double range =1;
-	private final NodeAddressI address= new NodeAddress(RoutingNode.genAddresse()) ;
+	private final NodeAddressI address= new NodeAddress(TerminalNode.genAddresse()) ;
 	//private Position pos = new Position(rand.nextInt(10), rand.nextInt(10));   // change this genPos
-	private Position pos = new Position(count, 4); 
+	private Position pos = new Position(count-1, 4); 
 	
 	// pooling 
 	protected static final String	POOL_URI = "computations pool" ;
@@ -157,7 +156,12 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 	
 	@Override
 	public synchronized void finalise() throws Exception {
-
+		
+		System.out.println(address.getAddress() + "--------------------------------------------------------");
+		System.out.println("\n"+ this.pos);
+		for (AddressI e : this.neighborsCOP.keySet()) {
+			System.out.println(this.address.getAddress() + " <-------> " + e.getAddress());
+		}
 		
 		for (CommunicationCI c : this.neighborsCOP.values()) {
 			this.doPortDisconnection(((CommunicationOutboundPort) c).getPortURI());
@@ -181,7 +185,7 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 			
 			e.printStackTrace();
 		}
-
+		neighborsCOP.clear();
 		super.shutdown();
 	}
 
@@ -252,35 +256,32 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 
 		if (m.getAddress().isequalsAddress(this.address)) {
 			this.logMessage(this.address.getAddress() + " <--- " + m.getContent().getMessage());
-		} else {
-			if (m.stillAlive()) {
-
-				if (this.neighborsCOP.containsKey(m.getAddress())) {
-					m.decrementHops();
-					this.neighborsCOP.get(m.getAddress()).transmitMessage(
-							new Message(this.address.getAddress() + " <--- " + m.getContent().getMessage(), m.getHops(),
-									m.getAddress()));
-				}
-				else {
-					m.decrementHops();
-					for (Entry<AddressI, CommunicationCI> e : this.neighborsCOP.entrySet()) {
-						e.getValue().transmitMessage(
-								new Message(this.address.getAddress() + " <--- " + m.getContent().getMessage(),
-										m.getHops(), m.getAddress()));
-					}
-				}
-			} else {
-			}
 		}
+		
 
 	}
 	
 	
 	
-	
+	public void sendMessage(MessageI m) throws Exception {
+		if (this.neighborsCOP.containsKey(m.getAddress())) {
+			m.decrementHops();
+			this.neighborsCOP.get(m.getAddress()).transmitMessage(
+					new Message(this.address.getAddress() + " <--- " + m.getContent().getMessage(), m.getHops(),
+							m.getAddress()));
+		}
+		else {
+			m.decrementHops();
+			for (Entry<AddressI, CommunicationCI> e : this.neighborsCOP.entrySet()) {
+				e.getValue().transmitMessage(
+						new Message(this.address.getAddress() + " <--- " + m.getContent().getMessage(),
+								m.getHops(), m.getAddress()));
+			}
+		}
+	}
 	public void coucou() throws Exception {
 		
-		this.transmitMessage(new Message(address.getAddress() , 4, new NetworkAddress("RNode 3"))); 
+		//this.sendMessage(new Message(address.getAddress() , 4, new NetworkAddress("RNode 3"))); 
 		
 	}
 	

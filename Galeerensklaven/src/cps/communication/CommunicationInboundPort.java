@@ -5,6 +5,7 @@ import cps.info.address.NodeAddressI;
 import cps.message.MessageI;
 import cps.node.routing.RoutingNode;
 import cps.node.NodeI;
+import cps.node.RoutingI;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 
@@ -79,7 +80,7 @@ public class CommunicationInboundPort extends AbstractInboundPort implements Com
 		
 		
 			this.getOwner().handleRequest(
-					u-> {((RoutingNode) u).connectRouting(address, communicationInboundPortURI, routingInboundPortURI);
+					u-> {((RoutingI) u).connectRouting(address, communicationInboundPortURI, routingInboundPortURI);
 						
 						return null;});
 					

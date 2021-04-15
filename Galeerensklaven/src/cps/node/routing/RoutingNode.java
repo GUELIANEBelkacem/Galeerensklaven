@@ -1,17 +1,16 @@
 package cps.node.routing;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import cps.communication.CommunicationCI;
 import cps.communication.CommunicationInboundPort;
 import cps.communication.CommunicationOutboundPort;
 import cps.connecteurs.CommunicationConnector;
-import cps.connecteurs.RegistrationConnector;
 import cps.connecteurs.RoutingConnector;
 import cps.info.ConnectionInfo;
 import cps.info.address.AddressI;
@@ -22,11 +21,10 @@ import cps.info.position.PositionI;
 import cps.message.Message;
 import cps.message.MessageI;
 import cps.node.NodeI;
+import cps.node.RoutingI;
 import cps.registration.RegistrationCI;
 import cps.registration.RegistrationOutboundPort;
-import cps.registration.Registrator;
 import cps.routing.RouteInfo;
-import cps.routing.RoutingAccessingCI;
 import cps.routing.RoutingCI;
 import cps.routing.RoutingInboundPort;
 import cps.routing.RoutingOutboundPort;
@@ -37,12 +35,13 @@ import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 
 @RequiredInterfaces(required = { RoutingCI.class, CommunicationCI.class, RegistrationCI.class })
 @OfferedInterfaces(offered = { RoutingCI.class, CommunicationCI.class, RegistrationCI.class })
-public class RoutingNode extends AbstractComponent implements NodeI, RoutingAccessingCI {
+public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
+	//a currentHashMap is thread safe without synchronizing the whole map. better than locking the entire map, to be verified with the prof
 
-	private Map<AddressI, CommunicationCI> neighborsCOP = new HashMap<AddressI, CommunicationCI>();
-	private Map<AddressI, RoutingCI> neighborsROP = new HashMap<AddressI, RoutingCI>();
+	private Map<AddressI, CommunicationCI> neighborsCOP = new ConcurrentHashMap<AddressI, CommunicationCI>();
+	private Map<AddressI, RoutingCI> neighborsROP = new ConcurrentHashMap<AddressI, RoutingCI>();
 	private Set<ConnectionInfo> neighbors;
-	private Map<AddressI, RouteInfo> routingTable = new HashMap<AddressI, RouteInfo>();
+	private Map<AddressI, RouteInfo> routingTable = new ConcurrentHashMap<AddressI, RouteInfo>();
 	private AddressI bestAProute = null;
 	private int jumpsToAP = -1;
 
@@ -53,7 +52,6 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingAcce
 	private CommunicationInboundPort comip;
 	private RegistrationOutboundPort regop;
 
-	private boolean check = false;
 	public static int count = 0;
 
 	public static String genAddresse() {
@@ -63,18 +61,17 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingAcce
 	}
 
 	Random rand = new Random();
-
+	
 	private double range =1;
 	private final NodeAddressI address= new NodeAddress(RoutingNode.genAddresse()) ;
 	//private Position pos = new Position(rand.nextInt(10), rand.nextInt(10));   // change this genPos
-	private Position pos = new Position(count, 5); 
-	private ConnectionInfo conInfo = new ConnectionInfo(this.address, ComIP_URI, RotIP_URI, true, pos, false);
+	private Position pos = new Position(count-1, 5); 
 
 	
 	// pooling 
 	protected static final String	POOL_URI = "computations pool" ;
-	protected static final int		NTHREADS = 10 ;
-	
+	protected static final int		NTHREADS = 3 ;
+	boolean stopit = true;
 	
 	
 	protected RoutingNode() {
@@ -152,10 +149,10 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingAcce
 					
 					@Override
 					public void run() {
+						
 						try {
 							
-							int i = 0;
-							while(i<10000) {
+							while(stopit) {
 							Thread.sleep(100L) ;
 							
 							route();
@@ -176,9 +173,8 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingAcce
 					public void run() {
 						try {
 							
-							//Thread.sleep(1000L) ;
-							int i = 0;
-							while(i<10000) {
+							
+							while(stopit) {
 							Thread.sleep(1000L) ;
 							coucou();
 							}
@@ -205,7 +201,9 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingAcce
 	
 	@Override
 	public synchronized void finalise() throws Exception {
-
+		stopit = false;
+		
+		
 		System.out.println(address.getAddress() + "--------------------------------------------------------");
 		System.out.println("\n"+ this.pos);
 		for (AddressI e : this.neighborsCOP.keySet()) {
@@ -217,13 +215,16 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingAcce
 					+ a.getValue().getNumberOfHops() + "===> " + a.getValue().getDestination().getAddress());
 		}
 		System.out.println(address.getAddress() + "--------------------------------------------------------");
-
+		routingTable.clear();
+		neighborsCOP.clear();
+		neighborsROP.clear();
 		for (CommunicationCI c : this.neighborsCOP.values()) {
 			this.doPortDisconnection(((CommunicationOutboundPort) c).getPortURI());
 		}
 		for (RoutingCI r : this.neighborsROP.values()) {
 			this.doPortDisconnection(((RoutingOutboundPort) r).getPortURI());
 		}
+		
 		super.finalise();
 	}
 
@@ -244,7 +245,7 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingAcce
 	
 	@Override
 	public synchronized void shutdown() throws ComponentShutdownException {
-
+		
 		try {
 			for (CommunicationCI c : this.neighborsCOP.values()) {
 				((CommunicationOutboundPort) c).unpublishPort();
@@ -259,7 +260,9 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingAcce
 			
 			e.printStackTrace();
 		}
-
+		routingTable.clear();
+		neighborsCOP.clear();
+		neighborsROP.clear();
 		super.shutdown();
 	}
 
@@ -301,7 +304,7 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingAcce
 
 	public void coucou() throws Exception {
 		for(AddressI e: this.routingTable.keySet()) { 
-			this.transmitMessage(new Message(address.getAddress() , 4, e)); 
+			this.transmitMessage(new Message(address.getAddress() , 15, e)); 
 		}
 	}
 	public void transmitMessage(MessageI m) throws Exception {
@@ -528,7 +531,7 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingAcce
 	
 	
 	
-	@Override
+	@Override 
 	public void updateAccessPoint(NodeAddressI neighbour, int numberOfHops) throws Exception {
 		// TODO Auto-generated method stub
 		

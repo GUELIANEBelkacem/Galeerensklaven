@@ -3,11 +3,9 @@ package cps.routing;
 import java.util.Set;
 
 import cps.info.address.NodeAddressI;
-import cps.node.NodeI;
-import cps.node.routing.RoutingNode;
+import cps.node.RoutingI;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
-import cps.node.accesspoint.AccessPoint;
 
 public class RoutingInboundPort extends AbstractInboundPort implements RoutingCI{
 	public static int count =0;
@@ -35,7 +33,7 @@ public class RoutingInboundPort extends AbstractInboundPort implements RoutingCI
 		this.getOwner().runTask(
 				r-> {
 					try {
-						((RoutingAccessingCI) r).updateRouting(neighbour, routes);
+						((RoutingI) r).updateRouting(neighbour, routes);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -49,7 +47,7 @@ public class RoutingInboundPort extends AbstractInboundPort implements RoutingCI
 		this.getOwner().runTask(
 				r-> {
 					try {
-						((RoutingAccessingCI) r).updateAccessPoint(neighbour, numberOfHops);
+						((RoutingI) r).updateAccessPoint(neighbour, numberOfHops);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
