@@ -54,6 +54,9 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 
 	public static int count = 0;
 
+
+	
+	
 	public static String genAddresse() {
 		String s = "RNode " + count;
 		count++;
@@ -67,6 +70,10 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 	//private Position pos = new Position(rand.nextInt(10), rand.nextInt(10));   // change this genPos
 	private Position pos = new Position(count-1, 5); 
 
+	// closest access point 
+	int apDistance = 9999999;
+	NodeAddressI apGateway = this.address;
+	
 	
 	// pooling 
 	protected static final String	POOL_URI = "computations pool" ;
@@ -205,6 +212,7 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 		
 		
 		System.out.println(address.getAddress() + "--------------------------------------------------------");
+		System.out.println("the closest access point: "+ this.apGateway.getAddress());
 		System.out.println("\n"+ this.pos);
 		for (AddressI e : this.neighborsCOP.keySet()) {
 			System.out.println(this.address.getAddress() + " <-------> " + e.getAddress());
@@ -308,7 +316,21 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 		}
 	}
 	public void transmitMessage(MessageI m) throws Exception {
-
+		// classical network
+				if(m.getAddress().isNetworkAddress()) {
+					
+					if(m.stillAlive()) {
+						
+							m.decrementHops();
+							this.neighborsCOP.get(this.apGateway).transmitMessage(
+									new Message(this.address.getAddress() + " <--- " + m.getContent().getMessage(), m.getHops(),
+										m.getAddress()));
+						
+						
+					}
+				}
+				// normal network 
+				else {
 
 		if (m.getAddress().isequalsAddress(this.address)) {
 			this.logMessage(this.address.getAddress() + " <--- " + m.getContent().getMessage());
@@ -336,7 +358,7 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 			} else {
 			}
 		}
-
+				}
 	}
 
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception {
@@ -507,7 +529,17 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 	
 	
 	
-	
+	@Override 
+	public void updateAccessPoint(NodeAddressI neighbour, int numberOfHops) throws Exception {
+		if(!neighbour.isequalsAddress(this.address) && numberOfHops < this.apDistance && this.neighborsCOP.containsKey(neighbour)) {
+			this.apDistance = numberOfHops;
+			this.apGateway = neighbour;
+			for(Entry<AddressI, RoutingCI> a : this.neighborsROP.entrySet()) {
+				a.getValue().updateAccessPoint(this.address, numberOfHops+1);
+			}
+		}
+		
+	}
 	
 	
 	
@@ -531,11 +563,7 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 	
 	
 	
-	@Override 
-	public void updateAccessPoint(NodeAddressI neighbour, int numberOfHops) throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
+	
 	
 	
 	

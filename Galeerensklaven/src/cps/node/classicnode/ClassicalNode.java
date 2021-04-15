@@ -1,0 +1,272 @@
+package cps.node.classicnode;
+
+import java.util.Random;
+import java.util.Set;
+
+import cps.communication.CommunicationCI;
+import cps.communication.CommunicationInboundPort;
+import cps.communication.CommunicationOutboundPort;
+import cps.info.address.AddressI;
+import cps.info.address.NetworkAddress;
+import cps.info.address.NetworkAddressI;
+import cps.info.address.NodeAddressI;
+import cps.info.position.Position;
+import cps.message.MessageI;
+import cps.node.NodeI;
+import cps.node.classicnode.registration.NConnectionInfo;
+import cps.node.classicnode.registration.NRegistrationCI;
+import cps.node.classicnode.registration.NRegistrationOutboundPort;
+import cps.registration.RegistrationOutboundPort;
+import fr.sorbonne_u.components.AbstractComponent;
+import fr.sorbonne_u.components.annotations.OfferedInterfaces;
+import fr.sorbonne_u.components.annotations.RequiredInterfaces;
+import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
+
+@RequiredInterfaces(required = { CommunicationCI.class, NRegistrationCI.class })
+@OfferedInterfaces(offered = { CommunicationCI.class, NRegistrationCI.class })
+
+public class ClassicalNode extends AbstractComponent implements NodeI{
+	public static final String NRegOP_URI = RegistrationOutboundPort.generatePortURI();
+	public String ComIP_URI = CommunicationInboundPort.generatePortURI();
+	private NRegistrationOutboundPort nregop;
+	private CommunicationInboundPort comip;
+	
+	public static int count = 0;
+	public int id = count%2;
+	public static String genAddresse() {
+		String s = "CNode " + count;
+		count++;
+		return s;
+	}
+	Random rand = new Random();
+	boolean stopit = true;
+	private final NetworkAddressI address= new NetworkAddress(ClassicalNode.genAddresse()) ;
+	
+	private Position pos = new Position(rand.nextInt(50), rand.nextInt(50));
+	// pooling 
+	protected static final String	POOL_URI = "computations pool" ;
+	protected static final int		NTHREADS = 10 ;
+		
+	String apuri = CommunicationOutboundPort.generatePortURI();
+	CommunicationOutboundPort ap ;
+		
+		
+	protected ClassicalNode() {
+			super(5, 0);
+			
+			
+			try {
+				this.nregop = new NRegistrationOutboundPort(NRegOP_URI, this);
+				this.comip = new CommunicationInboundPort(ComIP_URI, this);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+			
+			
+			
+			try {
+				this.nregop.publishPort();
+				this.comip.publishPort();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			
+			this.toggleLogging();
+			this.toggleTracing();
+			
+			try {
+				this.createNewExecutorService(POOL_URI, NTHREADS, false) ;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		
+		
+		
+		@Override
+		public synchronized void execute() throws Exception {
+			super.execute();
+			
+			
+			this.register();
+			
+			
+
+		
+			/*
+			this.runTaskOnComponent(
+					POOL_URI,
+					new AbstractComponent.AbstractTask() {
+						
+						@Override
+						public void run() {
+							try {
+								
+								
+								while(stopit) {
+								Thread.sleep(1000L) ;
+								coucou();
+								}
+							
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							}});
+			
+			*/
+		
+			
+		}
+		
+		
+		
+		@Override
+		public synchronized void finalise() throws Exception {
+			stopit = false;
+			
+			System.out.println(address.getAddress() + "--------------------------------------------------------");
+			System.out.println("\n"+ this.pos);
+		
+			
+			super.finalise();
+		}
+		
+		
+		@Override
+		public synchronized void shutdown() throws ComponentShutdownException {
+			
+			try {
+				this.nregop.unpublishPort();
+				this.comip.unpublishPort();
+			} catch (Exception e) {
+				
+				e.printStackTrace();
+			}
+			
+			super.shutdown();
+		}
+
+
+		
+		
+		// --------------------------Registration------------------------------------------------------------------------
+
+		public Set<NConnectionInfo> registerClassicNode(NetworkAddressI address, String commIpUri, int i) throws Exception{
+			return this.nregop.registerClassicNode(address, commIpUri, i);
+		}
+		
+		public void unregister(NetworkAddressI address) throws Exception {
+			this.nregop.unregister(address);
+			
+		}
+		public void register() throws Exception {
+			Set<NConnectionInfo> cnei = this.registerClassicNode(address, ComIP_URI, id);
+			/*
+			System.out.println(((NConnectionInfo)cnei.toArray()[0]).getSector() == this.id);
+			((NConnectionInfo)cnei.toArray()[0]).getCommunicationInboundPortURI();
+			*/
+		}
+		
+		
+		
+		// --------------------------Connection------------------------------------------------------------------------
+
+		
+		
+		
+		
+		
+		
+
+
+	@Override
+	public void transmitMessage(MessageI m) throws Exception {
+		
+		if (m.getAddress().isequalsAddress(this.address)) {
+			this.logMessage(this.address.getAddress() + " <--- " + m.getContent().getMessage());
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	@Override
+	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int hasRouteFor(AddressI address) throws Exception {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void ping() throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+}

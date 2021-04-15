@@ -1,10 +1,10 @@
 package cps.cvm;
 
-import cps.classicNetwork.ClassicNetwork;
-import cps.connecteurs.NetworkAccessConnector;
 import cps.connecteurs.RegistrationConnector;
-import cps.networkAccess.NetworkAccessor;
 import cps.node.accesspoint.AccessPoint;
+import cps.node.classicnode.ClassicalNode;
+import cps.node.classicnode.registration.NRegistrationConnector;
+import cps.node.classicnode.registration.NRegistrator;
 import cps.node.routing.RoutingNode;
 import cps.node.terminal.TerminalNode;
 import cps.registration.Registrator;
@@ -22,6 +22,7 @@ public class CVM extends AbstractCVM {
 		String[] ap = new String[1000];
 		
 		AbstractComponent.createComponent(Registrator.class.getCanonicalName(), new Object[] {});
+		AbstractComponent.createComponent(NRegistrator.class.getCanonicalName(), new Object[] {});
 		//AbstractComponent.createComponent(NetworkAccessor.class.getCanonicalName(), new Object[] {});
 		
 		/*
@@ -41,7 +42,10 @@ public class CVM extends AbstractCVM {
 			this.doPortConnection(ter[i],ClassicNetwork.NAOP_URI , NetworkAccessor.NaIP_URI, NetworkAccessConnector.class.getCanonicalName());
 		}
 		*/
-		
+		for(int i=0; i<3;i++) {
+			ter[i] = AbstractComponent.createComponent(ClassicalNode.class.getCanonicalName(), new Object[] {});
+			this.doPortConnection(ter[i],ClassicalNode.NRegOP_URI , NRegistrator.NRegIP_URI, NRegistrationConnector.class.getCanonicalName());
+		}
 		
 		for(int i=0; i<5;i++) {
 
@@ -60,6 +64,7 @@ public class CVM extends AbstractCVM {
 		for(int i=0; i<2;i++) {
 			ter[i] = AbstractComponent.createComponent(AccessPoint.class.getCanonicalName(), new Object[] {});
 			this.doPortConnection(ter[i],AccessPoint.RegOP_URI , Registrator.RegIP_URI, RegistrationConnector.class.getCanonicalName());
+			this.doPortConnection(ter[i],AccessPoint.NRegOP_URI , NRegistrator.NRegIP_URI, NRegistrationConnector.class.getCanonicalName());
 		}
 		
 		
@@ -77,7 +82,7 @@ public class CVM extends AbstractCVM {
 	public static void main(String[] args) {
 		try {
 			CVM c = new CVM();
-			c.startStandardLifeCycle(400000L);
+			c.startStandardLifeCycle(40000L);
 			System.exit(0);
 		} catch (Exception e) {
 			e.printStackTrace();
