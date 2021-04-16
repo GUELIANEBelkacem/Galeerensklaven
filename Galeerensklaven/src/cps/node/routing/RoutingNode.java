@@ -37,7 +37,7 @@ import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 @OfferedInterfaces(offered = { RoutingCI.class, CommunicationCI.class, RegistrationCI.class })
 public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 	//a currentHashMap is thread safe without synchronizing the whole map. better than locking the entire map, to be verified with the prof
-
+	// mutex for 2 modifications at the same time
 	private Map<AddressI, CommunicationCI> neighborsCOP = new ConcurrentHashMap<AddressI, CommunicationCI>();
 	private Map<AddressI, RoutingCI> neighborsROP = new ConcurrentHashMap<AddressI, RoutingCI>();
 	private Set<ConnectionInfo> neighbors;
