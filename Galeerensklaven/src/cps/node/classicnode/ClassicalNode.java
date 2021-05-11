@@ -15,7 +15,6 @@ import cps.message.MessageI;
 import cps.node.NodeI;
 import cps.node.classicnode.registration.NConnectionInfo;
 import cps.node.classicnode.registration.NRegistrationCI;
-import cps.registration.RegistrationOutboundPort;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;

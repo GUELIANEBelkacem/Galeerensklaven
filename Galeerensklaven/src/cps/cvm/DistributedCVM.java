@@ -24,11 +24,14 @@ public class DistributedCVM extends AbstractDistributedCVM{
 
 	@Override
 	public void instantiateAndPublish() throws Exception {
+		System.out.println("rot");
 		if(AbstractCVM.getThisJVMURI().equals(rot)){ 
+			System.out.println("rot");
 			AbstractComponent.createComponent(RoutingNode.class.getCanonicalName(), new Object[] {new Position(5, 5)});
 
 		}
 		else {if(AbstractCVM.getThisJVMURI().equals(ter)){
+			System.out.println("ter");
 			AbstractComponent.createComponent(TerminalNode.class.getCanonicalName(), new Object[] {new Position(4, 5)});
 		} 
 		else {if(AbstractCVM.getThisJVMURI().equals(cla)){
@@ -36,10 +39,12 @@ public class DistributedCVM extends AbstractDistributedCVM{
 
 		} 
 		else {if(AbstractCVM.getThisJVMURI().equals(acc)){
+			System.out.println("acc");
 			AbstractComponent.createComponent(AccessPoint.class.getCanonicalName(), new Object[] {new Position(6, 5)});
 
 		} 
 		else {if(AbstractCVM.getThisJVMURI().equals(reg)){
+			System.out.println("reg");
 			AbstractComponent.createComponent(Registrator.class.getCanonicalName(), new Object[] {});
 			
 		} 
@@ -53,8 +58,15 @@ public class DistributedCVM extends AbstractDistributedCVM{
 	}
 
 	
+	@Override
+	public void interconnect() throws Exception {
+		// TODO Auto-generated method stub
+		super.interconnect();
+	}
+
 	public static void main(String[] args) {
 		try {
+			
 			DistributedCVM dc = new DistributedCVM(args);
 			dc.startStandardLifeCycle(5000L);
 			System.exit(0);

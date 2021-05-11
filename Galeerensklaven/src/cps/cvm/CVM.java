@@ -1,10 +1,8 @@
 package cps.cvm;
 
-import cps.connecteurs.RegistrationConnector;
 import cps.info.position.Position;
 import cps.node.accesspoint.AccessPoint;
 import cps.node.classicnode.ClassicalNode;
-import cps.node.classicnode.registration.NRegistrationConnector;
 import cps.node.classicnode.registration.NRegistrator;
 import cps.node.routing.RoutingNode;
 import cps.node.terminal.TerminalNode;
