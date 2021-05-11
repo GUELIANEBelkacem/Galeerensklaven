@@ -1,7 +1,6 @@
 package cps.info;
 
 import cps.info.address.NetworkAddressI;
-import cps.info.address.NodeAddressI;
 
 public class AccessInfo {
 

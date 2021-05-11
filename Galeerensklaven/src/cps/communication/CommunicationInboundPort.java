@@ -3,7 +3,6 @@ package cps.communication;
 import cps.info.address.AddressI;
 import cps.info.address.NodeAddressI;
 import cps.message.MessageI;
-import cps.node.routing.RoutingNode;
 import cps.node.NodeI;
 import cps.node.RoutingI;
 import fr.sorbonne_u.components.ComponentI;
@@ -37,7 +36,7 @@ public class CommunicationInboundPort extends AbstractInboundPort implements Com
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception{
 		
 		try {
-			this.getOwner().runTask(
+			this.getOwner().runTask("inpooluri",
 					u-> {
 						try {
 							((NodeI) u).connect(address, communicationInboundPortURI);
@@ -79,7 +78,7 @@ public class CommunicationInboundPort extends AbstractInboundPort implements Com
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI) throws Exception{
 		
 		
-			this.getOwner().handleRequest(
+			this.getOwner().handleRequest("inpooluri",
 					u-> {((RoutingI) u).connectRouting(address, communicationInboundPortURI, routingInboundPortURI);
 						
 						return null;});
@@ -92,7 +91,7 @@ public class CommunicationInboundPort extends AbstractInboundPort implements Com
 	public void transmitMessage(MessageI m) throws Exception{
 		
 		try {
-			this.getOwner().runTask(
+			this.getOwner().runTask("messagepooluri",
 					u-> {
 						try {
 							((NodeI) u).transmitMessage(m);
@@ -102,8 +101,7 @@ public class CommunicationInboundPort extends AbstractInboundPort implements Com
 						}
 					});
 		} catch (AssertionError | Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("message to "+m.getAddress().getAddress()+" failed to reach");
 		}
 		
 	}
@@ -111,7 +109,7 @@ public class CommunicationInboundPort extends AbstractInboundPort implements Com
 	@Override
 	public int hasRouteFor(AddressI address) throws Exception{
 		
-		return this.getOwner().handleRequest(
+		return this.getOwner().handleRequest("inpooluri",
 				t -> ((NodeI) t).hasRouteFor(address));
 		
 	}
@@ -120,7 +118,7 @@ public class CommunicationInboundPort extends AbstractInboundPort implements Com
 	public void ping() throws Exception{
 
 	
-			this.getOwner().runTask(
+			this.getOwner().runTask("inpooluri",
 					u-> {
 						try {
 							((NodeI) u).ping();

@@ -3,9 +3,7 @@ package cps.routing;
 import java.util.Set;
 
 import cps.info.address.NodeAddressI;
-import cps.node.routing.RoutingNode;
 import fr.sorbonne_u.components.ComponentI;
-import fr.sorbonne_u.components.ports.AbstractInboundPort;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 
 public class RoutingOutboundPort extends AbstractOutboundPort implements RoutingCI{

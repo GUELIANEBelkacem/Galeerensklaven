@@ -16,16 +16,20 @@ public class Registrator extends AbstractComponent {
 	private Set<ConnectionInfo> cInfo = new HashSet<>();
 	protected RegistrationInboundPort rip;
 
+	
+	
 	protected Registrator() throws Exception {
 		super(1, 0);
 		this.rip = new RegistrationInboundPort(RegIP_URI, this);
 		this.rip.publishPort();
+		
 	}
 
 	
 	
 	@Override
 	public synchronized void shutdown() throws ComponentShutdownException {
+		
 		try {
 			this.rip.unpublishPort();
 		} catch (Exception e) {
@@ -67,12 +71,19 @@ public class Registrator extends AbstractComponent {
 
 	public Set<ConnectionInfo> registerAPoint(NodeAddressI address, String commIpUri, PositionI initialPosition,
 			double initialRange, String routingIpUri) {
+		
 		Set<ConnectionInfo> res = new HashSet<>();
 		for (ConnectionInfo ci : cInfo) {
 			if (ci.getPosition().distance(initialPosition) <= initialRange || ci.isAPoint())
 				res.add(ci);
+			
+				
+			
 		}
+		
 		cInfo.add(new ConnectionInfo(address, commIpUri, routingIpUri, true, initialPosition, true));
+		
+		
 		return res;
 	}
 	

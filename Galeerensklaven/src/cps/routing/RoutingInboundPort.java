@@ -30,7 +30,7 @@ public class RoutingInboundPort extends AbstractInboundPort implements RoutingCI
 
 	@Override
 	public void updateRouting(NodeAddressI neighbour, Set<RouteInfo> routes) throws Exception{
-		this.getOwner().runTask(
+		this.getOwner().runTask("inpooluri",
 				r-> {
 					try {
 						((RoutingI) r).updateRouting(neighbour, routes);
@@ -44,7 +44,7 @@ public class RoutingInboundPort extends AbstractInboundPort implements RoutingCI
 
 	@Override
 	public void updateAccessPoint(NodeAddressI neighbour, int numberOfHops)throws Exception {
-		this.getOwner().runTask(
+		this.getOwner().runTask("inpooluri",
 				r-> {
 					try {
 						((RoutingI) r).updateAccessPoint(neighbour, numberOfHops);

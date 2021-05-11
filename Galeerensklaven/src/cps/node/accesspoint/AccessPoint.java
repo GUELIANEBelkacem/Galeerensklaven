@@ -1,11 +1,13 @@
 package cps.node.accesspoint;
 
+import java.rmi.ConnectException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import cps.communication.CommunicationCI;
 import cps.communication.CommunicationInboundPort;
@@ -26,9 +28,7 @@ import cps.node.NodeI;
 import cps.node.RoutingI;
 import cps.node.classicnode.registration.NConnectionInfo;
 import cps.node.classicnode.registration.NRegistrationCI;
-import cps.node.classicnode.registration.NRegistrationOutboundPort;
 import cps.registration.RegistrationCI;
-import cps.registration.RegistrationOutboundPort;
 import cps.routing.RouteInfo;
 import cps.routing.RoutingCI;
 import cps.routing.RoutingInboundPort;
@@ -52,12 +52,12 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 	
 	public final String RotIP_URI = RoutingInboundPort.genURI();
 	public String ComIP_URI = CommunicationInboundPort.generatePortURI();
-	public static final String RegOP_URI = RegistrationOutboundPort.generatePortURI();
-	public static final String NRegOP_URI = RegistrationOutboundPort.generatePortURI();
+	//public static final String RegOP_URI = RegistrationOutboundPort.generatePortURI();
+	//public static final String NRegOP_URI = RegistrationOutboundPort.generatePortURI();
 	private RoutingInboundPort rotip;
 	private CommunicationInboundPort comip;
-	private RegistrationOutboundPort regop;
-	private NRegistrationOutboundPort nregop;
+	//private RegistrationOutboundPort regop;
+	//private NRegistrationOutboundPort nregop;
 
 	private int step = 4;
 	public static int count = 0;
@@ -70,30 +70,50 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 
 	Random rand = new Random();
 	
-	private double range =1;
+	private double range =1.6;
 	String ad = AccessPoint.genAddresse();
 	String nad = "N"+ad;
 	
 	private final NodeAddressI nodeAddress= new NodeAddress(ad) ;
 	private final NetworkAddressI networkAddress= new NetworkAddress(nad) ;
 	//private Position pos = new Position(rand.nextInt(10), rand.nextInt(10));   // change this genPos
-	private Position pos = new Position(count-step, 6); 
+	private Position pos; //= new Position(count-step, 6); 
 	boolean stopit = true;
 	
 	// pooling 
-	protected static final String	POOL_URI = "computations pool" ;
-	protected static final int		NTHREADS = 10 ;
+	protected static final String	IN_POOL_URI = "inpooluri" ;
+	protected static final int		ni = 6 ;
 	
-	protected AccessPoint() {
+	protected static final String	OUT_POOL_URI = "outpooluri" ;
+	protected static final int		no = 4 ;
+	
+	protected static final String	MESSAGE_POOL_URI = "messagepooluri" ;
+	protected static final int		nm = 2 ;
+	
+	
+	//mutex
+	protected final ReentrantReadWriteLock		hashMapLock ;
+	
+	
+	//disconnection
+	private Set<AddressI> missingNodes = new HashSet<AddressI>();
+	
+	//plugin
+	protected final static String	APLUGIN = "aplugin";
+	AccessPointPlugin plugin = new AccessPointPlugin();
+		
+		
+
+	protected AccessPoint(Position p) {
+		
 		super(5, 0);
-		
-		
+		this.pos = p;
 		try {
 			
 			this.rotip = new RoutingInboundPort(RotIP_URI, this);
 			this.comip = new CommunicationInboundPort(ComIP_URI, this);
-			this.regop = new RegistrationOutboundPort(RegOP_URI, this);
-			this.nregop = new NRegistrationOutboundPort(NRegOP_URI, this);
+			//this.regop = new RegistrationOutboundPort(RegOP_URI, this);
+			//this.nregop = new NRegistrationOutboundPort(NRegOP_URI, this);
 			
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -104,8 +124,8 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 		try {
 			this.rotip.publishPort();
 			this.comip.publishPort();
-			this.regop.publishPort();
-			this.nregop.publishPort();
+			//this.regop.publishPort();
+			//this.nregop.publishPort();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -115,8 +135,27 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 		this.toggleTracing();
 		
 		try {
-			this.createNewExecutorService(POOL_URI, NTHREADS, false) ;
+			this.createNewExecutorService(IN_POOL_URI, ni, false) ;
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			this.createNewExecutorService(OUT_POOL_URI, no, false) ;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			this.createNewExecutorService(MESSAGE_POOL_URI, nm, false) ;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		this.hashMapLock = new ReentrantReadWriteLock() ;
+		
+		plugin.setPluginURI(APLUGIN);
+		try {
+			this.installPlugin(plugin);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -136,7 +175,7 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 		
 		
 		this.runTaskOnComponent(
-				POOL_URI,
+				OUT_POOL_URI,
 				new AbstractComponent.AbstractTask() {
 					
 					@Override
@@ -152,7 +191,7 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 						}});
 		
 		this.runTaskOnComponent(
-				POOL_URI,
+				OUT_POOL_URI,
 				new AbstractComponent.AbstractTask() {
 					
 					@Override
@@ -162,7 +201,7 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 							
 							while(stopit) {
 							Thread.sleep(100L) ;
-							
+							checkDisconnection();
 							route();
 							
 							}
@@ -174,7 +213,7 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 		
 		
 		this.runTaskOnComponent(
-				POOL_URI,
+				MESSAGE_POOL_URI,
 				new AbstractComponent.AbstractTask() {
 					
 					@Override
@@ -184,6 +223,7 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 							
 							while(stopit) {
 							Thread.sleep(2000L) ;
+							
 							coucou();
 							
 							
@@ -213,8 +253,10 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 		for (AddressI e : this.neighborsCOP.keySet()) {
 			System.out.println(this.nodeAddress.getAddress() + " <-------> " + e.getAddress());
 		}
-		
-		for (Entry<AddressI, RouteInfo> a : this.routingTable.entrySet()) {
+		for (AddressI e : this.missingNodes) {
+			System.out.println(this.nodeAddress.getAddress() + " <xxxxxxx> " + e.getAddress());
+		}
+		for (Entry<AddressI, RouteInfo> a : this.rentrySet()) {
 			System.out.println(this.nodeAddress.getAddress() + ": " + a.getKey().getAddress() + " <==="
 					+ a.getValue().getNumberOfHops() + "===> " + a.getValue().getDestination().getAddress());
 		}
@@ -259,8 +301,8 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 			
 			this.rotip.unpublishPort();
 			this.comip.unpublishPort();
-			this.regop.unpublishPort();
-			this.nregop.unpublishPort();
+			//this.regop.unpublishPort();
+			//this.nregop.unpublishPort();
 		} catch (Exception e) {
 			
 			e.printStackTrace();
@@ -291,21 +333,21 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 	
 	public Set<ConnectionInfo> registerAPoint(NodeAddressI address, String commIpUri, PositionI initialPosition,
 			double initialRange, String routingIpUri) throws Exception {
-		return this.regop.registerAccessPoint(address, commIpUri, initialPosition, initialRange, routingIpUri);
+		return this.plugin.registerAPoint(address, commIpUri, initialPosition, initialRange, routingIpUri);
 	}
 	
 	public Set<NConnectionInfo> registerAccessPoint(NetworkAddressI address, String commIpUri, int i) throws Exception{
 		
-		return this.nregop.registerAccessPoint(address, commIpUri, i);
+		return this.plugin.registerAccessPoint(address, commIpUri, i);
 		
 	}
 	
 	public void unregister(NodeAddressI address) throws Exception {
-		this.regop.unregister(address);
+		this.plugin.unregister(address);
 		
 	}
 	public void unregister(NetworkAddressI address) throws Exception {
-		this.nregop.unregister(address);
+		this.plugin.unregister(address);
 		
 	}
 
@@ -316,6 +358,7 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 	public void register() throws Exception {
 
 		this.neighbors = this.registerAPoint(this.nodeAddress, this.ComIP_URI, this.pos, this.range, this.RotIP_URI);
+		
 		Set<NConnectionInfo> cnei = this.registerAccessPoint(networkAddress, ComIP_URI, id);
 		
 		for (ConnectionInfo c : this.neighbors) {
@@ -325,7 +368,7 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 			this.doPortConnection(uriTempC, c.getCommunicationInboundPortURI(),
 					CommunicationConnector.class.getCanonicalName());// add connector here
 			if(c.isAPoint()) {this.APCOP.put(c.getAddress(), pc);}
-			this.neighborsCOP.put(c.getAddress(), pc);
+			this.ncput(c.getAddress(), pc);
 
 			if (c.isRouting()) {
 				String uriTempR = RoutingOutboundPort.generatePortURI();
@@ -333,11 +376,11 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 				pr.publishPort();
 				this.doPortConnection(uriTempR, c.getRoutingInboundPortURI(),
 						RoutingConnector.class.getCanonicalName());// add connector here
-				this.neighborsROP.put(c.getAddress(), pr);
+				this.nrput(c.getAddress(), pr);
 			}
 
 			if (!c.getAddress().isequalsAddress(this.nodeAddress)) {
-				this.routingTable.put(c.getAddress(), new RouteInfo(c.getAddress(), 1));
+				this.rput(c.getAddress(), new RouteInfo(c.getAddress(), 1));
 			}
 		}
 		
@@ -367,13 +410,13 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 	// --------------------------Connection------------------------------------------------------------------------
 	@Override
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception {
-		if (!this.neighborsCOP.containsKey(address)) {
+		if (!this.nccontainsKey(address)) {
 			String uriTempC = CommunicationOutboundPort.generatePortURI();
 			CommunicationOutboundPort pc = new CommunicationOutboundPort(uriTempC, this);
 			pc.publishPort();
 			this.doPortConnection(uriTempC, communicationInboundPortURI,
 					CommunicationConnector.class.getCanonicalName());// add connector here
-			this.neighborsCOP.put(address, pc);
+			this.ncput(address, pc);
 
 			
 		}
@@ -381,32 +424,32 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI)
 			throws Exception {
 
-		if (!this.neighborsCOP.containsKey(address)) {
+		if (!this.nccontainsKey(address)) {
 
 			
 			String uriTempC = CommunicationOutboundPort.generatePortURI();
 			CommunicationOutboundPort pc = new CommunicationOutboundPort(uriTempC, this);
-			this.neighborsCOP.put(address, pc);
+			this.ncput(address, pc);
 			pc.publishPort();
 			this.doPortConnection(uriTempC, communicationInboundPortURI,
 					CommunicationConnector.class.getCanonicalName());
 
 			if (!address.isequalsAddress(this.nodeAddress)) {
-				this.routingTable.put(address, new RouteInfo(address, 1));
+				this.rput(address, new RouteInfo(address, 1));
 			}
 
 
 		}
 
-		if (!this.neighborsROP.containsKey(address)) {
+		if (!this.nrcontainsKey(address)) {
 			String uriTempR = RoutingOutboundPort.generatePortURI();
 			RoutingOutboundPort pr = new RoutingOutboundPort(uriTempR, this);
 			pr.publishPort();
 			this.doPortConnection(uriTempR, routingInboundPortURI, RoutingConnector.class.getCanonicalName());
-			this.neighborsROP.put(address, pr);
+			this.nrput(address, pr);
 
 			if (!address.isequalsAddress(this.nodeAddress)) {
-				this.routingTable.put(address, new RouteInfo(address, 1));
+				this.rput(address, new RouteInfo(address, 1));
 			}
 		}
 	}
@@ -416,9 +459,9 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 
 		for (ConnectionInfo c : this.neighbors) {
 			if (c.isRouting()) {
-				this.neighborsCOP.get(c.getAddress()).connectRouting(this.nodeAddress, this.ComIP_URI, this.RotIP_URI);
+				this.ncget(c.getAddress()).connectRouting(this.nodeAddress, this.ComIP_URI, this.RotIP_URI);
 			} else {
-				this.neighborsCOP.get(c.getAddress()).connect(this.nodeAddress, this.ComIP_URI);
+				this.ncget(c.getAddress()).connect(this.nodeAddress, this.ComIP_URI);
 
 			}
 		}
@@ -466,11 +509,11 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 		} else {
 			if (m.stillAlive()) {
 
-				if (this.routingTable.containsKey(m.getAddress())) {
+				if (this.rcontainsKey(m.getAddress())) {
 
 					
 					m.decrementHops();
-					this.neighborsCOP.get(this.routingTable.get(m.getAddress()).getDestination()).transmitMessage(
+					this.ncget(this.rget(m.getAddress()).getDestination()).transmitMessage(
 							new Message(this.nodeAddress.getAddress() + " <--- " + m.getContent().getMessage(), m.getHops(),
 									m.getAddress()));
 				}
@@ -478,7 +521,7 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 				else {
 					
 					m.decrementHops();
-					for (Entry<AddressI, CommunicationCI> e : this.neighborsCOP.entrySet()) {
+					for (Entry<AddressI, CommunicationCI> e : this.ncentrySet()) {
 						e.getValue().transmitMessage(
 								new Message(this.nodeAddress.getAddress() + " <--- " + m.getContent().getMessage(),
 										m.getHops(), m.getAddress()));
@@ -497,11 +540,13 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 	public void coucou() throws Exception {
 		
 		
-			for(AddressI e: this.routingTable.keySet()) { 
-				this.transmitMessage(new Message(nodeAddress.getAddress() , 15, e)); 
+			for(Entry<AddressI, RouteInfo> a : this.rentrySet()) { 
+				this.transmitMessage(new Message(nodeAddress.getAddress() , 15, a.getKey())); 
 			}
 		
 			this.transmitMessage(new Message(nodeAddress.getAddress() , 20, new NetworkAddress("CNode 0"))); 
+			this.transmitMessage(new Message(nodeAddress.getAddress() , 20, new NetworkAddress("CNode 1"))); 
+			this.transmitMessage(new Message(nodeAddress.getAddress() , 20, new NetworkAddress("CNode 2"))); 
 	}
 	
 	
@@ -509,7 +554,68 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 	
 	
 	
+	public void checkDisconnection() throws Exception {
+		try {
+			this.pingNeighbours();
+			
+
+		} catch (ConnectException ce) {
+			
+			hashMapLock.writeLock().lock();
+			NodeAddress tempAddr = new NodeAddress(ce.getMessage());
+			
+			this.logMessage("node "+tempAddr.getAddress()+" disconnected (neighbour)");
+			missingNodes.add(tempAddr);
+			
+			Set<RouteInfo> routes = new HashSet<RouteInfo>();
+			routes.add(new RouteInfo(tempAddr, -1));
+			
+			for (Entry<AddressI, RoutingCI> a : this.neighborsROP.entrySet()) {
+				if(!a.getKey().isequalsAddress(tempAddr)) {
+					
+					((RoutingOutboundPort) a.getValue()).updateRouting(this.nodeAddress, routes);
+				}
+			}
+			
+			for (Entry<AddressI, CommunicationCI> a : this.neighborsCOP.entrySet()) {
+				if (a.getKey().isequalsAddress(tempAddr)) {
+					this.neighborsCOP.remove(a.getKey());
+				}
+			}
+			for (Entry<AddressI, RoutingCI> a : this.neighborsROP.entrySet()) {
+				if (a.getKey().isequalsAddress(tempAddr)) {
+					this.neighborsROP.remove(a.getKey());
+				}
+			}
+			for (Entry<AddressI, RouteInfo> a : this.routingTable.entrySet()) {
+				if (a.getKey().isequalsAddress(tempAddr) || a.getValue().getDestination().isequalsAddress(tempAddr)) {
+					this.routingTable.remove(a.getKey());
+				}
+			}
+			hashMapLock.writeLock().unlock();
+			
+		} 
+		
+	}
 	
+	public void pingNeighbours() throws ConnectException {
+		for (Entry<AddressI, CommunicationCI> a : this.ncentrySet()) {
+			try {
+				
+				a.getValue().ping();
+			} catch (Exception e) {
+		
+				
+
+				throw new java.rmi.ConnectException(a.getKey().getAddress());
+			}
+		}
+	}
+	
+	public void ping() throws Exception {
+		
+
+	}
 	
 	
 	
@@ -518,29 +624,56 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 	
 	
 	public void updateRouting(NodeAddressI neighbour, Set<RouteInfo> routes) throws Exception {
+		
 		for (RouteInfo r : routes) {
-			if (this.routingTable.containsKey(r.getDestination())) {
-				if (this.routingTable.get(r.getDestination()).getNumberOfHops() > r.getNumberOfHops()) {
+			if(r.getNumberOfHops()==-1) {
+				this.logMessage("node "+r.getDestination().getAddress()+" disconnected");
+				missingNodes.add(r.getDestination());
+				boolean f = false;
+				for (Entry<AddressI, RouteInfo> a : this.routingTable.entrySet()) {
 					
-					this.routingTable.put(r.getDestination(), new RouteInfo(neighbour, r.getNumberOfHops() + 1));
+					if (a.getKey().isequalsAddress(r.getDestination()) || a.getValue().getDestination().isequalsAddress(r.getDestination())) {
+						f=true;
+						this.routingTable.remove(a.getKey());
+					}
+				}
+				
+				if(f) {
+					hashMapLock.writeLock().lock();
+					
+					Set<RouteInfo> mis = new HashSet<RouteInfo>();
+					mis.add(new RouteInfo(r.getDestination(), -1));
+					
+					for (Entry<AddressI, RoutingCI> a : this.neighborsROP.entrySet()) {
+						if(!a.getKey().isequalsAddress(r.getDestination())) {
+							((RoutingOutboundPort) a.getValue()).updateRouting(this.nodeAddress, mis);
+						}
+					}
+					hashMapLock.writeLock().unlock();
+				}
+			}
+			else {
+			if (this.rcontainsKey(r.getDestination())) {
+				if (this.rget(r.getDestination()).getNumberOfHops() > r.getNumberOfHops()) {
+					
+					this.rput(r.getDestination(), new RouteInfo(neighbour, r.getNumberOfHops() + 1));
 				}
 			}
 
 			else {
 				if (!r.getDestination().isequalsAddress(this.nodeAddress)) {
-					this.routingTable.put(r.getDestination(), new RouteInfo(neighbour, r.getNumberOfHops() + 1));
+					this.rput(r.getDestination(), new RouteInfo(neighbour, r.getNumberOfHops() + 1));
 
 				}
 
 			}
-		}
-		
+		}}
 	}
 	
 	public void route() throws Exception {
 
 		Set<RouteInfo> routes = this.getRouteInfo();
-		for (Entry<AddressI, RoutingCI> a : this.neighborsROP.entrySet()) {
+		for (Entry<AddressI, RoutingCI> a : this.nrentrySet()) {
 			//normal network
 			((RoutingOutboundPort) a.getValue()).updateRouting(this.nodeAddress, routes);
 			//classical network
@@ -552,7 +685,7 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 	public Set<RouteInfo> getRouteInfo() {
 
 		Set<RouteInfo> routes = new HashSet<RouteInfo>();
-		for (Entry<AddressI, RouteInfo> a : this.routingTable.entrySet()) {
+		for (Entry<AddressI, RouteInfo> a : this.rentrySet()) {
 			routes.add(new RouteInfo(a.getKey(), a.getValue().getNumberOfHops()));
 		}
 		return routes;
@@ -563,7 +696,7 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 	
 	@Override
 	public void updateAccessPoint(NodeAddressI neighbour, int numberOfHops) throws Exception {
-		for(Entry<AddressI, RoutingCI> a : this.neighborsROP.entrySet()) {
+		for(Entry<AddressI, RoutingCI> a : this.nrentrySet()) {
 			a.getValue().updateAccessPoint(this.nodeAddress, numberOfHops+1);
 		}
 		
@@ -644,15 +777,200 @@ public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 		return 0;
 	}
 
-	@Override
-	public void ping() throws Exception {
-		// TODO Auto-generated method stub
-		
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// maps
+	//routing table 
+	public RouteInfo rput(AddressI key, RouteInfo value) 
+	{
+		RouteInfo res ;
+		this.hashMapLock.writeLock().lock() ;
+		try {
+			res = this.routingTable.put(key, value) ;
+		} finally {
+			this.hashMapLock.writeLock().unlock() ;
+		}
+		return res ;
 	}
-
-
-
-
+	
+	public RouteInfo rget(AddressI key) 
+	{
+		RouteInfo res ;
+		this.hashMapLock.readLock().lock() ;
+		try {
+			res = this.routingTable.get(key) ;
+		} finally {
+			this.hashMapLock.readLock().unlock() ;
+		}
+		return res ;
+	}
+	
+	public boolean rcontainsKey(AddressI key) 
+	{
+		boolean res ;
+		this.hashMapLock.readLock().lock() ;
+		try {
+			res = this.routingTable.containsKey(key) ;
+		} finally {
+			this.hashMapLock.readLock().unlock() ;
+		}
+		return res ;
+	}
+	public Set<Entry<AddressI, RouteInfo>> rentrySet(){
+		Set<Entry<AddressI, RouteInfo>> res ;
+		this.hashMapLock.readLock().lock() ;
+		try {
+			res = this.routingTable.entrySet() ;
+		} finally {
+			this.hashMapLock.readLock().unlock() ;
+		}
+		return res ;
+	}
+	
+	
+	
+	
+	//neighborsCOP
+	public CommunicationCI ncput(AddressI key, CommunicationCI value) 
+	{
+		CommunicationCI res ;
+		this.hashMapLock.writeLock().lock() ;
+		try {
+			res = this.neighborsCOP.put(key, value) ;
+		} finally {
+			this.hashMapLock.writeLock().unlock() ;
+		}
+		return res ;
+	}
+	
+	public CommunicationCI ncget(AddressI key) 
+	{
+		CommunicationCI res ;
+		this.hashMapLock.readLock().lock() ;
+		try {
+			res = this.neighborsCOP.get(key) ;
+		} finally {
+			this.hashMapLock.readLock().unlock() ;
+		}
+		return res ;
+	}
+	
+	public boolean nccontainsKey(AddressI key) 
+	{
+		boolean res ;
+		this.hashMapLock.readLock().lock() ;
+		try {
+			res = this.neighborsCOP.containsKey(key) ;
+		} finally {
+			this.hashMapLock.readLock().unlock() ;
+		}
+		return res ;
+	}
+	
+	public Set<Entry<AddressI, CommunicationCI>> ncentrySet(){
+		Set<Entry<AddressI, CommunicationCI>> res ;
+		this.hashMapLock.readLock().lock() ;
+		try {
+			res = this.neighborsCOP.entrySet() ;
+		} finally {
+			this.hashMapLock.readLock().unlock() ;
+		}
+		return res ;
+	}
+	
+	
+	
+	
+	
+	
+	//neighborsROP
+	public RoutingCI nrput(AddressI key, RoutingCI value) 
+	{
+		RoutingCI res ;
+		this.hashMapLock.writeLock().lock() ;
+		try {
+			res = this.neighborsROP.put(key, value) ;
+		} finally {
+			this.hashMapLock.writeLock().unlock() ;
+		}
+		return res ;
+	}
+	
+	public RoutingCI nrget(AddressI key) 
+	{
+		RoutingCI res ;
+		this.hashMapLock.readLock().lock() ;
+		try {
+			res = this.neighborsROP.get(key) ;
+		} finally {
+			this.hashMapLock.readLock().unlock() ;
+		}
+		return res ;
+	}
+	
+	public boolean nrcontainsKey(AddressI key) 
+	{
+		boolean res ;
+		this.hashMapLock.readLock().lock() ;
+		try {
+			res = this.neighborsROP.containsKey(key) ;
+		} finally {
+			this.hashMapLock.readLock().unlock() ;
+		}
+		return res ;
+	}
+	
+	public Set<Entry<AddressI, RoutingCI>> nrentrySet(){
+		Set<Entry<AddressI, RoutingCI>> res ;
+		this.hashMapLock.readLock().lock() ;
+		try {
+			res = this.neighborsROP.entrySet() ;
+		} finally {
+			this.hashMapLock.readLock().unlock() ;
+		}
+		return res ;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 
 

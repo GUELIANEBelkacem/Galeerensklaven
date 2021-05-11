@@ -2,7 +2,6 @@ package cps.connecteurs;
 
 import java.util.Set;
 
-import cps.communication.CommunicationCI;
 import cps.info.ConnectionInfo;
 import cps.info.address.NodeAddressI;
 import cps.info.position.PositionI;

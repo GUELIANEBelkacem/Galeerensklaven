@@ -15,7 +15,6 @@ import cps.message.MessageI;
 import cps.node.NodeI;
 import cps.node.classicnode.registration.NConnectionInfo;
 import cps.node.classicnode.registration.NRegistrationCI;
-import cps.node.classicnode.registration.NRegistrationOutboundPort;
 import cps.registration.RegistrationOutboundPort;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
@@ -26,9 +25,9 @@ import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 @OfferedInterfaces(offered = { CommunicationCI.class, NRegistrationCI.class })
 
 public class ClassicalNode extends AbstractComponent implements NodeI{
-	public static final String NRegOP_URI = RegistrationOutboundPort.generatePortURI();
+	//public static final String NRegOP_URI = RegistrationOutboundPort.generatePortURI();
 	public String ComIP_URI = CommunicationInboundPort.generatePortURI();
-	private NRegistrationOutboundPort nregop;
+	//private NRegistrationOutboundPort nregop;
 	private CommunicationInboundPort comip;
 	
 	public static int count = 0;
@@ -42,21 +41,30 @@ public class ClassicalNode extends AbstractComponent implements NodeI{
 	boolean stopit = true;
 	private final NetworkAddressI address= new NetworkAddress(ClassicalNode.genAddresse()) ;
 	
-	private Position pos = new Position(rand.nextInt(50), rand.nextInt(50));
+	private Position pos;  // = new Position(rand.nextInt(50), rand.nextInt(50));
+	
 	// pooling 
-	protected static final String	POOL_URI = "computations pool" ;
-	protected static final int		NTHREADS = 10 ;
-		
+	protected static final String	IN_POOL_URI = "inpooluri" ;
+	protected static final int		ni = 6 ;
+	
+	protected static final String	OUT_POOL_URI = "outpooluri" ;
+	protected static final int		no = 4 ;
+	
+	protected static final String	MESSAGE_POOL_URI = "messagepooluri" ;
+	protected static final int		nm = 2 ;	
 	String apuri = CommunicationOutboundPort.generatePortURI();
 	CommunicationOutboundPort ap ;
 		
-		
-	protected ClassicalNode() {
+	//plugin
+	protected final static String	CPLUGIN = "cplugin";
+	ClassicalNodePlugin plugin = new ClassicalNodePlugin();
+			
+	protected ClassicalNode(Position p) {
 			super(5, 0);
 			
-			
+			this.pos=p;
 			try {
-				this.nregop = new NRegistrationOutboundPort(NRegOP_URI, this);
+				//this.nregop = new NRegistrationOutboundPort(NRegOP_URI, this);
 				this.comip = new CommunicationInboundPort(ComIP_URI, this);
 			} catch (Exception e1) {
 				e1.printStackTrace();
@@ -65,7 +73,7 @@ public class ClassicalNode extends AbstractComponent implements NodeI{
 			
 			
 			try {
-				this.nregop.publishPort();
+				//this.nregop.publishPort();
 				this.comip.publishPort();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -76,8 +84,26 @@ public class ClassicalNode extends AbstractComponent implements NodeI{
 			this.toggleTracing();
 			
 			try {
-				this.createNewExecutorService(POOL_URI, NTHREADS, false) ;
+				this.createNewExecutorService(OUT_POOL_URI, no, false) ;
 			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			try {
+				this.createNewExecutorService(IN_POOL_URI, ni, false) ;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			try {
+				this.createNewExecutorService(MESSAGE_POOL_URI, nm, false) ;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			plugin.setPluginURI(CPLUGIN);
+			try {
+				this.installPlugin(plugin);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -138,7 +164,7 @@ public class ClassicalNode extends AbstractComponent implements NodeI{
 		public synchronized void shutdown() throws ComponentShutdownException {
 			
 			try {
-				this.nregop.unpublishPort();
+				//this.nregop.unpublishPort();
 				this.comip.unpublishPort();
 			} catch (Exception e) {
 				
@@ -154,15 +180,16 @@ public class ClassicalNode extends AbstractComponent implements NodeI{
 		// --------------------------Registration------------------------------------------------------------------------
 
 		public Set<NConnectionInfo> registerClassicNode(NetworkAddressI address, String commIpUri, int i) throws Exception{
-			return this.nregop.registerClassicNode(address, commIpUri, i);
+			return this.plugin.registerClassicNode(address, commIpUri, i);
 		}
 		
 		public void unregister(NetworkAddressI address) throws Exception {
-			this.nregop.unregister(address);
+			this.plugin.unregister(address);
 			
 		}
 		public void register() throws Exception {
-			Set<NConnectionInfo> cnei = this.registerClassicNode(address, ComIP_URI, id);
+			//Set<NConnectionInfo> cnei = this.registerClassicNode(address, ComIP_URI, id);
+			this.registerClassicNode(address, ComIP_URI, id);
 			/*
 			System.out.println(((NConnectionInfo)cnei.toArray()[0]).getSector() == this.id);
 			((NConnectionInfo)cnei.toArray()[0]).getCommunicationInboundPortURI();
@@ -175,7 +202,14 @@ public class ClassicalNode extends AbstractComponent implements NodeI{
 
 		
 		
-		
+		// terminal nodes x
+		// pool inbound   x
+		// semaphore      x
+		// deconexion     x
+		// plug in        x
+		// jvm            
+		// tests 
+		// apply prof advice 
 		
 		
 		
@@ -189,6 +223,7 @@ public class ClassicalNode extends AbstractComponent implements NodeI{
 		}
 		
 	}
+	
 	
 	
 	

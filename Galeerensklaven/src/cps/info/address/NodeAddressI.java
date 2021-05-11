@@ -6,5 +6,6 @@ extends AddressI{
 	default public boolean isNodeAddress(){return true;};
 	@Override
 	default public boolean isNetworkAddress() {return false;};
+	
 
 }

@@ -1,13 +1,11 @@
 package cps.registration;
 
 import java.util.Set;
-import java.util.concurrent.RejectedExecutionException;
 
 import cps.info.ConnectionInfo;
 import cps.info.address.NodeAddressI;
 import cps.info.position.PositionI;
 import fr.sorbonne_u.components.ComponentI;
-import fr.sorbonne_u.components.interfaces.OfferedCI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 
 public class RegistrationInboundPort extends AbstractInboundPort implements RegistrationCI {
@@ -34,7 +32,8 @@ public class RegistrationInboundPort extends AbstractInboundPort implements Regi
 	@Override
 	public Set<ConnectionInfo> registerRoutingNode(NodeAddressI address, String commIpUri, PositionI initialPosition,
 			double initialRange, String routingIpUri) throws Exception {
-		return this.getOwner().handleRequest(r -> ((Registrator) r).registerRouting(address, commIpUri, initialPosition,
+		return this.getOwner().handleRequest(
+				r -> ((Registrator) r).registerRouting(address, commIpUri, initialPosition,
 				initialRange, routingIpUri));
 	}
 

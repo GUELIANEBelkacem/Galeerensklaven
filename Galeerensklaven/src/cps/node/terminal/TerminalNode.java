@@ -1,9 +1,12 @@
 package cps.node.terminal;
+import java.rmi.ConnectException;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import cps.communication.CommunicationCI;
 import cps.communication.CommunicationInboundPort;
@@ -11,7 +14,6 @@ import cps.communication.CommunicationOutboundPort;
 import cps.connecteurs.CommunicationConnector;
 import cps.info.ConnectionInfo;
 import cps.info.address.AddressI;
-import cps.info.address.NetworkAddress;
 import cps.info.address.NodeAddress;
 import cps.info.address.NodeAddressI;
 import cps.info.position.Position;
@@ -39,9 +41,9 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 		
 		
 	public String ComIP_URI = CommunicationInboundPort.generatePortURI();
-	public static final String RegOP_URI = RegistrationOutboundPort.generatePortURI();
+	//public static final String RegOP_URI = RegistrationOutboundPort.generatePortURI();
 	private CommunicationInboundPort comip;
-	private RegistrationOutboundPort regop;
+	//private RegistrationOutboundPort regop;
 	
 	public static int count = 0;
 
@@ -56,20 +58,39 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 	private double range =1;
 	private final NodeAddressI address= new NodeAddress(TerminalNode.genAddresse()) ;
 	//private Position pos = new Position(rand.nextInt(10), rand.nextInt(10));   // change this genPos
-	private Position pos = new Position(count-1, 4); 
+	private Position pos ;//= new Position(count-1, 4); 
 	
 	// pooling 
-	protected static final String	POOL_URI = "computations pool" ;
-	protected static final int		NTHREADS = 10 ;
-		
-	protected TerminalNode() {
+	protected static final String	IN_POOL_URI = "inpooluri" ;
+	protected static final int		ni = 6 ;
+	
+	protected static final String	OUT_POOL_URI = "outpooluri" ;
+	protected static final int		no = 4 ;
+	
+	protected static final String	MESSAGE_POOL_URI = "messagepooluri" ;
+	protected static final int		nm = 2 ;
+	private boolean stopit= true;
+	
+	//mutex
+	protected final ReentrantReadWriteLock		hashMapLock ;
+	
+	//disconnection
+	private Set<AddressI> missingNodes = new HashSet<AddressI>();
+	private int myn = count;
+	
+	
+	//plugin
+	protected final static String	TPLUGIN = "tplugin";
+	TerminalNodePlugin plugin = new TerminalNodePlugin();
+	
+	protected TerminalNode(Position p) {
 		super(2, 0);
 		
-		
+		this.pos=p;
 		try {
 			
 			this.comip = new CommunicationInboundPort(ComIP_URI, this);
-			this.regop = new RegistrationOutboundPort(RegOP_URI, this);
+			//this.regop = new RegistrationOutboundPort(RegOP_URI, this);
 			
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -79,7 +100,7 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 		
 		try {
 			this.comip.publishPort();
-			this.regop.publishPort();
+			//this.regop.publishPort();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -88,11 +109,31 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 		this.toggleTracing();
 		
 		try {
-			this.createNewExecutorService(POOL_URI, NTHREADS, false) ;
+			this.createNewExecutorService(OUT_POOL_URI, no, false) ;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		try {
+			this.createNewExecutorService(IN_POOL_URI, ni, false) ;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			this.createNewExecutorService(MESSAGE_POOL_URI, nm, false) ;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		this.hashMapLock = new ReentrantReadWriteLock() ;
+		
+		
+		
+		plugin.setPluginURI(TPLUGIN);
+		try {
+			this.installPlugin(plugin);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -107,7 +148,7 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 		
 		
 		this.runTaskOnComponent(
-				POOL_URI,
+				OUT_POOL_URI,
 				new AbstractComponent.AbstractTask() {
 					
 					@Override
@@ -125,7 +166,7 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 
 		
 		this.runTaskOnComponent(
-				POOL_URI,
+				MESSAGE_POOL_URI,
 				new AbstractComponent.AbstractTask() {
 					
 					@Override
@@ -133,9 +174,10 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 						try {
 							
 							//Thread.sleep(1000L) ;
-							int i = 0;
-							while(i<10000) {
+							
+							while(stopit) {
 							Thread.sleep(1000L) ;
+							
 							coucou();
 							}
 						
@@ -143,7 +185,44 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 							e.printStackTrace();
 						}
 						}});
+		this.runTaskOnComponent(
+				OUT_POOL_URI,
+				new AbstractComponent.AbstractTask() {
+					
+					@Override
+					public void run() {
+						try {
+							
+							//Thread.sleep(1000L) ;
+							
+							while(stopit) {
+							Thread.sleep(100L) ;
+							checkDisconnection();
+							}
+						
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						}});
 		
+		this.runTaskOnComponent(
+				OUT_POOL_URI,
+				new AbstractComponent.AbstractTask() {
+					
+					@Override
+					public void run() {
+						try {
+							
+							Thread.sleep(4000L) ;
+							if(myn==2) {
+								
+							disconnect();
+							}
+						
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						}});
 		
 	
 		
@@ -180,7 +259,7 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 			
 			
 			this.comip.unpublishPort();
-			this.regop.unpublishPort();
+			//this.regop.unpublishPort();
 		} catch (Exception e) {
 			
 			e.printStackTrace();
@@ -193,10 +272,12 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 
 	public Set<ConnectionInfo> registerTerminalNode(NodeAddressI address, String commIpUri, PositionI initialPosition,
 			double initialRange) throws Exception{
-		return this.regop.registerTerminalNode(address, commIpUri, initialPosition, initialRange);
+		return this.plugin.registerTerminalNode(address, commIpUri, initialPosition, initialRange);
 	}
+	
+	
 	public void unregister(NodeAddressI address) throws Exception {
-		this.regop.unregister(address);
+		this.plugin.unregister(address);
 	}
 
 	
@@ -210,7 +291,7 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 			pc.publishPort();
 			this.doPortConnection(uriTempC, c.getCommunicationInboundPortURI(),
 					CommunicationConnector.class.getCanonicalName());// add connector here
-			this.neighborsCOP.put(c.getAddress(), pc);
+			this.ncput(c.getAddress(), pc);
 
 		}
 
@@ -228,13 +309,13 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 	// --------------------------Connection------------------------------------------------------------------------
 	@Override
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception {
-		if (!this.neighborsCOP.containsKey(address)) {
+		if (!this.nccontainsKey(address)) {
 			String uriTempC = CommunicationOutboundPort.generatePortURI();
 			CommunicationOutboundPort pc = new CommunicationOutboundPort(uriTempC, this);
 			pc.publishPort();
 			this.doPortConnection(uriTempC, communicationInboundPortURI,
 					CommunicationConnector.class.getCanonicalName());// add connector here
-			this.neighborsCOP.put(address, pc);
+			this.ncput(address, pc);
 
 			
 		}
@@ -243,7 +324,7 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 	
 	public void catchUp() throws Exception {
 		for (ConnectionInfo c : this.neighbors) {
-			this.neighborsCOP.get(c.getAddress()).connect(this.address, this.ComIP_URI);
+			this.ncget(c.getAddress()).connect(this.address, this.ComIP_URI);
 		}
 	}
 	
@@ -264,15 +345,15 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 	
 	
 	public void sendMessage(MessageI m) throws Exception {
-		if (this.neighborsCOP.containsKey(m.getAddress())) {
+		if (this.nccontainsKey(m.getAddress())) {
 			m.decrementHops();
-			this.neighborsCOP.get(m.getAddress()).transmitMessage(
+			this.ncget(m.getAddress()).transmitMessage(
 					new Message(this.address.getAddress() + " <--- " + m.getContent().getMessage(), m.getHops(),
 							m.getAddress()));
 		}
 		else {
 			m.decrementHops();
-			for (Entry<AddressI, CommunicationCI> e : this.neighborsCOP.entrySet()) {
+			for (Entry<AddressI, CommunicationCI> e : this.ncentrySet()) {
 				e.getValue().transmitMessage(
 						new Message(this.address.getAddress() + " <--- " + m.getContent().getMessage(),
 								m.getHops(), m.getAddress()));
@@ -280,8 +361,8 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 		}
 	}
 	public void coucou() throws Exception {
-		
-		//this.sendMessage(new Message(address.getAddress() , 4, new NetworkAddress("RNode 3"))); 
+		this.logMessage("seeeent " + myn);
+		this.sendMessage(new Message(address.getAddress() , 4, new NodeAddress("RNode 0"))); 
 		
 	}
 	
@@ -289,13 +370,70 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 	
 	
 	
+	public void disconnect() throws Exception {
+		this.unregister(address);
+		stopit = false;
+		this.logMessage("disconnecting......");
+		neighborsCOP.clear();
+		try {
+			//this.shutdownExecutorService(MESSAGE_POOL_URI);
+			this.shutdownExecutorService(IN_POOL_URI);
+			this.shutdownExecutorService(OUT_POOL_URI);
+			this.shutdown();
+			this.shutdownNow();
+		
+		}catch(Exception e) {
+			
+		}
+		
+	}
+	
+	@Override
+	public void ping() throws Exception {
+		
+		
+	}
 	
 	
 	
+	public void checkDisconnection() throws Exception {
+		try {
+			this.pingNeighbours();
+			
+
+		} catch (ConnectException ce) {
+			
+			hashMapLock.writeLock().lock();
+			NodeAddress tempAddr = new NodeAddress(ce.getMessage());
+			
+			this.logMessage("node "+tempAddr.getAddress()+" disconnected (neighbour)");
+			missingNodes.add(tempAddr);
+			
+			for (Entry<AddressI, CommunicationCI> a : this.neighborsCOP.entrySet()) {
+				if (a.getKey().isequalsAddress(tempAddr)) {
+					this.neighborsCOP.remove(a.getKey());
+				}
+			}
+			
+			hashMapLock.writeLock().unlock();
+			
+		} 
+		
+	}
 	
-	
-	
-	
+	public void pingNeighbours() throws ConnectException {
+		for (Entry<AddressI, CommunicationCI> a : this.ncentrySet()) {
+			try {
+				
+				a.getValue().ping();
+			} catch (Exception e) {
+		
+				
+
+				throw new java.rmi.ConnectException(a.getKey().getAddress());
+			}
+		}
+	}
 	
 	
 	
@@ -318,50 +456,97 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 		return 0;
 	}
 
-	@Override
-	public void ping() throws Exception {
-		// TODO Auto-generated method stub
-		
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	//maps
+	//neighborsCOP
+	public CommunicationCI ncput(AddressI key, CommunicationCI value) 
+	{
+		CommunicationCI res ;
+		this.hashMapLock.writeLock().lock() ;
+		try {
+			res = this.neighborsCOP.put(key, value) ;
+		} finally {
+			this.hashMapLock.writeLock().unlock() ;
+		}
+		return res ;
 	}
+	
+	public CommunicationCI ncget(AddressI key) 
+	{
+		CommunicationCI res ;
+		this.hashMapLock.readLock().lock() ;
+		try {
+			res = this.neighborsCOP.get(key) ;
+		} finally {
+			this.hashMapLock.readLock().unlock() ;
+		}
+		return res ;
+	}
+	
+	public boolean nccontainsKey(AddressI key) 
+	{
+		boolean res ;
+		this.hashMapLock.readLock().lock() ;
+		try {
+			res = this.neighborsCOP.containsKey(key) ;
+		} finally {
+			this.hashMapLock.readLock().unlock() ;
+		}
+		return res ;
+	}
+	
+	public Set<Entry<AddressI, CommunicationCI>> ncentrySet(){
+		Set<Entry<AddressI, CommunicationCI>> res ;
+		this.hashMapLock.readLock().lock() ;
+		try {
+			res = this.neighborsCOP.entrySet() ;
+		} finally {
+			this.hashMapLock.readLock().unlock() ;
+		}
+		return res ;
+	}
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
