@@ -18,6 +18,8 @@ public class DistributedCVM extends AbstractDistributedCVM{
 	protected static final String acc = "accesspoint";
 	protected static final String reg = "registrator";
 	protected static final String nreg = "nregistrator";
+	
+	
 	public DistributedCVM(String[] args) throws Exception {
 		super(args);
 	}
@@ -58,17 +60,16 @@ public class DistributedCVM extends AbstractDistributedCVM{
 	}
 
 	
-	@Override
-	public void interconnect() throws Exception {
-		// TODO Auto-generated method stub
-		super.interconnect();
-	}
 
 	public static void main(String[] args) {
 		try {
 			
 			DistributedCVM dc = new DistributedCVM(args);
-			dc.startStandardLifeCycle(5000L);
+			
+			dc.startStandardLifeCycle(50000L);
+			
+			Thread.sleep(5000L);
+			
 			System.exit(0);
 		} catch (Exception e) {
 			e.printStackTrace();

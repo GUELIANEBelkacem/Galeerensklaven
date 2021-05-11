@@ -7,8 +7,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="deployment/jars/BCM4Java-13012021.jar"/>
-	<classpathentry kind="lib" path="deployment/jars/commons-math3-3.5.jar"/>
-	<classpathentry kind="lib" path="deployment/jars/javassist.jar"/>
 	<classpathentry kind="lib" path="deployment/jars/jing.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
