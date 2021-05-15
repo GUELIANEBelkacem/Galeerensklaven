@@ -1,0 +1,62 @@
+1621093288089|DCVM Cyclic Barrier up and running!
+1621093289825|DCVM Cyclic Barrier accepts: registrator localhost 57960
+1621093289827|DCVM Cyclic Barrier has received 1 out of 3 expected.
+1621093290005|DCVM Cyclic Barrier accepts: routing1 localhost 57961
+1621093290006|DCVM Cyclic Barrier has received 2 out of 3 expected.
+1621093290538|All connected!
+1621093290541|DCVM Cyclic Barrier accepts: routing2 localhost 57962
+1621093290542|DCVM Cyclic Barrier has received 3 out of 3 expected.
+1621093290543|DCVM Cyclic Barrier releases 3 sites.
+1621093290549|DCVM Cyclic Barrier accepts: registrator localhost 57960
+1621093290550|DCVM Cyclic Barrier has received 1 out of 3 expected.
+1621093290631|DCVM Cyclic Barrier accepts: routing2 localhost 57962
+1621093290632|DCVM Cyclic Barrier has received 2 out of 3 expected.
+1621093290635|DCVM Cyclic Barrier accepts: routing1 localhost 57961
+1621093290636|DCVM Cyclic Barrier has received 3 out of 3 expected.
+1621093290636|DCVM Cyclic Barrier releases 3 sites.
+1621093290939|DCVM Cyclic Barrier accepts: registrator localhost 57960
+1621093290940|DCVM Cyclic Barrier has received 1 out of 3 expected.
+1621093291581|DCVM Cyclic Barrier accepts: routing2 localhost 57962
+1621093291582|DCVM Cyclic Barrier has received 2 out of 3 expected.
+1621093291601|DCVM Cyclic Barrier accepts: routing1 localhost 57961
+1621093291603|DCVM Cyclic Barrier has received 3 out of 3 expected.
+1621093291603|DCVM Cyclic Barrier releases 3 sites.
+1621093291605|DCVM Cyclic Barrier accepts: routing1 localhost 57961
+1621093291605|DCVM Cyclic Barrier accepts: registrator localhost 57960
+1621093291606|DCVM Cyclic Barrier accepts: routing2 localhost 57962
+1621093291607|DCVM Cyclic Barrier has received 1 out of 3 expected.
+1621093291608|DCVM Cyclic Barrier has received 2 out of 3 expected.
+1621093291611|DCVM Cyclic Barrier has received 3 out of 3 expected.
+1621093291611|DCVM Cyclic Barrier releases 3 sites.
+1621093291618|DCVM Cyclic Barrier accepts: routing1 localhost 57961
+1621093291618|DCVM Cyclic Barrier accepts: registrator localhost 57960
+1621093291619|DCVM Cyclic Barrier has received 1 out of 3 expected.
+1621093291619|DCVM Cyclic Barrier accepts: routing2 localhost 57962
+1621093291620|DCVM Cyclic Barrier has received 2 out of 3 expected.
+1621093291620|DCVM Cyclic Barrier has received 3 out of 3 expected.
+1621093291620|DCVM Cyclic Barrier releases 3 sites.
+1621093296631|DCVM Cyclic Barrier accepts: routing1 localhost 57961
+1621093296631|DCVM Cyclic Barrier accepts: routing2 localhost 57962
+1621093296632|DCVM Cyclic Barrier has received 1 out of 3 expected.
+1621093296632|DCVM Cyclic Barrier accepts: registrator localhost 57960
+1621093296633|DCVM Cyclic Barrier has received 2 out of 3 expected.
+1621093296633|DCVM Cyclic Barrier has received 3 out of 3 expected.
+1621093296633|DCVM Cyclic Barrier releases 3 sites.
+1621093296642|DCVM Cyclic Barrier accepts: routing1 localhost 57961
+1621093296643|DCVM Cyclic Barrier has received 1 out of 3 expected.
+1621093296644|DCVM Cyclic Barrier accepts: registrator localhost 57960
+1621093296645|DCVM Cyclic Barrier accepts: routing2 localhost 57962
+1621093296645|DCVM Cyclic Barrier has received 2 out of 3 expected.
+1621093296646|DCVM Cyclic Barrier has received 3 out of 3 expected.
+1621093296646|DCVM Cyclic Barrier releases 3 sites.
+1621093296659|DCVM Cyclic Barrier accepts: registrator localhost 57960
+1621093296661|DCVM Cyclic Barrier has received 1 out of 3 expected.
+1621093296664|DCVM Cyclic Barrier accepts: routing2 localhost 57962
+1621093296664|DCVM Cyclic Barrier has received 2 out of 3 expected.
+1621093296671|DCVM Cyclic Barrier accepts: routing1 localhost 57961
+1621093296672|DCVM Cyclic Barrier has received 3 out of 3 expected.
+1621093296672|DCVM Cyclic Barrier releases 3 sites.
+1621093296675|DCVMCyclicBarrier.run() finished.
+1621093296676|DCVMCyclicBarrier.run() finished.
+1621093296677|DCVMCyclicBarrier.run() finished.
+1621093296677|DCVM Cyclic Barrier shuts down!

@@ -1,5 +1,6 @@
 package cps.cvm;
 
+import cps.connecteurs.RegistrationConnector;
 import cps.info.position.Position;
 import cps.node.accesspoint.AccessPoint;
 import cps.node.classicnode.ClassicalNode;
@@ -80,11 +81,11 @@ public class CVM extends AbstractCVM {
 		
 		
 		//for(int i=0; i<2;i++) {
-			acc[0] = AbstractComponent.createComponent(AccessPoint.class.getCanonicalName(), new Object[] {new Position(1, 6)});
+			//acc[0] = AbstractComponent.createComponent(AccessPoint.class.getCanonicalName(), new Object[] {new Position(1, 6)});
 			//this.doPortConnection(ter[0],AccessPoint.RegOP_URI , Registrator.RegIP_URI, RegistrationConnector.class.getCanonicalName());
 			//this.doPortConnection(ter[0],AccessPoint.NRegOP_URI , NRegistrator.NRegIP_URI, NRegistrationConnector.class.getCanonicalName());
 			
-			acc[1] = AbstractComponent.createComponent(AccessPoint.class.getCanonicalName(), new Object[] {new Position(6, 4)});
+			//acc[1] = AbstractComponent.createComponent(AccessPoint.class.getCanonicalName(), new Object[] {new Position(6, 4)});
 			//this.doPortConnection(ter[0],AccessPoint.RegOP_URI , Registrator.RegIP_URI, RegistrationConnector.class.getCanonicalName());
 			//this.doPortConnection(ter[0],AccessPoint.NRegOP_URI , NRegistrator.NRegIP_URI, NRegistrationConnector.class.getCanonicalName());
 		//}

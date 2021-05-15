@@ -4,11 +4,13 @@ import java.util.Set;
 
 import cps.connecteurs.RegistrationConnector;
 import cps.cvm.CVM;
+import cps.cvm.DistributedCVM;
 import cps.info.ConnectionInfo;
 import cps.info.address.NodeAddressI;
 import cps.info.position.PositionI;
 import cps.registration.RegistrationCI;
 import cps.registration.RegistrationOutboundPort;
+import cps.registration.Registrator;
 import fr.sorbonne_u.components.AbstractPlugin;
 import fr.sorbonne_u.components.ComponentI;
 
@@ -18,16 +20,18 @@ public class RoutingNodePlugin extends	AbstractPlugin{
 	 * 
 	 */
 	private static final long serialVersionUID = 3245702901632755774L;
-	
+	public String RegOP_URI;
 	protected RegistrationOutboundPort regop;
-	
+	public RoutingNodePlugin(String RegOP_URI) {
+		this.RegOP_URI=RegOP_URI;
+	}
 
 	@Override
 	public void installOn(ComponentI owner) throws Exception {
 		super.installOn(owner);
 		
 		this.addRequiredInterface(RegistrationCI.class);
-		this.regop = new RegistrationOutboundPort(this.getOwner());
+		this.regop = new RegistrationOutboundPort(RegOP_URI,this.getOwner());
 		this.regop.publishPort();
 		
 	}
@@ -38,7 +42,7 @@ public class RoutingNodePlugin extends	AbstractPlugin{
 		// connect the outbound port.
 		this.getOwner().doPortConnection(
 				this.regop.getPortURI(),
-				CVM.RegIP_URI,
+				DistributedCVM.RegIP_URI,
 				RegistrationConnector.class.getCanonicalName());
 
 		super.initialise();
@@ -62,7 +66,7 @@ public class RoutingNodePlugin extends	AbstractPlugin{
 	
 	public Set<ConnectionInfo> registerRoutingNode(NodeAddressI address, String commIpUri, PositionI initialPosition,
 			double initialRange, String routingIpUri) throws Exception {
-
+		System.out.println("registering plugin");
 		return this.regop.registerRoutingNode(address, commIpUri, initialPosition, initialRange, routingIpUri);
 
 	}

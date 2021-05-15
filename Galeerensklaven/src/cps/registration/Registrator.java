@@ -9,24 +9,45 @@ import cps.info.position.PositionI;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
+import fr.sorbonne_u.components.exceptions.ComponentStartException;
 
 @OfferedInterfaces(offered = { RegistrationCI.class })
 public class Registrator extends AbstractComponent {
-	public static final String RegIP_URI = "rip-uri";
+	public static final String RegIP_URI = "my-bbb-rip-uri";
+	public static final String RegIP_URI2 = "my-bbb-rip-uri";
 	private Set<ConnectionInfo> cInfo = new HashSet<>();
-	protected RegistrationInboundPort rip;
-
+	public RegistrationInboundPort rip;
+	
+	// pooling 
+	protected static final String	IN_POOL_URI = "inregpooluri" ;
+	protected static final int		ni = 3 ;
 	
 	
-	protected Registrator() throws Exception {
-		super(1, 0);
-		this.rip = new RegistrationInboundPort(RegIP_URI, this);
-		this.rip.publishPort();
-		
+	protected Registrator() {
+		super(5, 0);
+		try {
+			this.rip = new RegistrationInboundPort(RegIP_URI2, this);
+			this.rip.publishPort();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			this.createNewExecutorService(IN_POOL_URI, ni, false) ;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println("kjhgkjhb");
 	}
 
 	
 	
+
+
+	@Override
+	public synchronized void execute() throws Exception {
+		super.execute();
+	}
 	@Override
 	public synchronized void shutdown() throws ComponentShutdownException {
 		
@@ -59,7 +80,7 @@ public class Registrator extends AbstractComponent {
 
 	public Set<ConnectionInfo> registerRouting(NodeAddressI address, String commIpUri, PositionI initialPosition,
 			double initialRange, String routingIpUri) {
-		
+		System.out.println("contacted routing");
 		Set<ConnectionInfo> res = new HashSet<>();
 		for (ConnectionInfo ci : cInfo) {
 			if (ci.getPosition().distance(initialPosition) <= initialRange)

@@ -30,6 +30,8 @@ public class RegistrationOutboundPort extends AbstractOutboundPort implements Re
 	@Override
 	public Set<ConnectionInfo> registerRoutingNode(NodeAddressI address, String commIpUri, PositionI initialPosition,
 			double initialRange, String routingIpUri) throws Exception {
+		System.out.println("registering outbound");
+
 		return ((RegistrationCI)this.getConnector()).registerRoutingNode(address, commIpUri, initialPosition, initialRange, routingIpUri);
 	}
 

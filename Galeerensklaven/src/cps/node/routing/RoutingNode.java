@@ -25,6 +25,7 @@ import cps.message.MessageI;
 import cps.node.NodeI;
 import cps.node.RoutingI;
 import cps.registration.RegistrationCI;
+import cps.registration.RegistrationOutboundPort;
 import cps.routing.RouteInfo;
 import cps.routing.RoutingCI;
 import cps.routing.RoutingInboundPort;
@@ -35,7 +36,7 @@ import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 
 @RequiredInterfaces(required = { RoutingCI.class, CommunicationCI.class, RegistrationCI.class })
-@OfferedInterfaces(offered = { RoutingCI.class, CommunicationCI.class, RegistrationCI.class })
+@OfferedInterfaces(offered = { RoutingCI.class, CommunicationCI.class })
 public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 	//a currentHashMap is thread safe without synchronizing the whole map. better than locking the entire map, to be verified with the prof
 	// mutex for 2 modifications at the same time
@@ -45,10 +46,10 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 	private Map<AddressI, RouteInfo> routingTable = new ConcurrentHashMap<AddressI, RouteInfo>();
 	private AddressI bestAProute = null;
 	private int jumpsToAP = -1;
-
-	public final String RotIP_URI = RoutingInboundPort.genURI();
+	Random rand = new Random();
+	public final String RotIP_URI = RoutingInboundPort.generatePortURI();
 	public final String ComIP_URI = CommunicationInboundPort.generatePortURI();
-	//public static final String RegOP_URI = RegistrationOutboundPort.generatePortURI();
+	public  final String RegOP_URI = "Rnode"+rand.nextInt(10); //dPort.generatePortURI();
 	private RoutingInboundPort rotip;
 	private CommunicationInboundPort comip;
 	//private RegistrationOutboundPort regop;
@@ -64,7 +65,7 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 		return s;
 	}
 
-	Random rand = new Random();
+	
 	
 	private double range =1.6;
 	private final NodeAddressI address= new NodeAddress(RoutingNode.genAddresse()) ;
@@ -95,11 +96,11 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 	
 	//plugin
 	protected final static String	RPLUGIN = "tplugin";
-	RoutingNodePlugin plugin = new RoutingNodePlugin();
+	RoutingNodePlugin plugin = new RoutingNodePlugin(RegOP_URI);
 	
 	protected RoutingNode(Position p) {
 		super(2, 0);
-		
+		System.out.println(this.RegOP_URI);
 		this.pos=p;
 		try {
 			
@@ -149,6 +150,7 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
 
 	
@@ -161,8 +163,7 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 	@Override
 	public synchronized void execute() throws Exception {
 		super.execute();
-		
-		
+		this.logMessage("jefjelfejl");
 		this.register();
 		
 		
@@ -176,7 +177,7 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 					@Override
 					public void run() {
 						try {
-							
+							register();
 							Thread.sleep(100L) ;
 							catchUp();
 						
@@ -195,7 +196,7 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 					public void run() {
 						
 						try {
-							
+							register();
 							while(stopit) {
 							Thread.sleep(100L) ;
 							checkDisconnection();
@@ -217,7 +218,7 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 					public void run() {
 						try {
 							
-							
+							register();
 							while(stopit) {
 							Thread.sleep(1000L) ;
 							//checkDisconnection();
@@ -606,8 +607,12 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 	
 	
 	public void register() throws Exception {
-
-		this.neighbors = this.registerRoutingNode(this.address, this.ComIP_URI, this.pos, this.range, this.RotIP_URI);
+		System.out.println("hey1");
+		Set<ConnectionInfo> bbb =this.registerRoutingNode(this.address, this.ComIP_URI, this.pos, this.range, this.RotIP_URI);
+		System.out.println("hey2");
+		System.out.println(bbb);
+		this.neighbors = bbb;
+		
 		for (ConnectionInfo c : this.neighbors) {
 			String uriTempC = CommunicationOutboundPort.generatePortURI();
 			CommunicationOutboundPort pc = new CommunicationOutboundPort(uriTempC, this);

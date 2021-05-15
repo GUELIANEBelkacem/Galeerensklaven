@@ -30,7 +30,7 @@ import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 
 
 @RequiredInterfaces(required = {  CommunicationCI.class, RegistrationCI.class })
-@OfferedInterfaces(offered = {  CommunicationCI.class, RegistrationCI.class })
+@OfferedInterfaces(offered = {  CommunicationCI.class})
 
 
 public class TerminalNode extends AbstractComponent implements NodeI{

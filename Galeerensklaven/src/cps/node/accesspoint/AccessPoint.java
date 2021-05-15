@@ -40,8 +40,8 @@ import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 
 
 
-@RequiredInterfaces(required = { RoutingCI.class, CommunicationCI.class, RegistrationCI.class, NRegistrationCI.class })
-@OfferedInterfaces(offered = { RoutingCI.class, CommunicationCI.class, RegistrationCI.class, NRegistrationCI.class })
+@RequiredInterfaces(required = { RoutingCI.class, CommunicationCI.class,  NRegistrationCI.class })
+@OfferedInterfaces(offered = { RoutingCI.class, CommunicationCI.class})
 public class AccessPoint extends AbstractComponent implements NodeI, RoutingI{
 	private Map<AddressI, CommunicationCI> neighborsCOP = new ConcurrentHashMap<AddressI, CommunicationCI>();
 	private Set<ConnectionInfo> neighbors;

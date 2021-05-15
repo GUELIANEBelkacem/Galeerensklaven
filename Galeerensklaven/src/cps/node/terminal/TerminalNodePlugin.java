@@ -4,11 +4,13 @@ import java.util.Set;
 
 import cps.connecteurs.RegistrationConnector;
 import cps.cvm.CVM;
+import cps.cvm.DistributedCVM;
 import cps.info.ConnectionInfo;
 import cps.info.address.NodeAddressI;
 import cps.info.position.PositionI;
 import cps.registration.RegistrationCI;
 import cps.registration.RegistrationOutboundPort;
+import cps.registration.Registrator;
 import fr.sorbonne_u.components.AbstractPlugin;
 import fr.sorbonne_u.components.ComponentI;
 
@@ -40,7 +42,7 @@ public class TerminalNodePlugin extends	AbstractPlugin{
 		// connect the outbound port.
 		this.getOwner().doPortConnection(
 				this.regop.getPortURI(),
-				CVM.RegIP_URI,
+				DistributedCVM.RegIP_URI,
 				RegistrationConnector.class.getCanonicalName());
 
 		super.initialise();

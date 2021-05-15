@@ -20,6 +20,13 @@ public class RegistrationConnector extends AbstractConnector implements Registra
 	@Override
 	public Set<ConnectionInfo> registerRoutingNode(NodeAddressI address, String commIpUri, PositionI initialPosition,
 			double initialRange, String routingIpUri) throws Exception {
+		System.out.println("registering connector");
+		System.out.println(((RegistrationCI)this.offering).toString());
+		System.out.println(this.requiringPortURI);
+		System.out.println(this.offeringPortURI);
+		
+		
+		System.out.println("kjnlsjdnlckjndclqksnc");
 		return ((RegistrationCI)this.offering).registerRoutingNode(address, commIpUri, initialPosition, initialRange, routingIpUri);
 	}
 
