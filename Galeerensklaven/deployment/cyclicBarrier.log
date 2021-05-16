@@ -1,130 +1,130 @@
-1621170545254|DCVM Cyclic Barrier up and running!
-1621170546886|DCVM Cyclic Barrier accepts: nregistrator localhost 53935
-1621170546888|DCVM Cyclic Barrier has received 1 out of 7 expected.
-1621170546929|DCVM Cyclic Barrier accepts: registrator localhost 53936
-1621170546930|DCVM Cyclic Barrier has received 2 out of 7 expected.
-1621170547552|DCVM Cyclic Barrier accepts: routing1 localhost 53937
-1621170547553|DCVM Cyclic Barrier has received 3 out of 7 expected.
-1621170548196|DCVM Cyclic Barrier accepts: routing2 localhost 53938
-1621170548197|DCVM Cyclic Barrier has received 4 out of 7 expected.
-1621170548492|DCVM Cyclic Barrier accepts: terminal localhost 53939
-1621170548492|DCVM Cyclic Barrier has received 5 out of 7 expected.
-1621170549188|DCVM Cyclic Barrier accepts: accesspoint localhost 53940
-1621170549189|DCVM Cyclic Barrier has received 6 out of 7 expected.
-1621170549204|All connected!
-1621170549211|DCVM Cyclic Barrier accepts: classical localhost 53941
-1621170549211|DCVM Cyclic Barrier has received 7 out of 7 expected.
-1621170549211|DCVM Cyclic Barrier releases 7 sites.
-1621170549218|DCVM Cyclic Barrier accepts: registrator localhost 53936
-1621170549219|DCVM Cyclic Barrier has received 1 out of 7 expected.
-1621170549335|DCVM Cyclic Barrier accepts: terminal localhost 53939
-1621170549336|DCVM Cyclic Barrier has received 2 out of 7 expected.
-1621170549358|DCVM Cyclic Barrier accepts: nregistrator localhost 53935
-1621170549359|DCVM Cyclic Barrier has received 3 out of 7 expected.
-1621170549379|DCVM Cyclic Barrier accepts: routing2 localhost 53938
-1621170549380|DCVM Cyclic Barrier has received 4 out of 7 expected.
-1621170549380|DCVM Cyclic Barrier accepts: classical localhost 53941
-1621170549382|DCVM Cyclic Barrier accepts: routing1 localhost 53937
-1621170549383|DCVM Cyclic Barrier has received 5 out of 7 expected.
-1621170549384|DCVM Cyclic Barrier has received 6 out of 7 expected.
-1621170549388|DCVM Cyclic Barrier accepts: accesspoint localhost 53940
-1621170549389|DCVM Cyclic Barrier has received 7 out of 7 expected.
-1621170549389|DCVM Cyclic Barrier releases 7 sites.
-1621170549905|DCVM Cyclic Barrier accepts: registrator localhost 53936
-1621170549906|DCVM Cyclic Barrier has received 1 out of 7 expected.
-1621170550120|DCVM Cyclic Barrier accepts: nregistrator localhost 53935
-1621170550120|DCVM Cyclic Barrier has received 2 out of 7 expected.
-1621170550933|DCVM Cyclic Barrier accepts: terminal localhost 53939
-1621170550934|DCVM Cyclic Barrier has received 3 out of 7 expected.
-1621170551200|DCVM Cyclic Barrier accepts: routing1 localhost 53937
-1621170551203|DCVM Cyclic Barrier has received 4 out of 7 expected.
-1621170551292|DCVM Cyclic Barrier accepts: routing2 localhost 53938
-1621170551293|DCVM Cyclic Barrier has received 5 out of 7 expected.
-1621170551340|DCVM Cyclic Barrier accepts: classical localhost 53941
-1621170551341|DCVM Cyclic Barrier has received 6 out of 7 expected.
-1621170551389|DCVM Cyclic Barrier accepts: accesspoint localhost 53940
-1621170551390|DCVM Cyclic Barrier has received 7 out of 7 expected.
-1621170551390|DCVM Cyclic Barrier releases 7 sites.
-1621170551397|DCVM Cyclic Barrier accepts: accesspoint localhost 53940
-1621170551400|DCVM Cyclic Barrier has received 1 out of 7 expected.
-1621170551401|DCVM Cyclic Barrier accepts: registrator localhost 53936
-1621170551404|DCVM Cyclic Barrier accepts: nregistrator localhost 53935
-1621170551406|DCVM Cyclic Barrier accepts: terminal localhost 53939
-1621170551407|DCVM Cyclic Barrier accepts: routing1 localhost 53937
-1621170551408|DCVM Cyclic Barrier has received 2 out of 7 expected.
-1621170551408|DCVM Cyclic Barrier accepts: routing2 localhost 53938
-1621170551408|DCVM Cyclic Barrier accepts: classical localhost 53941
-1621170551412|DCVM Cyclic Barrier has received 3 out of 7 expected.
-1621170551413|DCVM Cyclic Barrier has received 4 out of 7 expected.
-1621170551415|DCVM Cyclic Barrier has received 5 out of 7 expected.
-1621170551416|DCVM Cyclic Barrier has received 6 out of 7 expected.
-1621170551420|DCVM Cyclic Barrier has received 7 out of 7 expected.
-1621170551420|DCVM Cyclic Barrier releases 7 sites.
-1621170551425|DCVM Cyclic Barrier accepts: accesspoint localhost 53940
-1621170551426|DCVM Cyclic Barrier accepts: routing2 localhost 53938
-1621170551426|DCVM Cyclic Barrier accepts: registrator localhost 53936
-1621170551426|DCVM Cyclic Barrier has received 1 out of 7 expected.
-1621170551426|DCVM Cyclic Barrier accepts: routing1 localhost 53937
-1621170551426|DCVM Cyclic Barrier accepts: terminal localhost 53939
-1621170551427|DCVM Cyclic Barrier accepts: classical localhost 53941
-1621170551427|DCVM Cyclic Barrier accepts: nregistrator localhost 53935
-1621170551428|DCVM Cyclic Barrier has received 2 out of 7 expected.
-1621170551429|DCVM Cyclic Barrier has received 3 out of 7 expected.
-1621170551430|DCVM Cyclic Barrier has received 4 out of 7 expected.
-1621170551430|DCVM Cyclic Barrier has received 5 out of 7 expected.
-1621170551431|DCVM Cyclic Barrier has received 6 out of 7 expected.
-1621170551432|DCVM Cyclic Barrier has received 7 out of 7 expected.
-1621170551432|DCVM Cyclic Barrier releases 7 sites.
-1621170571437|DCVM Cyclic Barrier accepts: terminal localhost 53939
-1621170571438|DCVM Cyclic Barrier has received 1 out of 7 expected.
-1621170571439|DCVM Cyclic Barrier accepts: classical localhost 53941
-1621170571439|DCVM Cyclic Barrier has received 2 out of 7 expected.
-1621170571440|DCVM Cyclic Barrier accepts: accesspoint localhost 53940
-1621170571441|DCVM Cyclic Barrier has received 3 out of 7 expected.
-1621170571443|DCVM Cyclic Barrier accepts: nregistrator localhost 53935
-1621170571443|DCVM Cyclic Barrier accepts: registrator localhost 53936
-1621170571443|DCVM Cyclic Barrier has received 4 out of 7 expected.
-1621170571444|DCVM Cyclic Barrier has received 5 out of 7 expected.
-1621170571446|DCVM Cyclic Barrier accepts: routing2 localhost 53938
-1621170571447|DCVM Cyclic Barrier has received 6 out of 7 expected.
-1621170571450|DCVM Cyclic Barrier accepts: routing1 localhost 53937
-1621170571451|DCVM Cyclic Barrier has received 7 out of 7 expected.
-1621170571451|DCVM Cyclic Barrier releases 7 sites.
-1621170571463|DCVM Cyclic Barrier accepts: registrator localhost 53936
-1621170571464|DCVM Cyclic Barrier has received 1 out of 7 expected.
-1621170571464|DCVM Cyclic Barrier accepts: classical localhost 53941
-1621170571466|DCVM Cyclic Barrier has received 2 out of 7 expected.
-1621170571470|DCVM Cyclic Barrier accepts: nregistrator localhost 53935
-1621170571471|DCVM Cyclic Barrier has received 3 out of 7 expected.
-1621170571475|DCVM Cyclic Barrier accepts: accesspoint localhost 53940
-1621170571477|DCVM Cyclic Barrier has received 4 out of 7 expected.
-1621170571477|DCVM Cyclic Barrier accepts: terminal localhost 53939
-1621170571477|DCVM Cyclic Barrier has received 5 out of 7 expected.
-1621170571485|DCVM Cyclic Barrier accepts: routing2 localhost 53938
-1621170571486|DCVM Cyclic Barrier has received 6 out of 7 expected.
-1621170571487|DCVM Cyclic Barrier accepts: routing1 localhost 53937
-1621170571488|DCVM Cyclic Barrier has received 7 out of 7 expected.
-1621170571488|DCVM Cyclic Barrier releases 7 sites.
-1621170571503|DCVM Cyclic Barrier accepts: registrator localhost 53936
-1621170571504|DCVM Cyclic Barrier has received 1 out of 7 expected.
-1621170571514|DCVM Cyclic Barrier accepts: nregistrator localhost 53935
-1621170571514|DCVM Cyclic Barrier has received 2 out of 7 expected.
-1621170571517|DCVM Cyclic Barrier accepts: classical localhost 53941
-1621170571518|DCVM Cyclic Barrier has received 3 out of 7 expected.
-1621170571522|DCVM Cyclic Barrier accepts: terminal localhost 53939
-1621170571523|DCVM Cyclic Barrier has received 4 out of 7 expected.
-1621170571526|DCVM Cyclic Barrier accepts: accesspoint localhost 53940
-1621170571526|DCVM Cyclic Barrier has received 5 out of 7 expected.
-1621170571527|DCVM Cyclic Barrier accepts: routing2 localhost 53938
-1621170571528|DCVM Cyclic Barrier has received 6 out of 7 expected.
-1621170571530|DCVM Cyclic Barrier accepts: routing1 localhost 53937
-1621170571531|DCVM Cyclic Barrier has received 7 out of 7 expected.
-1621170571531|DCVM Cyclic Barrier releases 7 sites.
-1621170571535|DCVMCyclicBarrier.run() finished.
-1621170571535|DCVMCyclicBarrier.run() finished.
-1621170571535|DCVMCyclicBarrier.run() finished.
-1621170571535|DCVMCyclicBarrier.run() finished.
-1621170571536|DCVMCyclicBarrier.run() finished.
-1621170571536|DCVMCyclicBarrier.run() finished.
-1621170571536|DCVMCyclicBarrier.run() finished.
-1621170571545|DCVM Cyclic Barrier shuts down!
+1621177050802|DCVM Cyclic Barrier up and running!
+1621177052529|DCVM Cyclic Barrier accepts: nregistrator localhost 55123
+1621177052532|DCVM Cyclic Barrier has received 1 out of 7 expected.
+1621177052582|DCVM Cyclic Barrier accepts: registrator localhost 55124
+1621177052583|DCVM Cyclic Barrier has received 2 out of 7 expected.
+1621177053340|DCVM Cyclic Barrier accepts: routing1 localhost 55125
+1621177053341|DCVM Cyclic Barrier has received 3 out of 7 expected.
+1621177053924|DCVM Cyclic Barrier accepts: routing2 localhost 55126
+1621177053925|DCVM Cyclic Barrier has received 4 out of 7 expected.
+1621177053959|DCVM Cyclic Barrier accepts: terminal localhost 55127
+1621177053960|DCVM Cyclic Barrier has received 5 out of 7 expected.
+1621177054782|DCVM Cyclic Barrier accepts: accesspoint localhost 55128
+1621177054783|DCVM Cyclic Barrier has received 6 out of 7 expected.
+1621177055355|All connected!
+1621177055362|DCVM Cyclic Barrier accepts: classical localhost 55129
+1621177055362|DCVM Cyclic Barrier has received 7 out of 7 expected.
+1621177055363|DCVM Cyclic Barrier releases 7 sites.
+1621177055369|DCVM Cyclic Barrier accepts: registrator localhost 55124
+1621177055370|DCVM Cyclic Barrier has received 1 out of 7 expected.
+1621177055512|DCVM Cyclic Barrier accepts: routing1 localhost 55125
+1621177055513|DCVM Cyclic Barrier has received 2 out of 7 expected.
+1621177055515|DCVM Cyclic Barrier accepts: terminal localhost 55127
+1621177055515|DCVM Cyclic Barrier has received 3 out of 7 expected.
+1621177055516|DCVM Cyclic Barrier accepts: accesspoint localhost 55128
+1621177055516|DCVM Cyclic Barrier accepts: routing2 localhost 55126
+1621177055519|DCVM Cyclic Barrier has received 4 out of 7 expected.
+1621177055519|DCVM Cyclic Barrier accepts: classical localhost 55129
+1621177055520|DCVM Cyclic Barrier has received 5 out of 7 expected.
+1621177055520|DCVM Cyclic Barrier has received 6 out of 7 expected.
+1621177055529|DCVM Cyclic Barrier accepts: nregistrator localhost 55123
+1621177055529|DCVM Cyclic Barrier has received 7 out of 7 expected.
+1621177055529|DCVM Cyclic Barrier releases 7 sites.
+1621177056042|DCVM Cyclic Barrier accepts: registrator localhost 55124
+1621177056043|DCVM Cyclic Barrier has received 1 out of 7 expected.
+1621177056372|DCVM Cyclic Barrier accepts: nregistrator localhost 55123
+1621177056373|DCVM Cyclic Barrier has received 2 out of 7 expected.
+1621177057160|DCVM Cyclic Barrier accepts: terminal localhost 55127
+1621177057162|DCVM Cyclic Barrier has received 3 out of 7 expected.
+1621177057464|DCVM Cyclic Barrier accepts: accesspoint localhost 55128
+1621177057465|DCVM Cyclic Barrier has received 4 out of 7 expected.
+1621177057466|DCVM Cyclic Barrier accepts: routing2 localhost 55126
+1621177057468|DCVM Cyclic Barrier has received 5 out of 7 expected.
+1621177057551|DCVM Cyclic Barrier accepts: routing1 localhost 55125
+1621177057552|DCVM Cyclic Barrier has received 6 out of 7 expected.
+1621177057554|DCVM Cyclic Barrier accepts: classical localhost 55129
+1621177057556|DCVM Cyclic Barrier has received 7 out of 7 expected.
+1621177057556|DCVM Cyclic Barrier releases 7 sites.
+1621177057562|DCVM Cyclic Barrier accepts: registrator localhost 55124
+1621177057562|DCVM Cyclic Barrier has received 1 out of 7 expected.
+1621177057565|DCVM Cyclic Barrier accepts: classical localhost 55129
+1621177057566|DCVM Cyclic Barrier has received 2 out of 7 expected.
+1621177057566|DCVM Cyclic Barrier accepts: nregistrator localhost 55123
+1621177057566|DCVM Cyclic Barrier accepts: terminal localhost 55127
+1621177057567|DCVM Cyclic Barrier has received 3 out of 7 expected.
+1621177057567|DCVM Cyclic Barrier accepts: routing2 localhost 55126
+1621177057567|DCVM Cyclic Barrier accepts: routing1 localhost 55125
+1621177057568|DCVM Cyclic Barrier accepts: accesspoint localhost 55128
+1621177057568|DCVM Cyclic Barrier has received 4 out of 7 expected.
+1621177057570|DCVM Cyclic Barrier has received 5 out of 7 expected.
+1621177057575|DCVM Cyclic Barrier has received 6 out of 7 expected.
+1621177057575|DCVM Cyclic Barrier has received 7 out of 7 expected.
+1621177057575|DCVM Cyclic Barrier releases 7 sites.
+1621177057583|DCVM Cyclic Barrier accepts: registrator localhost 55124
+1621177057583|DCVM Cyclic Barrier accepts: routing1 localhost 55125
+1621177057583|DCVM Cyclic Barrier accepts: classical localhost 55129
+1621177057584|DCVM Cyclic Barrier has received 1 out of 7 expected.
+1621177057585|DCVM Cyclic Barrier has received 2 out of 7 expected.
+1621177057585|DCVM Cyclic Barrier has received 3 out of 7 expected.
+1621177057585|DCVM Cyclic Barrier accepts: nregistrator localhost 55123
+1621177057585|DCVM Cyclic Barrier accepts: terminal localhost 55127
+1621177057585|DCVM Cyclic Barrier accepts: accesspoint localhost 55128
+1621177057585|DCVM Cyclic Barrier accepts: routing2 localhost 55126
+1621177057588|DCVM Cyclic Barrier has received 4 out of 7 expected.
+1621177057589|DCVM Cyclic Barrier has received 5 out of 7 expected.
+1621177057589|DCVM Cyclic Barrier has received 6 out of 7 expected.
+1621177057593|DCVM Cyclic Barrier has received 7 out of 7 expected.
+1621177057593|DCVM Cyclic Barrier releases 7 sites.
+1621177077604|DCVM Cyclic Barrier accepts: nregistrator localhost 55123
+1621177077605|DCVM Cyclic Barrier has received 1 out of 7 expected.
+1621177077606|DCVM Cyclic Barrier accepts: terminal localhost 55127
+1621177077606|DCVM Cyclic Barrier accepts: registrator localhost 55124
+1621177077606|DCVM Cyclic Barrier accepts: classical localhost 55129
+1621177077606|DCVM Cyclic Barrier has received 2 out of 7 expected.
+1621177077607|DCVM Cyclic Barrier accepts: accesspoint localhost 55128
+1621177077608|DCVM Cyclic Barrier has received 3 out of 7 expected.
+1621177077608|DCVM Cyclic Barrier has received 4 out of 7 expected.
+1621177077609|DCVM Cyclic Barrier has received 5 out of 7 expected.
+1621177077613|DCVM Cyclic Barrier accepts: routing1 localhost 55125
+1621177077613|DCVM Cyclic Barrier accepts: routing2 localhost 55126
+1621177077613|DCVM Cyclic Barrier has received 6 out of 7 expected.
+1621177077614|DCVM Cyclic Barrier has received 7 out of 7 expected.
+1621177077614|DCVM Cyclic Barrier releases 7 sites.
+1621177077626|DCVM Cyclic Barrier accepts: classical localhost 55129
+1621177077628|DCVM Cyclic Barrier has received 1 out of 7 expected.
+1621177077632|DCVM Cyclic Barrier accepts: terminal localhost 55127
+1621177077633|DCVM Cyclic Barrier has received 2 out of 7 expected.
+1621177077639|DCVM Cyclic Barrier accepts: nregistrator localhost 55123
+1621177077640|DCVM Cyclic Barrier has received 3 out of 7 expected.
+1621177077642|DCVM Cyclic Barrier accepts: registrator localhost 55124
+1621177077643|DCVM Cyclic Barrier has received 4 out of 7 expected.
+1621177077650|DCVM Cyclic Barrier accepts: accesspoint localhost 55128
+1621177077651|DCVM Cyclic Barrier has received 5 out of 7 expected.
+1621177077653|DCVM Cyclic Barrier accepts: routing1 localhost 55125
+1621177077654|DCVM Cyclic Barrier has received 6 out of 7 expected.
+1621177077663|DCVM Cyclic Barrier accepts: routing2 localhost 55126
+1621177077664|DCVM Cyclic Barrier has received 7 out of 7 expected.
+1621177077664|DCVM Cyclic Barrier releases 7 sites.
+1621177077696|DCVM Cyclic Barrier accepts: classical localhost 55129
+1621177077698|DCVM Cyclic Barrier accepts: terminal localhost 55127
+1621177077699|DCVM Cyclic Barrier has received 1 out of 7 expected.
+1621177077699|DCVM Cyclic Barrier accepts: routing2 localhost 55126
+1621177077700|DCVM Cyclic Barrier accepts: nregistrator localhost 55123
+1621177077701|DCVM Cyclic Barrier accepts: registrator localhost 55124
+1621177077702|DCVM Cyclic Barrier has received 2 out of 7 expected.
+1621177077702|DCVM Cyclic Barrier accepts: accesspoint localhost 55128
+1621177077702|DCVM Cyclic Barrier accepts: routing1 localhost 55125
+1621177077703|DCVM Cyclic Barrier has received 3 out of 7 expected.
+1621177077704|DCVM Cyclic Barrier has received 4 out of 7 expected.
+1621177077711|DCVM Cyclic Barrier has received 5 out of 7 expected.
+1621177077714|DCVM Cyclic Barrier has received 6 out of 7 expected.
+1621177077716|DCVM Cyclic Barrier has received 7 out of 7 expected.
+1621177077716|DCVM Cyclic Barrier releases 7 sites.
+1621177077725|DCVMCyclicBarrier.run() finished.
+1621177077728|DCVMCyclicBarrier.run() finished.
+1621177077728|DCVMCyclicBarrier.run() finished.
+1621177077728|DCVMCyclicBarrier.run() finished.
+1621177077728|DCVMCyclicBarrier.run() finished.
+1621177077730|DCVMCyclicBarrier.run() finished.
+1621177077731|DCVMCyclicBarrier.run() finished.
+1621177077731|DCVM Cyclic Barrier shuts down!

@@ -270,19 +270,21 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 		System.out.println(address.getAddress() + "--------------------------------------------------------");
 		System.out.println("the closest access point: "+ this.apGateway.getAddress());
 		System.out.println("\n"+ this.pos);
+		System.out.println("neighbours:");
 		for (AddressI e : this.neighborsCOP.keySet()) {
 			System.out.println(this.address.getAddress() + " <-------> " + e.getAddress());
 		}
+		System.out.println("disconnected nodes:");
 		for (AddressI e : this.missingNodes) {
 			System.out.println(this.address.getAddress() + " <xxxxxxx> " + e.getAddress());
 		}
 		
-		
+		System.out.println("routing table:");
 		for (Entry<AddressI, RouteInfo> a : this.rentrySet()) {
-			System.out.println(this.address.getAddress() + ": " + a.getKey().getAddress() + " <==="
-					+ a.getValue().getNumberOfHops() + "===> " + a.getValue().getDestination().getAddress());
+			System.out.println(this.address.getAddress() + ": " + a.getKey().getAddress() + " <=== hops: "
+					+ a.getValue().getNumberOfHops() + "===> gateWay: " + a.getValue().getDestination().getAddress());
 		}
-		System.out.println(address.getAddress() + "--------------------------------------------------------");
+		System.out.println(address.getAddress() + "--------------------------------------------------------\n");
 		
 		for (CommunicationCI c : this.neighborsCOP.values()) {
 			this.doPortDisconnection(((CommunicationOutboundPort) c).getPortURI());

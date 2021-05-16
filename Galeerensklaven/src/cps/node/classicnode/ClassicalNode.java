@@ -14,7 +14,6 @@ import cps.info.position.Position;
 import cps.message.MessageI;
 import cps.node.NodeI;
 import cps.node.classicnode.registration.NConnectionInfo;
-import cps.node.classicnode.registration.NRegistrationCI;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
@@ -31,7 +30,7 @@ public class ClassicalNode extends AbstractComponent implements NodeI{
 	
 	public static int count = 0;
 	public int id;
-	public int idd;
+	public int subNet;
 	
 	Random rand = new Random();
 	boolean stopit = true;
@@ -58,7 +57,7 @@ public class ClassicalNode extends AbstractComponent implements NodeI{
 	protected ClassicalNode(int id, Position p) {
 			super(5, 0);
 			this.id=id;
-			this.idd= id%2;
+			this.subNet= id%2;
 			this.address= new NetworkAddress("CNode "+id) ;
 			this.pos=p;
 			try {
@@ -115,33 +114,7 @@ public class ClassicalNode extends AbstractComponent implements NodeI{
 			
 			
 			this.register();
-			
-			
-
 		
-			/*
-			this.runTaskOnComponent(
-					POOL_URI,
-					new AbstractComponent.AbstractTask() {
-						
-						@Override
-						public void run() {
-							try {
-								
-								
-								while(stopit) {
-								Thread.sleep(1000L) ;
-								coucou();
-								}
-							
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-							}});
-			
-			*/
-		
-			
 		}
 		
 		
@@ -187,7 +160,7 @@ public class ClassicalNode extends AbstractComponent implements NodeI{
 		}
 		public void register() throws Exception {
 			//Set<NConnectionInfo> cnei = this.registerClassicNode(address, ComIP_URI, id);
-			this.registerClassicNode(address, ComIP_URI, idd);
+			this.registerClassicNode(address, ComIP_URI, subNet);
 			/*
 			System.out.println(((NConnectionInfo)cnei.toArray()[0]).getSector() == this.id);
 			((NConnectionInfo)cnei.toArray()[0]).getCommunicationInboundPortURI();

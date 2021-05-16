@@ -36,7 +36,7 @@ public class RoutingInboundPort extends AbstractInboundPort implements RoutingCI
 						((RoutingI) r).updateRouting(neighbour, routes);
 					} catch (Exception e) {
 						
-						System.out.println("update routing failed "+neighbour.getAddress() );
+						//System.out.println("update routing failed "+neighbour.getAddress() );
 					}
 				});
 		
@@ -49,8 +49,7 @@ public class RoutingInboundPort extends AbstractInboundPort implements RoutingCI
 					try {
 						((RoutingI) r).updateAccessPoint(neighbour, numberOfHops);
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						//System.out.println("update routing failed "+neighbour.getAddress() );
 					}
 				});
 		

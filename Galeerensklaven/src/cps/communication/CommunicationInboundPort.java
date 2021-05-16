@@ -96,12 +96,11 @@ public class CommunicationInboundPort extends AbstractInboundPort implements Com
 						try {
 							((NodeI) u).transmitMessage(m);
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							//System.out.println("message to "+m.getAddress().getAddress()+" failed to reach");
 						}
 					});
 		} catch (AssertionError | Exception e) {
-			System.out.println("message to "+m.getAddress().getAddress()+" failed to reach");
+			//System.out.println("message to "+m.getAddress().getAddress()+" failed to reach");
 		}
 		
 	}

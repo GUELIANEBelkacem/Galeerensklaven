@@ -220,6 +220,7 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 		
 		System.out.println(address.getAddress() + "--------------------------------------------------------");
 		System.out.println("\n"+ this.pos);
+		System.out.println("neighbours:");
 		for (AddressI e : this.neighborsCOP.keySet()) {
 			System.out.println(this.address.getAddress() + " <-------> " + e.getAddress());
 		}
