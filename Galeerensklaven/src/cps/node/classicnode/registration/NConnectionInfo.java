@@ -1,8 +1,14 @@
 package cps.node.classicnode.registration;
 
+import java.io.Serializable;
+
 import cps.info.address.NetworkAddressI;
 
-public class NConnectionInfo {
+public class NConnectionInfo implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7488183453515146349L;
 	private NetworkAddressI adr;
 	private String comipuri;
 	private boolean isAPoint;

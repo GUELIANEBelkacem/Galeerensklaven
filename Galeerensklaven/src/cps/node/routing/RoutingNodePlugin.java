@@ -3,8 +3,6 @@ package cps.node.routing;
 import java.util.Set;
 
 import cps.connecteurs.RegistrationConnector;
-import cps.cvm.CVM;
-import cps.cvm.DistributedCVM;
 import cps.info.ConnectionInfo;
 import cps.info.address.NodeAddressI;
 import cps.info.position.PositionI;
@@ -20,11 +18,9 @@ public class RoutingNodePlugin extends	AbstractPlugin{
 	 * 
 	 */
 	private static final long serialVersionUID = 3245702901632755774L;
-	public String RegOP_URI;
+	public  final String RegOP_URI = RegistrationOutboundPort.generatePortURI();
 	protected RegistrationOutboundPort regop;
-	public RoutingNodePlugin(String RegOP_URI) {
-		this.RegOP_URI=RegOP_URI;
-	}
+	
 
 	@Override
 	public void installOn(ComponentI owner) throws Exception {
@@ -42,7 +38,7 @@ public class RoutingNodePlugin extends	AbstractPlugin{
 		// connect the outbound port.
 		this.getOwner().doPortConnection(
 				this.regop.getPortURI(),
-				DistributedCVM.RegIP_URI,
+				Registrator.RegIP_URI,
 				RegistrationConnector.class.getCanonicalName());
 
 		super.initialise();

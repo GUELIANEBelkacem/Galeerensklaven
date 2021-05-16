@@ -1,10 +1,13 @@
 package cps.message;
 
-public class MessageContent implements java.io.Serializable {
-	  /**
+import java.io.Serializable;
+
+public class MessageContent implements Serializable {
+	 
+	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2676480461872565232L;
 	private final String message;
 
 

@@ -1,7 +1,12 @@
 package cps.info.address;
 
+import java.io.Serializable;
 
-public class NodeAddress implements NodeAddressI {
+public class NodeAddress implements NodeAddressI, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8164580842828063919L;
 	private String adr;
 
 
@@ -31,7 +36,10 @@ public class NodeAddress implements NodeAddressI {
 		
 	}
 
-	
+	@Override
+    public int hashCode() {
+		return this.adr.hashCode();
+	}
 	  
 	
 

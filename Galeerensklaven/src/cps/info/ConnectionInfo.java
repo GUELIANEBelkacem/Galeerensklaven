@@ -1,9 +1,15 @@
 package cps.info;
 
+import java.io.Serializable;
+
 import cps.info.address.NodeAddressI;
 import cps.info.position.PositionI;
 
-public class ConnectionInfo {
+public class ConnectionInfo implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2874001235705941962L;
 	private NodeAddressI adr;
 	private String comipuri;
 	private String rotipuri;

@@ -1,9 +1,15 @@
 package cps.info;
 
+import java.io.Serializable;
+
 import cps.info.address.NetworkAddressI;
 
-public class AccessInfo {
+public class AccessInfo implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1369353759585128563L;
 	private NetworkAddressI address;
 	private String accessIpUri;
 		

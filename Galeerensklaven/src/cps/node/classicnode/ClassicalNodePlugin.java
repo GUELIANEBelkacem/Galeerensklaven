@@ -2,12 +2,12 @@ package cps.node.classicnode;
 
 import java.util.Set;
 
-import cps.cvm.CVM;
 import cps.info.address.NetworkAddressI;
 import cps.node.classicnode.registration.NConnectionInfo;
 import cps.node.classicnode.registration.NRegistrationCI;
 import cps.node.classicnode.registration.NRegistrationConnector;
 import cps.node.classicnode.registration.NRegistrationOutboundPort;
+import cps.node.classicnode.registration.NRegistrator;
 import fr.sorbonne_u.components.AbstractPlugin;
 import fr.sorbonne_u.components.ComponentI;
 
@@ -18,7 +18,7 @@ public class ClassicalNodePlugin extends	AbstractPlugin{
 	 */
 	private static final long serialVersionUID = 3684919915311580765L;
 	
-	
+	public  final String NRegOP_URI = NRegistrationOutboundPort.generatePortURI();
 	protected NRegistrationOutboundPort nregop;
 	
 
@@ -29,7 +29,7 @@ public class ClassicalNodePlugin extends	AbstractPlugin{
 		
 		
 		this.addRequiredInterface(NRegistrationCI.class);
-		this.nregop = new NRegistrationOutboundPort(this.getOwner());
+		this.nregop = new NRegistrationOutboundPort(NRegOP_URI, this.getOwner());
 		this.nregop.publishPort();
 		
 	}
@@ -42,7 +42,7 @@ public class ClassicalNodePlugin extends	AbstractPlugin{
 		
 		this.getOwner().doPortConnection(
 				this.nregop.getPortURI(),
-				CVM.NRegIP_URI,
+				NRegistrator.NRegIP_URI,
 				NRegistrationConnector.class.getCanonicalName());
 
 		super.initialise();

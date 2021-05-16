@@ -3,7 +3,6 @@ package cps.node.accesspoint;
 import java.util.Set;
 
 import cps.connecteurs.RegistrationConnector;
-import cps.cvm.CVM;
 import cps.info.ConnectionInfo;
 import cps.info.address.NetworkAddressI;
 import cps.info.address.NodeAddressI;
@@ -12,8 +11,10 @@ import cps.node.classicnode.registration.NConnectionInfo;
 import cps.node.classicnode.registration.NRegistrationCI;
 import cps.node.classicnode.registration.NRegistrationConnector;
 import cps.node.classicnode.registration.NRegistrationOutboundPort;
+import cps.node.classicnode.registration.NRegistrator;
 import cps.registration.RegistrationCI;
 import cps.registration.RegistrationOutboundPort;
+import cps.registration.Registrator;
 import fr.sorbonne_u.components.AbstractPlugin;
 import fr.sorbonne_u.components.ComponentI;
 
@@ -23,7 +24,8 @@ public class AccessPointPlugin extends	AbstractPlugin{
 	 * 
 	 */
 	private static final long serialVersionUID = -3473130740095769938L;
-	
+	public  final String RegOP_URI = RegistrationOutboundPort.generatePortURI();
+	public  final String NRegOP_URI = NRegistrationOutboundPort.generatePortURI();
 	protected RegistrationOutboundPort regop;
 	protected NRegistrationOutboundPort nregop;
 	
@@ -33,11 +35,11 @@ public class AccessPointPlugin extends	AbstractPlugin{
 		super.installOn(owner);
 		
 		this.addRequiredInterface(RegistrationCI.class);
-		this.regop = new RegistrationOutboundPort(this.getOwner());
+		this.regop = new RegistrationOutboundPort(RegOP_URI,this.getOwner());
 		this.regop.publishPort();
 		
 		this.addRequiredInterface(NRegistrationCI.class);
-		this.nregop = new NRegistrationOutboundPort(this.getOwner());
+		this.nregop = new NRegistrationOutboundPort(NRegOP_URI,this.getOwner());
 		this.nregop.publishPort();
 		
 	}
@@ -48,12 +50,12 @@ public class AccessPointPlugin extends	AbstractPlugin{
 		// connect the outbound port.
 		this.getOwner().doPortConnection(
 				this.regop.getPortURI(),
-				CVM.RegIP_URI,
+				Registrator.RegIP_URI,
 				RegistrationConnector.class.getCanonicalName());
 		
 		this.getOwner().doPortConnection(
 				this.nregop.getPortURI(),
-				CVM.NRegIP_URI,
+				NRegistrator.NRegIP_URI,
 				NRegistrationConnector.class.getCanonicalName());
 
 		super.initialise();

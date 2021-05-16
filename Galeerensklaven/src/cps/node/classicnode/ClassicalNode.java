@@ -20,27 +20,24 @@ import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 
-@RequiredInterfaces(required = { CommunicationCI.class, NRegistrationCI.class })
-@OfferedInterfaces(offered = { CommunicationCI.class, NRegistrationCI.class })
+@RequiredInterfaces(required = { CommunicationCI.class })
+@OfferedInterfaces(offered = { CommunicationCI.class})
 
 public class ClassicalNode extends AbstractComponent implements NodeI{
-	//public static final String NRegOP_URI = RegistrationOutboundPort.generatePortURI();
+	
 	public String ComIP_URI = CommunicationInboundPort.generatePortURI();
-	//private NRegistrationOutboundPort nregop;
+
 	private CommunicationInboundPort comip;
 	
 	public static int count = 0;
-	public int id = count%2;
-	public static String genAddresse() {
-		String s = "CNode " + count;
-		count++;
-		return s;
-	}
+	public int id;
+	public int idd;
+	
 	Random rand = new Random();
 	boolean stopit = true;
-	private final NetworkAddressI address= new NetworkAddress(ClassicalNode.genAddresse()) ;
+	private NetworkAddressI address;
 	
-	private Position pos;  // = new Position(rand.nextInt(50), rand.nextInt(50));
+	private Position pos;  
 	
 	// pooling 
 	protected static final String	IN_POOL_URI = "inpooluri" ;
@@ -58,9 +55,11 @@ public class ClassicalNode extends AbstractComponent implements NodeI{
 	protected final static String	CPLUGIN = "cplugin";
 	ClassicalNodePlugin plugin = new ClassicalNodePlugin();
 			
-	protected ClassicalNode(Position p) {
+	protected ClassicalNode(int id, Position p) {
 			super(5, 0);
-			
+			this.id=id;
+			this.idd= id%2;
+			this.address= new NetworkAddress("CNode "+id) ;
 			this.pos=p;
 			try {
 				//this.nregop = new NRegistrationOutboundPort(NRegOP_URI, this);
@@ -188,7 +187,7 @@ public class ClassicalNode extends AbstractComponent implements NodeI{
 		}
 		public void register() throws Exception {
 			//Set<NConnectionInfo> cnei = this.registerClassicNode(address, ComIP_URI, id);
-			this.registerClassicNode(address, ComIP_URI, id);
+			this.registerClassicNode(address, ComIP_URI, idd);
 			/*
 			System.out.println(((NConnectionInfo)cnei.toArray()[0]).getSector() == this.id);
 			((NConnectionInfo)cnei.toArray()[0]).getCommunicationInboundPortURI();

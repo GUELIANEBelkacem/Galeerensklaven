@@ -13,17 +13,32 @@
         hostname="localhost"
         mainclass="cps.cvm.DistributedCVM"/>
         
-        
+    <jvm2hostname jvmuri="nregistrator"
+  	    rmiRegistryCreator="false"
+        hostname="localhost"
+        mainclass="cps.cvm.DistributedCVM"/>
     <jvm2hostname jvmuri="routing1"
   	    rmiRegistryCreator="false"
         hostname="localhost"
         mainclass="cps.cvm.DistributedCVM"/>
-        
+    
     <jvm2hostname jvmuri="routing2"
   	    rmiRegistryCreator="false"
         hostname="localhost"
         mainclass="cps.cvm.DistributedCVM"/>
-        
+    <jvm2hostname jvmuri="terminal"
+  	    rmiRegistryCreator="false"
+        hostname="localhost"
+        mainclass="cps.cvm.DistributedCVM"/>
+    <jvm2hostname jvmuri="accesspoint"
+  	    rmiRegistryCreator="false"
+        hostname="localhost"
+        mainclass="cps.cvm.DistributedCVM"/>
+    <jvm2hostname jvmuri="classical"
+  	    rmiRegistryCreator="false"
+        hostname="localhost"
+        mainclass="cps.cvm.DistributedCVM"/>
+  
 
         
   </jvms2hostnames>

@@ -16,12 +16,6 @@ grant {
   permission java.net.SocketPermission "*:1999", "connect, resolve";
   permission java.net.SocketPermission "*:1024-", "connect, resolve";
   permission java.net.SocketPermission "*:1024-", "accept, resolve";
-  
-  permission java.net.SocketPermission "localhost:55252", "listen, accept, connect, resolve";
-  permission java.net.SocketPermission "localhost:55253", "listen, accept, connect, resolve";
-  permission java.net.SocketPermission "localhost:64494", "listen, accept, connect, resolve";
-  permission java.net.SocketPermission "localhost:55999", "listen, accept, connect, resolve";
-  
   permission java.lang.RuntimePermission "stopThread";
   permission java.lang.RuntimePermission "modifyThread";
   permission java.lang.RuntimePermission "modifyThreadGroup";

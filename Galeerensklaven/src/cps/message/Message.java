@@ -1,8 +1,14 @@
 package cps.message;
 
+import java.io.Serializable;
+
 import cps.info.address.AddressI;
 
-public class Message implements MessageI {
+public class Message implements MessageI, Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8886141569728791240L;
 	private int hopsLeft;
 	private MessageContent message;
 	private AddressI dest;

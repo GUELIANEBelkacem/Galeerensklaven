@@ -35,8 +35,8 @@ public class RoutingInboundPort extends AbstractInboundPort implements RoutingCI
 					try {
 						((RoutingI) r).updateRouting(neighbour, routes);
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						
+						System.out.println("update routing failed "+neighbour.getAddress() );
 					}
 				});
 		

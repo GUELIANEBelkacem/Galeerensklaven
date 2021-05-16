@@ -3,7 +3,6 @@ import java.rmi.ConnectException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -21,7 +20,6 @@ import cps.info.position.PositionI;
 import cps.message.Message;
 import cps.message.MessageI;
 import cps.node.NodeI;
-import cps.registration.RegistrationCI;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
@@ -29,35 +27,23 @@ import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 
 
 
-@RequiredInterfaces(required = {  CommunicationCI.class, RegistrationCI.class })
+@RequiredInterfaces(required = {  CommunicationCI.class })
 @OfferedInterfaces(offered = {  CommunicationCI.class})
 
 
 public class TerminalNode extends AbstractComponent implements NodeI{
-	//a currentHashMap is thread safe without synchronizing the whole map. better than locking the entire map, to be verified with the prof
 	private Map<AddressI, CommunicationCI> neighborsCOP = new ConcurrentHashMap<AddressI, CommunicationCI>();
 	private Set<ConnectionInfo> neighbors;
 		
 		
 	public String ComIP_URI = CommunicationInboundPort.generatePortURI();
-	//public static final String RegOP_URI = RegistrationOutboundPort.generatePortURI();
 	private CommunicationInboundPort comip;
-	//private RegistrationOutboundPort regop;
-	
-	public static int count = 0;
 
-	public static String genAddresse() {
-		String s = "TNode " + count;
-		count++;
-		return s;
-	}
-
-	Random rand = new Random();
+	public int id;
 
 	private double range =1;
-	private final NodeAddressI address= new NodeAddress(TerminalNode.genAddresse()) ;
-	//private Position pos = new Position(rand.nextInt(10), rand.nextInt(10));   // change this genPos
-	private Position pos ;//= new Position(count-1, 4); 
+	private final NodeAddressI address ;
+	private Position pos ;
 	
 	// pooling 
 	protected static final String	IN_POOL_URI = "inpooluri" ;
@@ -75,31 +61,27 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 	
 	//disconnection
 	private Set<AddressI> missingNodes = new HashSet<AddressI>();
-	private int myn = count;
+
 	
 	
 	//plugin
 	protected final static String	TPLUGIN = "tplugin";
 	TerminalNodePlugin plugin = new TerminalNodePlugin();
 	
-	protected TerminalNode(Position p) {
+	protected TerminalNode(int id, Position p) {
 		super(2, 0);
+		this.id=id;
+		this.address= new NodeAddress("TNode "+id) ;
 		
 		this.pos=p;
 		try {
-			
-			this.comip = new CommunicationInboundPort(ComIP_URI, this);
-			//this.regop = new RegistrationOutboundPort(RegOP_URI, this);
-			
+			this.comip = new CommunicationInboundPort(ComIP_URI, this);			
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
 		
-		
-		
 		try {
 			this.comip.publishPort();
-			//this.regop.publishPort();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -130,7 +112,6 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 		try {
 			this.installPlugin(plugin);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -203,7 +184,7 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 							e.printStackTrace();
 						}
 						}});
-		
+		/*
 		this.runTaskOnComponent(
 				OUT_POOL_URI,
 				new AbstractComponent.AbstractTask() {
@@ -213,7 +194,7 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 						try {
 							
 							Thread.sleep(4000L) ;
-							if(myn==2) {
+							if(id==2) {
 								
 							disconnect();
 							}
@@ -222,6 +203,8 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 							e.printStackTrace();
 						}
 						}});
+						
+						*/
 		
 	
 		
@@ -243,7 +226,9 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 		
 		for (CommunicationCI c : this.neighborsCOP.values()) {
 			this.doPortDisconnection(((CommunicationOutboundPort) c).getPortURI());
+			((CommunicationOutboundPort) c).unpublishPort();
 		}
+		neighborsCOP.clear();
 		super.finalise();
 	}
 	
@@ -252,18 +237,14 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 	public synchronized void shutdown() throws ComponentShutdownException {
 
 		try {
-			for (CommunicationCI c : this.neighborsCOP.values()) {
-				((CommunicationOutboundPort) c).unpublishPort();
-			}
-			
 			
 			this.comip.unpublishPort();
-			//this.regop.unpublishPort();
+			this.comip.destroyPort();
 		} catch (Exception e) {
 			
 			e.printStackTrace();
 		}
-		neighborsCOP.clear();
+		
 		super.shutdown();
 	}
 
@@ -360,7 +341,7 @@ public class TerminalNode extends AbstractComponent implements NodeI{
 		}
 	}
 	public void coucou() throws Exception {
-		this.logMessage("seeeent " + myn);
+		
 		this.sendMessage(new Message(address.getAddress() , 4, new NodeAddress("RNode 0"))); 
 		
 	}

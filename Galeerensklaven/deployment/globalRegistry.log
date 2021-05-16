@@ -1,43 +1,130 @@
-1621093287780|Global registry up and running!
-1621093290862|Global registry accepted the 1th connection.
-1621093290863|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-6919da21-9940-42c1-aa16-272fc6cb9a9c rmi=localhost
-1621093290908|GlobalRegistry processing put my-bbb-rip-uri rmi=localhost
-1621093290914|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-35234bd1-ddfa-4629-be75-601d59cccb39 rmi=localhost
-1621093290937|GlobalRegistry processing put registrator-dcc rmi=localhost
-1621093291008|Global registry accepted the 2th connection.
-1621093291008|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-1ad9d8ff-4b63-490c-aeee-2c6a461241d6 rmi=localhost
-1621093291010|Global registry accepted the 3th connection.
-1621093291010|All (3) connected!
-1621093291010|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-61b0b607-6c9f-431b-9818-5f307b3700ce rmi=localhost
-1621093291072|GlobalRegistry processing put d129b360-becd-4755-a896-b763abfca96b rmi=localhost
-1621093291072|GlobalRegistry processing put 4c747cce-3ca3-4d2a-98fa-ee09ac4b453f rmi=localhost
-1621093291091|GlobalRegistry processing put d273a94e-55fe-4b22-b606-b226e0a09390 rmi=localhost
-1621093291091|GlobalRegistry processing put a35fda34-210c-4b80-9764-5e79c764d7f7 rmi=localhost
-1621093291470|GlobalRegistry processing put Rnode1 rmi=localhost
-1621093291480|GlobalRegistry processing lookup my-bbb-rip-uri
-1621093291480|GlobalRegistry processing put Rnode4 rmi=localhost
-1621093291505|GlobalRegistry processing lookup my-bbb-rip-uri
-1621093291551|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-d16bbbc9-68d1-4bfb-8548-4ddff297ae8c rmi=localhost
-1621093291573|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-2053e17d-e295-4c77-aba5-cd6e719a5654 rmi=localhost
-1621093291578|GlobalRegistry processing put routing2-dcc rmi=localhost
-1621093291599|GlobalRegistry processing put routing1-dcc rmi=localhost
-1621093296635|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-6919da21-9940-42c1-aa16-272fc6cb9a9c
-1621093296636|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-1ad9d8ff-4b63-490c-aeee-2c6a461241d6
-1621093296636|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-61b0b607-6c9f-431b-9818-5f307b3700ce
-1621093296637|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-35234bd1-ddfa-4629-be75-601d59cccb39
-1621093296639|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-2053e17d-e295-4c77-aba5-cd6e719a5654
-1621093296642|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-d16bbbc9-68d1-4bfb-8548-4ddff297ae8c
-1621093296650|GlobalRegistry processing remove d129b360-becd-4755-a896-b763abfca96b
-1621093296650|GlobalRegistry processing remove my-bbb-rip-uri
-1621093296650|GlobalRegistry processing remove 4c747cce-3ca3-4d2a-98fa-ee09ac4b453f
-1621093296652|GlobalRegistry processing remove a35fda34-210c-4b80-9764-5e79c764d7f7
-1621093296654|GlobalRegistry processing remove registrator-dcc
-1621093296654|GlobalRegistry processing remove d273a94e-55fe-4b22-b606-b226e0a09390
-1621093296655|GlobalRegistry processing remove Rnode1
-1621093296662|GlobalRegistry processing remove routing2-dcc
-1621093296663|GlobalRegistry processing remove Rnode4
-1621093296669|GlobalRegistry processing remove routing1-dcc
-1621093296676|GlobalRegistry processing shutdown
-1621093296676|GlobalRegistry processing shutdown
-1621093296676|GlobalRegistry processing shutdown
-1621093296682|Global registry shuts down!
+1621170545206|Global registry up and running!
+1621170549775|Global registry accepted the 1th connection.
+1621170549777|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-ca6ab025-0499-46d0-8876-eb5f05f0d205 rmi=localhost
+1621170549837|GlobalRegistry processing put reg-inbound-port-uri rmi=localhost
+1621170549884|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-70367540-41a8-45c2-82cc-876364f1037e rmi=localhost
+1621170549903|GlobalRegistry processing put registrator-dcc rmi=localhost
+1621170549965|Global registry accepted the 2th connection.
+1621170549968|Global registry accepted the 3th connection.
+1621170549970|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-0e56eef1-4e4e-47c2-b0c4-450049e4f3a2 rmi=localhost
+1621170549980|Global registry accepted the 4th connection.
+1621170549980|Global registry accepted the 5th connection.
+1621170549982|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-17a377f6-e99a-41f5-9e12-de073a648834 rmi=localhost
+1621170549985|Global registry accepted the 6th connection.
+1621170549987|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-ec73754f-323b-4384-84e5-5c0e6f426dcb rmi=localhost
+1621170549988|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-438eac6f-3b98-4b80-8738-8e74989dd498 rmi=localhost
+1621170550017|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-747b3173-fb2b-4814-bdc3-f9e26d5e8671 rmi=localhost
+1621170550074|GlobalRegistry processing put nrip-uri rmi=localhost
+1621170550080|GlobalRegistry processing put 9cc27881-b6e8-4b56-a50f-e23293e7fb02 rmi=localhost
+1621170550089|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-a8a56521-04c7-4e85-b042-424369c7345a rmi=localhost
+1621170550097|GlobalRegistry processing put 53b4829f-e759-4b83-b0f0-bf86373dc8cb rmi=localhost
+1621170550117|GlobalRegistry processing put nregistrator-dcc rmi=localhost
+1621170550130|Global registry accepted the 7th connection.
+1621170550130|All (7) connected!
+1621170550140|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-1f5ee633-7290-4b38-925e-d5c1d1b26866 rmi=localhost
+1621170550143|GlobalRegistry processing put 04d6dc16-a6ec-4088-92a7-a7931d72c5ff rmi=localhost
+1621170550174|GlobalRegistry processing put 403644c8-5c73-4d12-bd43-6df2965df917 rmi=localhost
+1621170550205|GlobalRegistry processing put 4317d98b-5cf5-400c-907b-f67ce5a874a6 rmi=localhost
+1621170550215|GlobalRegistry processing put 9613eb3d-27e0-4997-a854-d67dbd6b6e36 rmi=localhost
+1621170550393|GlobalRegistry processing put 5cb2772a-28c1-4372-8267-09e69d268f81 rmi=localhost
+1621170550402|GlobalRegistry processing put e9b43f80-1666-4369-bc18-2b595f675685 rmi=localhost
+1621170550844|GlobalRegistry processing put 6f67fa14-8b29-44c9-93ad-6a16ef1bad68 rmi=localhost
+1621170550849|GlobalRegistry processing lookup reg-inbound-port-uri
+1621170550905|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-98b442d9-f6a7-44c6-9dba-f9914ecccafe rmi=localhost
+1621170550932|GlobalRegistry processing put terminal-dcc rmi=localhost
+1621170551067|GlobalRegistry processing put 8bf19815-bf46-4a64-acae-63be3e832f0d rmi=localhost
+1621170551072|GlobalRegistry processing lookup reg-inbound-port-uri
+1621170551081|GlobalRegistry processing put 05654af8-8dd1-48ac-8b57-27f7cc5dcd3f rmi=localhost
+1621170551104|GlobalRegistry processing put 77b55edd-b8e5-4ab0-a725-0cc84df138c6 rmi=localhost
+1621170551113|GlobalRegistry processing lookup nrip-uri
+1621170551126|GlobalRegistry processing put b68e5978-93e7-4465-8377-3fb399d839d8 rmi=localhost
+1621170551133|GlobalRegistry processing lookup reg-inbound-port-uri
+1621170551142|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-9a7ec070-9675-416e-aeb5-7df8375959d1 rmi=localhost
+1621170551182|GlobalRegistry processing put 6a27615a-77d9-477b-99d3-68ecd9d4ed21 rmi=localhost
+1621170551188|GlobalRegistry processing put routing1-dcc rmi=localhost
+1621170551194|GlobalRegistry processing lookup reg-inbound-port-uri
+1621170551261|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-0448a522-0472-4dec-b53e-c175ecfebada rmi=localhost
+1621170551262|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-cb38ee34-47db-41c3-8aa0-23644e748db1 rmi=localhost
+1621170551290|GlobalRegistry processing put routing2-dcc rmi=localhost
+1621170551321|GlobalRegistry processing lookup nrip-uri
+1621170551338|GlobalRegistry processing put classical-dcc rmi=localhost
+1621170551363|GlobalRegistry processing put fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-cbf52eef-0266-450b-b249-bb9545de596e rmi=localhost
+1621170551387|GlobalRegistry processing put accesspoint-dcc rmi=localhost
+1621170551506|GlobalRegistry processing put aba936fe-6789-4580-9f49-e56a06c83da3 rmi=localhost
+1621170551509|GlobalRegistry processing lookup 04d6dc16-a6ec-4088-92a7-a7931d72c5ff
+1621170551531|GlobalRegistry processing put 4f058603-5dce-45ad-8c71-7c44fb50ab59 rmi=localhost
+1621170551539|GlobalRegistry processing put a3829e01-4929-4f27-97ce-007836c253c0 rmi=localhost
+1621170551543|GlobalRegistry processing lookup e9b43f80-1666-4369-bc18-2b595f675685
+1621170551543|GlobalRegistry processing lookup 04d6dc16-a6ec-4088-92a7-a7931d72c5ff
+1621170551568|GlobalRegistry processing put e2d34b6b-d62f-47ba-b039-0cc4254c8ada rmi=localhost
+1621170551571|GlobalRegistry processing lookup 53b4829f-e759-4b83-b0f0-bf86373dc8cb
+1621170551599|GlobalRegistry processing put 2435e146-0f46-4628-b08b-828dfea1461d rmi=localhost
+1621170551602|GlobalRegistry processing lookup 5cb2772a-28c1-4372-8267-09e69d268f81
+1621170551616|GlobalRegistry processing put d3785862-8375-4922-9ee8-f47542d6ee1e rmi=localhost
+1621170551617|GlobalRegistry processing lookup 403644c8-5c73-4d12-bd43-6df2965df917
+1621170551719|GlobalRegistry processing put 3cedb2d4-f207-4c2f-af0a-961946ca24a3 rmi=localhost
+1621170551721|GlobalRegistry processing lookup 9cc27881-b6e8-4b56-a50f-e23293e7fb02
+1621170552592|GlobalRegistry processing put c8892d18-e00e-45d5-9c73-847229f1bd77 rmi=localhost
+1621170552594|GlobalRegistry processing lookup e9b43f80-1666-4369-bc18-2b595f675685
+1621170552614|GlobalRegistry processing put a9b74aed-845a-43b9-b8a0-9e02f5fc8105 rmi=localhost
+1621170552616|GlobalRegistry processing lookup 5cb2772a-28c1-4372-8267-09e69d268f81
+1621170552641|GlobalRegistry processing put 0cefc630-9129-43fd-b563-9027d4272e3a rmi=localhost
+1621170552644|GlobalRegistry processing lookup 9613eb3d-27e0-4997-a854-d67dbd6b6e36
+1621170552658|GlobalRegistry processing put 4c8cefc9-1812-46ea-a75c-aa06c8240a22 rmi=localhost
+1621170552660|GlobalRegistry processing lookup 4317d98b-5cf5-400c-907b-f67ce5a874a6
+1621170571454|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-438eac6f-3b98-4b80-8738-8e74989dd498
+1621170571454|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-ca6ab025-0499-46d0-8876-eb5f05f0d205
+1621170571454|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-cbf52eef-0266-450b-b249-bb9545de596e
+1621170571455|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-ec73754f-323b-4384-84e5-5c0e6f426dcb
+1621170571455|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-98b442d9-f6a7-44c6-9dba-f9914ecccafe
+1621170571455|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-cb38ee34-47db-41c3-8aa0-23644e748db1
+1621170571456|GlobalRegistry processing remove c8892d18-e00e-45d5-9c73-847229f1bd77
+1621170571457|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-0448a522-0472-4dec-b53e-c175ecfebada
+1621170571457|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-70367540-41a8-45c2-82cc-876364f1037e
+1621170571458|GlobalRegistry processing remove a3829e01-4929-4f27-97ce-007836c253c0
+1621170571462|GlobalRegistry processing remove aba936fe-6789-4580-9f49-e56a06c83da3
+1621170571462|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-a8a56521-04c7-4e85-b042-424369c7345a
+1621170571463|GlobalRegistry processing remove 4f058603-5dce-45ad-8c71-7c44fb50ab59
+1621170571463|GlobalRegistry processing remove 2435e146-0f46-4628-b08b-828dfea1461d
+1621170571466|GlobalRegistry processing remove 3cedb2d4-f207-4c2f-af0a-961946ca24a3
+1621170571469|GlobalRegistry processing remove d3785862-8375-4922-9ee8-f47542d6ee1e
+1621170571470|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-0e56eef1-4e4e-47c2-b0c4-450049e4f3a2
+1621170571472|GlobalRegistry processing remove 0cefc630-9129-43fd-b563-9027d4272e3a
+1621170571472|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-747b3173-fb2b-4814-bdc3-f9e26d5e8671
+1621170571475|GlobalRegistry processing remove a9b74aed-845a-43b9-b8a0-9e02f5fc8105
+1621170571478|GlobalRegistry processing remove e2d34b6b-d62f-47ba-b039-0cc4254c8ada
+1621170571481|GlobalRegistry processing remove 4c8cefc9-1812-46ea-a75c-aa06c8240a22
+1621170571481|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-17a377f6-e99a-41f5-9e12-de073a648834
+1621170571483|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-1f5ee633-7290-4b38-925e-d5c1d1b26866
+1621170571485|GlobalRegistry processing remove fr.sorbonne_u.components.reflection.interfaces.ReflectionCI-9a7ec070-9675-416e-aeb5-7df8375959d1
+1621170571492|GlobalRegistry processing remove 403644c8-5c73-4d12-bd43-6df2965df917
+1621170571492|GlobalRegistry processing remove reg-inbound-port-uri
+1621170571494|GlobalRegistry processing remove accesspoint-dcc
+1621170571494|GlobalRegistry processing remove terminal-dcc
+1621170571495|GlobalRegistry processing remove 53b4829f-e759-4b83-b0f0-bf86373dc8cb
+1621170571496|GlobalRegistry processing remove routing2-dcc
+1621170571496|GlobalRegistry processing remove nrip-uri
+1621170571497|GlobalRegistry processing remove 77b55edd-b8e5-4ab0-a725-0cc84df138c6
+1621170571499|GlobalRegistry processing remove registrator-dcc
+1621170571502|GlobalRegistry processing remove classical-dcc
+1621170571503|GlobalRegistry processing remove 9cc27881-b6e8-4b56-a50f-e23293e7fb02
+1621170571504|GlobalRegistry processing remove 04d6dc16-a6ec-4088-92a7-a7931d72c5ff
+1621170571504|GlobalRegistry processing remove nregistrator-dcc
+1621170571507|GlobalRegistry processing remove 4317d98b-5cf5-400c-907b-f67ce5a874a6
+1621170571514|GlobalRegistry processing remove 9613eb3d-27e0-4997-a854-d67dbd6b6e36
+1621170571517|GlobalRegistry processing remove 8bf19815-bf46-4a64-acae-63be3e832f0d
+1621170571517|GlobalRegistry processing remove 5cb2772a-28c1-4372-8267-09e69d268f81
+1621170571518|GlobalRegistry processing remove 6f67fa14-8b29-44c9-93ad-6a16ef1bad68
+1621170571520|GlobalRegistry processing remove 05654af8-8dd1-48ac-8b57-27f7cc5dcd3f
+1621170571520|GlobalRegistry processing remove e9b43f80-1666-4369-bc18-2b595f675685
+1621170571523|GlobalRegistry processing remove b68e5978-93e7-4465-8377-3fb399d839d8
+1621170571524|GlobalRegistry processing remove routing1-dcc
+1621170571524|GlobalRegistry processing remove 6a27615a-77d9-477b-99d3-68ecd9d4ed21
+1621170571534|GlobalRegistry processing shutdown
+1621170571534|GlobalRegistry processing shutdown
+1621170571534|GlobalRegistry processing shutdown
+1621170571534|GlobalRegistry processing shutdown
+1621170571534|GlobalRegistry processing shutdown
+1621170571535|GlobalRegistry processing shutdown
+1621170571536|GlobalRegistry processing shutdown
+1621170571546|Global registry shuts down!

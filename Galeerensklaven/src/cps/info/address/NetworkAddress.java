@@ -1,6 +1,12 @@
 package cps.info.address;
 
-public class NetworkAddress implements NetworkAddressI {
+import java.io.Serializable;
+
+public class NetworkAddress implements NetworkAddressI, Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4900990061792882728L;
 	private String adr;
 
 
@@ -14,7 +20,10 @@ public class NetworkAddress implements NetworkAddressI {
 		return (this.adr.equals( a.getAddress()));
 	}
 
-
+	@Override
+    public int hashCode() {
+		return this.adr.hashCode();
+	}
 	
 
 }

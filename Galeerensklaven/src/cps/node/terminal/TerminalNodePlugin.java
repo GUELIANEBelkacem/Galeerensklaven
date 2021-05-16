@@ -3,8 +3,6 @@ package cps.node.terminal;
 import java.util.Set;
 
 import cps.connecteurs.RegistrationConnector;
-import cps.cvm.CVM;
-import cps.cvm.DistributedCVM;
 import cps.info.ConnectionInfo;
 import cps.info.address.NodeAddressI;
 import cps.info.position.PositionI;
@@ -22,7 +20,7 @@ public class TerminalNodePlugin extends	AbstractPlugin{
 	 */
 	private static final long serialVersionUID = -965703022304694799L;
 	
-	
+	public  final String RegOP_URI = RegistrationOutboundPort.generatePortURI();
 	protected RegistrationOutboundPort regop;
 	
 
@@ -31,7 +29,7 @@ public class TerminalNodePlugin extends	AbstractPlugin{
 		super.installOn(owner);
 		
 		this.addRequiredInterface(RegistrationCI.class);
-		this.regop = new RegistrationOutboundPort(this.getOwner());
+		this.regop = new RegistrationOutboundPort(RegOP_URI,this.getOwner());
 		this.regop.publishPort();
 		
 	}
@@ -42,7 +40,7 @@ public class TerminalNodePlugin extends	AbstractPlugin{
 		// connect the outbound port.
 		this.getOwner().doPortConnection(
 				this.regop.getPortURI(),
-				DistributedCVM.RegIP_URI,
+				Registrator.RegIP_URI,
 				RegistrationConnector.class.getCanonicalName());
 
 		super.initialise();

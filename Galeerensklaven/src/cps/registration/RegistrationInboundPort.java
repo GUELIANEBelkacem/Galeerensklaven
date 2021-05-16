@@ -15,7 +15,7 @@ public class RegistrationInboundPort extends AbstractInboundPort implements Regi
 	public RegistrationInboundPort(String uri, ComponentI owner) throws Exception {
 		
 		super(uri, RegistrationCI.class, owner);
-		System.out.println("initing registering inbound");
+		
 	}
 
 	@Override
@@ -28,7 +28,6 @@ public class RegistrationInboundPort extends AbstractInboundPort implements Regi
 	@Override
 	public Set<ConnectionInfo> registerRoutingNode(NodeAddressI address, String commIpUri, PositionI initialPosition,
 			double initialRange, String routingIpUri) throws Exception {
-		System.out.println("registering inbound");
 		return this.getOwner().handleRequest("inregpooluri",
 				r -> ((Registrator) r).registerRouting(address, commIpUri, initialPosition,
 				initialRange, routingIpUri));
@@ -40,7 +39,7 @@ public class RegistrationInboundPort extends AbstractInboundPort implements Regi
 		return this.getOwner().handleRequest("inregpooluri",
 				a -> ((Registrator) a).registerAPoint(address, commIpUri, initialPosition, initialRange, routingIpUri));
 	}
-
+	
 	@Override
 	public void unregister(NodeAddressI address) {
 		try {

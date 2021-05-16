@@ -2,6 +2,7 @@ package cps.registration;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import cps.info.ConnectionInfo;
 import cps.info.address.NodeAddressI;
@@ -9,15 +10,24 @@ import cps.info.position.PositionI;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
-import fr.sorbonne_u.components.exceptions.ComponentStartException;
 
 @OfferedInterfaces(offered = { RegistrationCI.class })
 public class Registrator extends AbstractComponent {
-	public static final String RegIP_URI = "my-bbb-rip-uri";
-	public static final String RegIP_URI2 = "my-bbb-rip-uri";
+	public static final String RegIP_URI = "reg-inbound-port-uri";
+	//mutex
+	protected final ReentrantReadWriteLock		hashMapLock ;
+	
+	
+	
 	private Set<ConnectionInfo> cInfo = new HashSet<>();
 	public RegistrationInboundPort rip;
 	
+	@Override
+	public synchronized void finalise() throws Exception {
+		
+		super.finalise();
+	}
+
 	// pooling 
 	protected static final String	IN_POOL_URI = "inregpooluri" ;
 	protected static final int		ni = 3 ;
@@ -25,11 +35,12 @@ public class Registrator extends AbstractComponent {
 	
 	protected Registrator() {
 		super(5, 0);
+		this.hashMapLock = new ReentrantReadWriteLock() ;
 		try {
-			this.rip = new RegistrationInboundPort(RegIP_URI2, this);
+			this.rip = new RegistrationInboundPort(RegIP_URI, this);
 			this.rip.publishPort();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		try {
@@ -37,7 +48,7 @@ public class Registrator extends AbstractComponent {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("kjhgkjhb");
+		
 	}
 
 	
@@ -46,7 +57,9 @@ public class Registrator extends AbstractComponent {
 
 	@Override
 	public synchronized void execute() throws Exception {
+		
 		super.execute();
+		Thread.sleep(4377L);
 	}
 	@Override
 	public synchronized void shutdown() throws ComponentShutdownException {
@@ -61,38 +74,39 @@ public class Registrator extends AbstractComponent {
 
 
 
-	protected Registrator(String reflectionInboundPortURI, int nbThreads, int nbSchedulableThreads) {
-		super(reflectionInboundPortURI, nbThreads, nbSchedulableThreads);
-		// TODO Auto-generated constructor stub
-	}
+	
 
 	public Set<ConnectionInfo> registerTerminal(NodeAddressI address, String commIpUri, PositionI initialPosition,
 			double initialRange) {
+		this.hashMapLock.writeLock().lock() ;
 		Set<ConnectionInfo> res = new HashSet<>();
 		for (ConnectionInfo ci : cInfo) {
 			if (ci.getPosition().distance(initialPosition) <= initialRange)
 				res.add(ci);
 		}
 		cInfo.add(new ConnectionInfo(address, commIpUri, "", false, initialPosition, false));
+		this.hashMapLock.writeLock().unlock() ;
 		return res;
 
 	}
 
 	public Set<ConnectionInfo> registerRouting(NodeAddressI address, String commIpUri, PositionI initialPosition,
 			double initialRange, String routingIpUri) {
-		System.out.println("contacted routing");
+		this.hashMapLock.writeLock().lock() ;
+		
 		Set<ConnectionInfo> res = new HashSet<>();
 		for (ConnectionInfo ci : cInfo) {
 			if (ci.getPosition().distance(initialPosition) <= initialRange)
 				res.add(ci);
 		}
 		cInfo.add(new ConnectionInfo(address, commIpUri, routingIpUri, true, initialPosition, false));
+		this.hashMapLock.writeLock().unlock() ;
 		return res;
 	}
 
 	public Set<ConnectionInfo> registerAPoint(NodeAddressI address, String commIpUri, PositionI initialPosition,
 			double initialRange, String routingIpUri) {
-		
+		this.hashMapLock.writeLock().lock() ;
 		Set<ConnectionInfo> res = new HashSet<>();
 		for (ConnectionInfo ci : cInfo) {
 			if (ci.getPosition().distance(initialPosition) <= initialRange || ci.isAPoint())
@@ -104,17 +118,21 @@ public class Registrator extends AbstractComponent {
 		
 		cInfo.add(new ConnectionInfo(address, commIpUri, routingIpUri, true, initialPosition, true));
 		
-		
+		this.hashMapLock.writeLock().unlock() ;
 		return res;
 	}
 	
 	public void unreg(NodeAddressI address) {
+		this.hashMapLock.writeLock().lock() ;
 		for (ConnectionInfo ci : cInfo) {
 			if(ci.getAddress().isequalsAddress(address)) {
 				cInfo.remove(ci);
 				break;
 			}
 		}
+		this.hashMapLock.writeLock().unlock() ;
 	}
+	
+	
 
 }

@@ -1,6 +1,12 @@
 package cps.info.position;
 
-public class Position implements PositionI{
+import java.io.Serializable;
+
+public class Position implements PositionI, Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6898008121510352721L;
 	private int x, y;
 	
 	public Position(int x, int y) {

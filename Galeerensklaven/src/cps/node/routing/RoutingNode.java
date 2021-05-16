@@ -24,8 +24,6 @@ import cps.message.Message;
 import cps.message.MessageI;
 import cps.node.NodeI;
 import cps.node.RoutingI;
-import cps.registration.RegistrationCI;
-import cps.registration.RegistrationOutboundPort;
 import cps.routing.RouteInfo;
 import cps.routing.RoutingCI;
 import cps.routing.RoutingInboundPort;
@@ -35,46 +33,35 @@ import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 
-@RequiredInterfaces(required = { RoutingCI.class, CommunicationCI.class, RegistrationCI.class })
+@RequiredInterfaces(required = { RoutingCI.class, CommunicationCI.class})
 @OfferedInterfaces(offered = { RoutingCI.class, CommunicationCI.class })
 public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
-	//a currentHashMap is thread safe without synchronizing the whole map. better than locking the entire map, to be verified with the prof
-	// mutex for 2 modifications at the same time
+
+
 	private Map<AddressI, CommunicationCI> neighborsCOP = new ConcurrentHashMap<AddressI, CommunicationCI>();
 	private Map<AddressI, RoutingCI> neighborsROP = new ConcurrentHashMap<AddressI, RoutingCI>();
 	private Set<ConnectionInfo> neighbors;
 	private Map<AddressI, RouteInfo> routingTable = new ConcurrentHashMap<AddressI, RouteInfo>();
 	private AddressI bestAProute = null;
 	private int jumpsToAP = -1;
-	Random rand = new Random();
+	static Random rand = new Random();
 	public final String RotIP_URI = RoutingInboundPort.generatePortURI();
-	public final String ComIP_URI = CommunicationInboundPort.generatePortURI();
-	public  final String RegOP_URI = "Rnode"+rand.nextInt(10); //dPort.generatePortURI();
+	protected final String ComIP_URI = CommunicationInboundPort.generatePortURI();
 	private RoutingInboundPort rotip;
 	private CommunicationInboundPort comip;
-	//private RegistrationOutboundPort regop;
-
-	public static int count = 0;
-
-
-	private int t=count;
-	
-	public static String genAddresse() {
-		String s = "RNode " + count;
-		count++;
-		return s;
-	}
-
 	
 	
+
+
+    
+	private int id;
 	private double range =1.6;
-	private final NodeAddressI address= new NodeAddress(RoutingNode.genAddresse()) ;
-	//private Position pos = new Position(rand.nextInt(10), rand.nextInt(10));   // change this genPos
-	private Position pos;// = new Position(count-1, 5); 
-
+	private final NodeAddressI address;
+	
+	private Position pos;
 	// closest access point 
 	int apDistance = 9999999;
-	NodeAddressI apGateway = this.address;
+	NodeAddressI apGateway;
 	
 	
 	// pooling 
@@ -96,17 +83,20 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 	
 	//plugin
 	protected final static String	RPLUGIN = "tplugin";
-	RoutingNodePlugin plugin = new RoutingNodePlugin(RegOP_URI);
+	RoutingNodePlugin plugin= new RoutingNodePlugin();
 	
-	protected RoutingNode(Position p) {
+	protected RoutingNode(int id, Position p) {
 		super(2, 0);
-		System.out.println(this.RegOP_URI);
+		this.id=id;
+		this.address= new NodeAddress("RNode "+id) ;
+		apGateway = this.address;
+		
 		this.pos=p;
 		try {
 			
 			this.rotip = new RoutingInboundPort(RotIP_URI, this);
 			this.comip = new CommunicationInboundPort(ComIP_URI, this);
-			//this.regop = new RegistrationOutboundPort(RegOP_URI, this);
+			
 			
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -147,9 +137,12 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 		try {
 			this.installPlugin(plugin);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
+		
+		
+		
 		
 	}
 
@@ -163,7 +156,6 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 	@Override
 	public synchronized void execute() throws Exception {
 		super.execute();
-		this.logMessage("jefjelfejl");
 		this.register();
 		
 		
@@ -177,8 +169,8 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 					@Override
 					public void run() {
 						try {
-							register();
-							Thread.sleep(100L) ;
+							
+							Thread.sleep(1000L) ;
 							catchUp();
 						
 						} catch (Exception e) {
@@ -196,7 +188,7 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 					public void run() {
 						
 						try {
-							register();
+							Thread.sleep(2000L) ;
 							while(stopit) {
 							Thread.sleep(100L) ;
 							checkDisconnection();
@@ -218,10 +210,9 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 					public void run() {
 						try {
 							
-							register();
+							
 							while(stopit) {
 							Thread.sleep(1000L) ;
-							//checkDisconnection();
 							coucou();
 							}
 						
@@ -240,8 +231,8 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 						
 						try {
 							
-							if(t==3) {
-							Thread.sleep(3000L) ;
+							if(id==3) {
+							Thread.sleep(5000L) ;
 
 								disconnect();
 							
@@ -292,31 +283,21 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 					+ a.getValue().getNumberOfHops() + "===> " + a.getValue().getDestination().getAddress());
 		}
 		System.out.println(address.getAddress() + "--------------------------------------------------------");
-		routingTable.clear();
-		neighborsCOP.clear();
-		neighborsROP.clear();
+		
 		for (CommunicationCI c : this.neighborsCOP.values()) {
 			this.doPortDisconnection(((CommunicationOutboundPort) c).getPortURI());
+			((CommunicationOutboundPort) c).unpublishPort();
 		}
 		for (RoutingCI r : this.neighborsROP.values()) {
 			this.doPortDisconnection(((RoutingOutboundPort) r).getPortURI());
+			((RoutingOutboundPort) r).unpublishPort();
 		}
-		
+		routingTable.clear();
+		neighborsCOP.clear();
+		neighborsROP.clear();
 		super.finalise();
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
@@ -324,22 +305,15 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 	public synchronized void shutdown() throws ComponentShutdownException {
 		
 		try {
-			for (CommunicationCI c : this.neighborsCOP.values()) {
-				((CommunicationOutboundPort) c).unpublishPort();
-			}
-			for (RoutingCI r : this.neighborsROP.values()) {
-				((RoutingOutboundPort) r).unpublishPort();
-			}
 			this.rotip.unpublishPort();
 			this.comip.unpublishPort();
-			//this.regop.unpublishPort();
+			this.rotip.destroyPort();
+			this.comip.destroyPort();
 		} catch (Exception e) {
 			
 			e.printStackTrace();
 		}
-		routingTable.clear();
-		neighborsCOP.clear();
-		neighborsROP.clear();
+		
 		super.shutdown();
 	}
 
@@ -364,7 +338,7 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 
 	// --------------------------Connection------------------------------------------------------------------------
 	
-	// this part is verified it works 100% of the time 
+
 	
 	public void catchUp() throws Exception {
 
@@ -446,6 +420,7 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 	}
 
 	public void connect(NodeAddressI address, String communicationInboundPortURI) throws Exception {
+		System.out.println("connect contacted: "+neighborsCOP.size());
 		if (!this.nccontainsKey(address)) {
 			String uriTempC = CommunicationOutboundPort.generatePortURI();
 			CommunicationOutboundPort pc = new CommunicationOutboundPort(uriTempC, this);
@@ -467,7 +442,7 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 	
 	public void connectRouting(NodeAddressI address, String communicationInboundPortURI, String routingInboundPortURI)
 			throws Exception {
-
+		
 		if (!this.nccontainsKey(address)) {
 
 			
@@ -486,6 +461,7 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 		}
 
 		if (!this.nrcontainsKey(address)) {
+			
 			String uriTempR = RoutingOutboundPort.generatePortURI();
 			RoutingOutboundPort pr = new RoutingOutboundPort(uriTempR, this);
 			pr.publishPort();
@@ -607,11 +583,10 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 	
 	
 	public void register() throws Exception {
-		System.out.println("hey1");
-		Set<ConnectionInfo> bbb =this.registerRoutingNode(this.address, this.ComIP_URI, this.pos, this.range, this.RotIP_URI);
-		System.out.println("hey2");
-		System.out.println(bbb);
-		this.neighbors = bbb;
+		
+		hashMapLock.writeLock().lock();
+		try {
+		this.neighbors = this.registerRoutingNode(this.address, this.ComIP_URI, this.pos, this.range, this.RotIP_URI);;
 		
 		for (ConnectionInfo c : this.neighbors) {
 			String uriTempC = CommunicationOutboundPort.generatePortURI();
@@ -619,7 +594,7 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 			pc.publishPort();
 			this.doPortConnection(uriTempC, c.getCommunicationInboundPortURI(),
 					CommunicationConnector.class.getCanonicalName());// add connector here
-			this.ncput(c.getAddress(), pc);
+			this.neighborsCOP.put(c.getAddress(), pc);
 
 			if (c.isRouting()) {
 				String uriTempR = RoutingOutboundPort.generatePortURI();
@@ -627,14 +602,16 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 				pr.publishPort();
 				this.doPortConnection(uriTempR, c.getRoutingInboundPortURI(),
 						RoutingConnector.class.getCanonicalName());// add connector here
-				this.nrput(c.getAddress(), pr);
+				this.neighborsROP.put(c.getAddress(), pr);
 			}
 
 			if (!c.getAddress().isequalsAddress(this.address)) {
-				this.rput(c.getAddress(), new RouteInfo(c.getAddress(), 1));
+				this.routingTable.put(c.getAddress(), new RouteInfo(c.getAddress(), 1));
 			}
 		}
-
+		}finally {
+		hashMapLock.writeLock().unlock();
+		}
 	}
 
 	
@@ -648,7 +625,7 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 	
 	// --------------------------Routing------------------------------------------------------------------------
 	
-	// this part is verified it works 100% of the time 
+
 	
 	public void updateRouting(NodeAddressI neighbour, Set<RouteInfo> routes) throws Exception {
 		for (RouteInfo r : routes) {
@@ -686,14 +663,7 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 			}
 
 			else {
-				/*
-				boolean missing = false;
-				for(AddressI aa: missingNodes) {
-					if(aa.isequalsAddress(r.getDestination())) {
-						missing = true;
-					}
-				}
-				*/
+				
 				if (!r.getDestination().isequalsAddress(this.address) ) {
 					
 					this.rput(r.getDestination(), new RouteInfo(neighbour, r.getNumberOfHops() + 1));
@@ -751,29 +721,13 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 	
 	
 	
-	// --------------------------garbage code------------------------------------------------------------------------
+	// --------------------------miscellaneous------------------------------------------------------------------------
 	
 	
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 	public int hasRouteFor(AddressI address) {
 		if (this.rcontainsKey(address)) {
@@ -783,25 +737,6 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 		}
 	}
 
-	
-	
-	
-	
-	
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
@@ -823,7 +758,9 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 	{
 		RouteInfo res ;
 		this.hashMapLock.writeLock().lock() ;
+		
 		try {
+			
 			res = this.routingTable.put(key, value) ;
 		} finally {
 			this.hashMapLock.writeLock().unlock() ;
@@ -836,7 +773,8 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 		RouteInfo res ;
 		this.hashMapLock.readLock().lock() ;
 		try {
-			res = this.routingTable.get(key) ;
+		
+			res = this.routingTable.get(key);
 		} finally {
 			this.hashMapLock.readLock().unlock() ;
 		}
@@ -848,7 +786,8 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 		boolean res ;
 		this.hashMapLock.readLock().lock() ;
 		try {
-			res = this.routingTable.containsKey(key) ;
+			res = this.routingTable.containsKey(key);
+			
 		} finally {
 			this.hashMapLock.readLock().unlock() ;
 		}
@@ -971,130 +910,5 @@ public class RoutingNode extends AbstractComponent implements NodeI, RoutingI{
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/*
-	
-	if (m.getAddress().isNetworkAddress()) {
-		this.logMessage(this.address.getAddress() + " <--- " + m.getContent().getMessage());
-		if (bestAProute == null) {
-			for (Entry<AddressI, CommunicationCI> e : this.neighborsCOP.entrySet()) {
-				e.getValue().transmitMessage(
-						new Message(this.address.getAddress() + " <--- " + m.getContent().getMessage(), m.getHops(),
-								m.getAddress()));
-			}
-		} else {
-			m.decrementHops();
-			neighborsCOP.get(bestAProute)
-					.transmitMessage(new Message(this.address.getAddress() + " <--- " + m.getContent().getMessage(),
-							m.getHops(), m.getAddress()));
-		}
 
-	}
-	
-	
-	*/
-	
-	
-	
-	
-	/// REACTIVERRRRRRRRRRRRRRRRRRRRRRRRRRRR
-
-			/*
-			 * for(AddressI e: this.routingTable.keySet()) { this.transmitMessage(new
-			 * Message(address.getAddress() , 2, e)); }
-			 */
-
-			// transmitMessage(new Message(address.getAddress(), 50, new
-			// NetworkAddress("CNode 1")));
-			// transmitMessage(new Message(address.getAddress(), 50, new
-			// NetworkAddress("CNode 0")));
-			/*
-			 * for(AddressI e: this.neighborsCOP.keySet()) {
-			 * this.logMessage(this.address.getAddress() + " <=====> " + e.getAddress()); }
-			 */
-			// this.logMessage("end");
-	
-	
-	
-	
-	
-	
-	/*
-	 * public void transmitMessage(MessageI m) throws Exception {
-	 * if(m.getAddress().isequalsAddress(this.address)) {
-	 * this.logMessage(this.address.getAddress() + " <--- " +
-	 * m.getContent().getMessage()); } else { if(m.stillAlive()) {
-	 * m.decrementHops(); for(Entry<AddressI,CommunicationCI> e :
-	 * this.neighborsCOP.entrySet()){ e.getValue().transmitMessage(m); } }else {
-	 * //this.logMessage("message expired"); } }
-	 * 
-	 * }
-	 */
-	
-	
-	
-	
-	
-	
-	
-	
-	// this is garbage cheat code
-	// ---------------------------------------------------------------
-	/*
-	 * this.route(); this.route(); this.route(); this.route(); this.route(); for(int
-	 * i = 0; i<1000000; i++) {} this.route(); this.transmitMessage(new
-	 * Message(this.address.getAddress() , 2 , address));
-	 */
-
-	// -------------------------------------------------------------------------------------------
-
-	
-	
-	
-	
-	// this.route();
-
-			// REACTIVERRRRRRRRRRR
-
-			/*
-			 * for(AddressI e: this.routingTable.keySet()) { this.transmitMessage(new
-			 * Message(address.getAddress() , 2, e)); }
-			 */
-			// transmitMessage(new Message(address.getAddress(), 50, new
-			// NetworkAddress("CNode 1")));
-			// transmitMessage(new Message(address.getAddress(), 50, new
-			// NetworkAddress("CNode 0")));
-	
-	
-	
-	
-	
-	/*
-	public void updateAccessPoint(NodeAddressI neighbour, int numberOfHops) throws Exception {
-		if (jumpsToAP == -1 || numberOfHops < jumpsToAP) {
-			jumpsToAP = numberOfHops;
-			bestAProute = neighbour;
-			for (Entry<AddressI, RoutingCI> e : neighborsROP.entrySet()) {
-				e.getValue().updateAccessPoint(address, jumpsToAP + 1);
-			}
-		}
-		// transmitMessage(new Message(address.getAddress(), 3, new
-		// NetworkAddress("CNode 1")));
-		// transmitMessage(new Message(address.getAddress(), 3, new
-		// NetworkAddress("CNode 0")));
-	}
-	*/
 }
